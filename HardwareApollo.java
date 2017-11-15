@@ -29,17 +29,47 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class HardwareApollo
-{
+import static org.firstinspires.ftc.teamcode.ApolloTeleop.MID_SERVO;
+
+/**
+ * This is NOT an opmode.
+ * <p>
+ * This class can be used to define all the specific hardware for a single robot.
+ * In this case that robot is a Pushbot.
+ * See PushbotTeleopTank_Iterative and others classes starting with "Pushbot" for usage examples.
+ * <p>
+ * This hardware class assumes the following device names have been configured on the robot:
+ * Note:  All names are lower case and some have single spaces between words.
+ * <p>
+ * Motor channel:  Left  drive motor:        "left_drive"
+ * Motor channel:  Right drive motor:        "right_drive"
+ * Motor channel:  Manipulator drive motor:  "left_arm"
+ * Servo channel:  Servo to open left claw:  "left_hand"
+ * Servo channel:  Servo to open right claw: "right_hand"
+ */
+public class HardwareApollo {
     /* Public OpMode members. */
+    public DcMotor leftDriveF = null;
+    public DcMotor rightDriveF = null;
+    public DcMotor leftDriveB = null;
+    public DcMotor rightDriveB = null;
+    public Servo clawLeft = null;
+    public Servo clawRight = null;
+    public Servo liftLeft = null;
+    public Servo liftRight = null;
+
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
+    private ElapsedTime period = new ElapsedTime();
 
     /* Constructor */
-    public HardwareApollo(){
+    public HardwareApollo() {
 
     }
 
@@ -47,6 +77,45 @@ public class HardwareApollo
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
+
+        // Define and Initialize Motors
+        leftDriveB = hwMap.get(DcMotor.class, "left_driveB");
+        rightDriveB = hwMap.get(DcMotor.class, "right_driveB");
+        leftDriveB.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        rightDriveB.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        leftDriveF = hwMap.get(DcMotor.class, "left_driveF");
+        rightDriveF = hwMap.get(DcMotor.class, "right_driveF");
+        leftDriveF.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        rightDriveF.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+
+
+        // Set all motors to zero power
+        leftDriveB.setPower(0);
+        rightDriveB.setPower(0);
+        leftDriveF.setPower(0);
+        rightDriveF.setPower(0);
+
+
+        // Set all motors to run without encoders.
+        // May want to use RUN_USING_ENCODERS if encoders are installed.
+        leftDriveF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightDriveF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftDriveB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightDriveB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        clawLeft = hwMap.get(Servo.class, "claw_left");
+        clawRight = hwMap.get(Servo.class, "claw_right");
+        liftLeft = hwMap.get(Servo.class, "lift_left");
+        liftRight = hwMap.get(Servo.class, "lift_right");
+
+        clawLeft.setPosition(MID_SERVO);
+        clawRight.setPosition(MID_SERVO);
+        liftLeft.setPosition(MID_SERVO);
+        liftRight.setPosition(MID_SERVO);
+
+        // היה פה הערות כי החיבורים היו שגואים ברובוט (לא החלק הזה היה הבעיה)
+
+
     }
- }
+}
 
