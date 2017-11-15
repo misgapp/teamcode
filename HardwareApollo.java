@@ -36,32 +36,18 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static org.firstinspires.ftc.teamcode.ApolloTeleop.MID_SERVO;
 
-/**
- * This is NOT an opmode.
- * <p>
- * This class can be used to define all the specific hardware for a single robot.
- * In this case that robot is a Pushbot.
- * See PushbotTeleopTank_Iterative and others classes starting with "Pushbot" for usage examples.
- * <p>
- * This hardware class assumes the following device names have been configured on the robot:
- * Note:  All names are lower case and some have single spaces between words.
- * <p>
- * Motor channel:  Left  drive motor:        "left_drive"
- * Motor channel:  Right drive motor:        "right_drive"
- * Motor channel:  Manipulator drive motor:  "left_arm"
- * Servo channel:  Servo to open left claw:  "left_hand"
- * Servo channel:  Servo to open right claw: "right_hand"
- */
+
 public class HardwareApollo {
     /* Public OpMode members. */
     public DcMotor leftDriveFront = null;
     public DcMotor rightDriveFront = null;
     public DcMotor leftDriveBack = null;
     public DcMotor rightDriveBack = null;
-    public Servo clawLeft = null;
-    public Servo clawRight = null;
-    public Servo liftLeft = null;
-    public Servo liftRight = null;
+    public Servo clawDownLeft = null;
+    public Servo clawDownRight = null;
+    public Servo clawUpLeft = null;
+    public Servo clawUpRight = null;
+    public DcMotor lift = null;
 
 
     /* local OpMode members. */
@@ -87,6 +73,9 @@ public class HardwareApollo {
         rightDriveFront = hwMap.get(DcMotor.class, "right_drive_front");
         leftDriveFront.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         rightDriveFront.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        lift = hwMap.get(DcMotor.class, "lift");
+        lift.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+
 
 
         // Set all motors to zero power
@@ -94,6 +83,7 @@ public class HardwareApollo {
         rightDriveBack.setPower(0);
         leftDriveBack.setPower(0);
         rightDriveFront.setPower(0);
+        lift.setPower(0);
 
 
         // Set all motors to run without encoders.
@@ -102,18 +92,18 @@ public class HardwareApollo {
         rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftDriveBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightDriveBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        clawLeft = hwMap.get(Servo.class, "claw_left");
-        clawRight = hwMap.get(Servo.class, "claw_right");
-        liftLeft = hwMap.get(Servo.class, "lift_left");
-        liftRight = hwMap.get(Servo.class, "lift_right");
+        clawDownLeft = hwMap.get(Servo.class, "claw_down_left");
+        clawDownRight = hwMap.get(Servo.class, "claw_down_right");
+        clawUpLeft = hwMap.get(Servo.class, "claw_up_left");
+        clawUpRight = hwMap.get(Servo.class, "claw_up_right");
 
-        clawLeft.setPosition(MID_SERVO);
-        clawRight.setPosition(MID_SERVO);
-        liftLeft.setPosition(MID_SERVO);
-        liftRight.setPosition(MID_SERVO);
+        clawDownLeft.setPosition(MID_SERVO);
+        clawDownRight.setPosition(MID_SERVO);
+        clawUpLeft.setPosition(MID_SERVO);
+        clawUpRight.setPosition(MID_SERVO);
 
-        // היה פה הערות כי החיבורים היו שגואים ברובוט (לא החלק הזה היה הבעיה)
 
 
     }

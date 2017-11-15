@@ -60,21 +60,22 @@ public class ApolloTeleop extends LinearOpMode {
     HardwareApollo robot = new HardwareApollo();
 
     public static final double MID_SERVO = 0.5;
-    public static final double ARM_UP_POWER = 0.45;
-    double clawOffset = 0;                       // Servo mid position
-    final double CLAW_SPEED = 0.02;                   // sets rate to move servo
+    public static final double liftSpeed = 0.5;
 
     @Override
     public void runOpMode() {
 
-        double clawPosition = 0.17;
-        double liftPosition = 0.64;
-        double left;
-        double right;
-        double Doobi = 0;
+        double clawDownPosition = 0.17;
+        double clawUpPosition = 0.17;
+       // double liftPosition = 0.64;
+        double left = 0;
+        double right = 0;
+        double Doobi = 0.2;
         double Mcqueen = 1;
+        double bibix = 1;
         Mcqueen = Math.min(Mcqueen, 1);
         Mcqueen = Math.max(Mcqueen, 4);
+
 
 
         /* Initialize the hardware variables.
@@ -96,25 +97,29 @@ public class ApolloTeleop extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-
-            left = -gamepad1.left_stick_y;
-            right = -gamepad1.right_stick_y;
-
             if (gamepad1.x) {
-                left *= -1;
-                right *= -1;
+                bibix = 2;
+                idle();
             }
 
-            robot.leftDriveFront.setPower(left);
-            robot.rightDriveFront.setPower(right);
-            robot.leftDriveBack.setPower(left);
-            robot.rightDriveBack.setPower(right);
+            if (gamepad1.b) {
+                bibix = 1;
+                idle();
+            }
 
+            if (bibix == 1) {
+                right = gamepad1.right_stick_y;
+                left = gamepad1.left_stick_y;
+            }
 
+            if (bibix == 2) {
+                right = -gamepad1.right_stick_y;
+                left = -gamepad1.left_stick_y;
+            }
 
-            /*if (gamepad1.dpad_up) {
+            if (gamepad1.dpad_up) {
                 Doobi = 0.1;
-                Mcqueen += 0.2;
+                Mcqueen = Mcqueen - 0.2;
                 while (gamepad1.dpad_up) {
                     idle();
                 }
@@ -123,10 +128,10 @@ public class ApolloTeleop extends LinearOpMode {
 
 
             if (Doobi == 0.1) {
-                robot.leftDriveF.setPower(left / Mcqueen);
-                robot.rightDriveF.setPower(right / Mcqueen);
-                robot.leftDriveB.setPower(left / Mcqueen);
-                robot.rightDriveB.setPower(right / Mcqueen);
+                robot.leftDriveFront.setPower(left / Mcqueen);
+                robot.rightDriveFront.setPower(right / Mcqueen);
+                robot.leftDriveBack.setPower(left / Mcqueen);
+                robot.rightDriveBack.setPower(right / Mcqueen);
                 idle();
             }
 
@@ -137,10 +142,10 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             if (Doobi == 0.2) {
-                robot.leftDriveF.setPower(left / 1.7);
-                robot.rightDriveF.setPower(right / 1.7);
-                robot.leftDriveB.setPower(left / 1.7);
-                robot.rightDriveB.setPower(right / 1.7);
+                robot.leftDriveFront.setPower(left / 1.7);
+                robot.rightDriveFront.setPower(right / 1.7);
+                robot.leftDriveBack.setPower(left / 1.7);
+                robot.rightDriveBack.setPower(right / 1.7);
                 Mcqueen = 1.7;
                 idle();
             }
@@ -151,10 +156,10 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             if (Doobi == 0.3) {
-                robot.leftDriveF.setPower(left / 2.5);
-                robot.rightDriveF.setPower(right / 2.5);
-                robot.leftDriveB.setPower(left / 2.5);
-                robot.rightDriveB.setPower(right / 2.5);
+                robot.leftDriveFront.setPower(left / 2.5);
+                robot.rightDriveFront.setPower(right / 2.5);
+                robot.leftDriveBack.setPower(left / 2.5);
+                robot.rightDriveBack.setPower(right / 2.5);
                 Mcqueen = 2.5;
                 idle();
             }
@@ -162,7 +167,7 @@ public class ApolloTeleop extends LinearOpMode {
 
             if (gamepad1.dpad_down) {
                 Doobi = 0.4;
-                Mcqueen = Mcqueen - 0.2;
+                Mcqueen += 0.2;
                 while (gamepad1.dpad_down) {
                     idle();
                 }
@@ -170,57 +175,46 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             if (Doobi == 0.4) {
-                robot.leftDriveF.setPower(left / Mcqueen);
-                robot.rightDriveF.setPower(right / Mcqueen);
-                robot.leftDriveB.setPower(left / Mcqueen);
-                robot.rightDriveB.setPower(right / Mcqueen);
+                robot.leftDriveFront.setPower(left / Mcqueen);
+                robot.rightDriveFront.setPower(right / Mcqueen);
+                robot.leftDriveBack.setPower(left / Mcqueen);
+                robot.rightDriveBack.setPower(right / Mcqueen);
                 idle();
             }
 
-            if (gamepad1.x) {
-                right = gamepad1.right_stick_y;
-                left = gamepad1.left_stick_y;
-                idle();
+
+            if (gamepad2.right_trigger > 0) {
+                robot.lift.setPower(liftSpeed);
             }
 
-            if (gamepad1.b) {
-                right = -gamepad1.right_stick_y;
-                left = -gamepad1.left_stick_y;
-                idle();
+            if (gamepad2.left_trigger > 0) {
+                robot.lift.setPower(-liftSpeed);
             }
 
-*/
 
 
 
             double deltaClaw = -gamepad2.left_stick_y;
             double deltaLift = gamepad2.right_stick_y;
 
-            clawPosition += deltaClaw;
-            clawPosition = Math.min(clawPosition, 1);
-            clawPosition = Math.max(clawPosition, 0);
-            robot.clawLeft.setPosition(clawPosition);
-            robot.clawRight.setPosition(1 - clawPosition);
+            clawDownPosition += deltaClaw;
+            clawDownPosition = Math.min(clawDownPosition, 1);
+            clawDownPosition = Math.max(clawDownPosition, 0);
+            robot.clawDownLeft.setPosition(clawDownPosition);
+            robot.clawDownRight.setPosition(1 - clawDownPosition);
 
-            liftPosition += deltaLift;
-            liftPosition = Math.min(liftPosition, 1);
-            liftPosition = Math.max(liftPosition, 0);
-
-
-            robot.liftLeft.setPosition(liftPosition);
-            robot.liftRight.setPosition(1 - liftPosition);
-
+            clawUpPosition += deltaLift;
+            clawUpPosition = Math.min(clawUpPosition, 1);
+            clawUpPosition = Math.max(clawUpPosition, 0);
+            robot.clawUpLeft.setPosition(clawUpPosition);
+            robot.clawUpRight.setPosition(1 - clawUpPosition);
 
 
             telemetry.addData("left", "%.2f", left);
             telemetry.addData("right", "%.2f", right);
-            telemetry.addData("claw target", "%.2f", clawPosition);
-            telemetry.addData("claw position", "%.2f", robot.clawLeft.getPosition());
-            // we dont know how to do this telemetry to work
+            telemetry.addData("claw position", "%.2f", robot.clawDownLeft.getPosition());
             telemetry.addData("speed", "%.2f", Mcqueen);
-
-            telemetry.addData("lift target", "%.2f", liftPosition);
-            telemetry.addData("lift position", "%.2f", robot.liftLeft.getPosition());
+            telemetry.addData("lift position", "%.2f", robot.clawUpLeft.getPosition());
             telemetry.update();
 
 
