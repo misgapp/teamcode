@@ -96,7 +96,7 @@ public class ApolloTeleop extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-//הוספנו מינוס כדאי שהכיוונים לא יהיו הפוכים כי בגו'ייסטיקים הם כן הפוכים והורדנו מהירות
+
             left = -gamepad1.left_stick_y;
             right = -gamepad1.right_stick_y;
 
@@ -105,10 +105,10 @@ public class ApolloTeleop extends LinearOpMode {
                 right *= -1;
             }
 
-            robot.leftDriveF.setPower(left);
-            robot.rightDriveF.setPower(right);
-            robot.leftDriveB.setPower(left);
-            robot.rightDriveB.setPower(right);
+            robot.leftDriveFront.setPower(left);
+            robot.rightDriveFront.setPower(right);
+            robot.leftDriveBack.setPower(left);
+            robot.rightDriveBack.setPower(right);
 
 
 
@@ -188,7 +188,6 @@ public class ApolloTeleop extends LinearOpMode {
                 left = -gamepad1.left_stick_y;
                 idle();
             }
-//הוספנו מינוס כדאי שהכיוונים לא יהיו הפוכים כי בגו'ייסטיקים הם כן הפוכים
 
 */
 

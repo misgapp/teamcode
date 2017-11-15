@@ -54,10 +54,10 @@ import static org.firstinspires.ftc.teamcode.ApolloTeleop.MID_SERVO;
  */
 public class HardwareApollo {
     /* Public OpMode members. */
-    public DcMotor leftDriveF = null;
-    public DcMotor rightDriveF = null;
-    public DcMotor leftDriveB = null;
-    public DcMotor rightDriveB = null;
+    public DcMotor leftDriveFront = null;
+    public DcMotor rightDriveFront = null;
+    public DcMotor leftDriveBack = null;
+    public DcMotor rightDriveBack = null;
     public Servo clawLeft = null;
     public Servo clawRight = null;
     public Servo liftLeft = null;
@@ -79,29 +79,29 @@ public class HardwareApollo {
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        leftDriveB = hwMap.get(DcMotor.class, "left_driveB");
-        rightDriveB = hwMap.get(DcMotor.class, "right_driveB");
-        leftDriveB.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        rightDriveB.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        leftDriveF = hwMap.get(DcMotor.class, "left_driveF");
-        rightDriveF = hwMap.get(DcMotor.class, "right_driveF");
-        leftDriveF.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        rightDriveF.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        leftDriveBack = hwMap.get(DcMotor.class, "left_drive_back");
+        rightDriveBack = hwMap.get(DcMotor.class, "right_drive_back");
+        leftDriveBack.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        rightDriveBack.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        leftDriveFront = hwMap.get(DcMotor.class, "left_drive_front");
+        rightDriveFront = hwMap.get(DcMotor.class, "right_drive_front");
+        leftDriveFront.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        rightDriveFront.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
 
 
         // Set all motors to zero power
-        leftDriveB.setPower(0);
-        rightDriveB.setPower(0);
-        leftDriveF.setPower(0);
-        rightDriveF.setPower(0);
+        leftDriveFront.setPower(0);
+        rightDriveBack.setPower(0);
+        leftDriveBack.setPower(0);
+        rightDriveFront.setPower(0);
 
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        leftDriveF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightDriveF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftDriveB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightDriveB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftDriveBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightDriveBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         clawLeft = hwMap.get(Servo.class, "claw_left");
         clawRight = hwMap.get(Servo.class, "claw_right");
