@@ -29,35 +29,35 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import static org.firstinspires.ftc.teamcode.ApolloTeleop.MID_SERVO;
-
+// the lift is in Remarks because we dont have another  motor
 
 public class HardwareApollo {
     /* Public OpMode members. */
-    public DcMotor leftDriveFront = null;
-    public DcMotor rightDriveFront = null;
-    public DcMotor leftDriveBack = null;
-    public DcMotor rightDriveBack = null;
+    public DcMotor driveFrontLeft = null;
+    public DcMotor driveFrontRight = null;
+    public DcMotor driveBackLeft = null;
+    public DcMotor driveBackRight = null;
     public Servo clawDownLeft = null;
     public Servo clawDownRight = null;
     public Servo clawUpLeft = null;
     public Servo clawUpRight = null;
     public DcMotor lift = null;
-
+    // public ColorSensor sensor_color = null;
+    // public TouchSensor sensor_button = null;
+    public static final double start_Position_clawUp = 0.1;
+    public static final double start_Position_clawDown = 0.9;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
     private ElapsedTime period = new ElapsedTime();
-
-    /* Constructor */
-    public HardwareApollo() {
-
-    }
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
@@ -65,33 +65,30 @@ public class HardwareApollo {
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        leftDriveBack = hwMap.get(DcMotor.class, "left_drive_back");
-        rightDriveBack = hwMap.get(DcMotor.class, "right_drive_back");
-        leftDriveBack.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        rightDriveBack.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        leftDriveFront = hwMap.get(DcMotor.class, "left_drive_front");
-        rightDriveFront = hwMap.get(DcMotor.class, "right_drive_front");
-        leftDriveFront.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        rightDriveFront.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        driveBackLeft = hwMap.get(DcMotor.class, "drive_back_left");
+        driveBackRight = hwMap.get(DcMotor.class, "drive_back_right");
+        driveBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        driveBackRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        driveFrontLeft = hwMap.get(DcMotor.class, "drive_front_left");
+        driveFrontRight = hwMap.get(DcMotor.class, "drive_front_right");
+        driveFrontLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        driveFrontRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
         lift = hwMap.get(DcMotor.class, "lift");
         lift.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
 
-
-
         // Set all motors to zero power
-        leftDriveFront.setPower(0);
-        rightDriveBack.setPower(0);
-        leftDriveBack.setPower(0);
-        rightDriveFront.setPower(0);
+        driveFrontLeft.setPower(0);
+        driveBackRight.setPower(0);
+        driveBackLeft.setPower(0);
+        driveFrontRight.setPower(0);
         lift.setPower(0);
-
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        leftDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightDriveFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftDriveBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightDriveBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        driveFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        driveFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        driveBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        driveBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         clawDownLeft = hwMap.get(Servo.class, "claw_down_left");
@@ -99,13 +96,14 @@ public class HardwareApollo {
         clawUpLeft = hwMap.get(Servo.class, "claw_up_left");
         clawUpRight = hwMap.get(Servo.class, "claw_up_right");
 
-        clawDownLeft.setPosition(MID_SERVO);
-        clawDownRight.setPosition(MID_SERVO);
-        clawUpLeft.setPosition(MID_SERVO);
-        clawUpRight.setPosition(MID_SERVO);
-
-
-
+        clawDownLeft.setPosition(start_Position_clawDown);
+        clawDownRight.setPosition(start_Position_clawDown);
+        clawUpLeft.setPosition(start_Position_clawUp);
+        clawUpRight.setPosition(start_Position_clawUp);
+        /*
+        sensor_color = hwMap.get(ColorSensor.class, "sensor_color");
+        sensor_button = hwMap.get(TouchSensor.class, "sensor_button");
+        */
     }
 }
 

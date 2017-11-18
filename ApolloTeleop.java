@@ -29,16 +29,11 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 /**
- * This OpMode uses the common Pushbot hardware class to define the devices on the robot.
+ * This OpMode uses the common Apollo hardware class to define the devices on the robot.
  * All device access is managed through the HardwarePushbot class.
  * The code is structured as a LinearOpMode
  * <p>
@@ -54,29 +49,26 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 @TeleOp(name = "Apollo Teleop", group = "Apollo")
 //@Disabled //TODO Enable this to show program in TeleOP list - lasim lev
 public class ApolloTeleop extends LinearOpMode {
-
-    /* Declare OpMode members. */
-    // could also use HardwarePushbotMatrix class.
+    // the lift is in Remarks because we dont have another  motor
     HardwareApollo robot = new HardwareApollo();
 
-    public static final double MID_SERVO = 0.5;
-    public static final double liftSpeed = 0.5;
+    static final double LIFT_SPEED = 0.45;
+    static final double SPEED_FACTOR_1 = 1.2;
+    static final double SPEED_FACTOR_2 = 1.8;
+    static final double SPEED_FACTOR_3 = 2.6;
+    static final double SPEED_FACTOR_4 = 3.5;
 
     @Override
     public void runOpMode() {
 
-        double clawDownPosition = 0.17;
-        double clawUpPosition = 0.17;
-       // double liftPosition = 0.64;
-        double left = 0;
-        double right = 0;
-        double Doobi = 0.2;
-        double Mcqueen = 1;
-        double bibix = 1;
-        Mcqueen = Math.min(Mcqueen, 1);
-        Mcqueen = Math.max(Mcqueen, 4);
-
-
+        double clawDownPosition = 0.9;
+        double clawUpPosition = 0.1;
+        double speed_Left = 0;
+        double speed_Right = 0;
+        double driveSpeedFactor = 1;
+        boolean driveDirectionForward = true;
+        boolean speedFactorUpPressHandled = false;
+        boolean speedFactorDownPressHandled = false;
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
@@ -84,12 +76,8 @@ public class ApolloTeleop extends LinearOpMode {
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Say", "Hello Driver");    //
+        telemetry.addData("Say", "Go Go Apollo");    //
         telemetry.update();
-
-        //clawPosition = robot.clawLeft.getPosition();
-        //liftPosition = robot.liftLeft.getPosition();
-
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -98,129 +86,100 @@ public class ApolloTeleop extends LinearOpMode {
         while (opModeIsActive()) {
 
             if (gamepad1.x) {
-                bibix = 2;
+                driveDirectionForward = true;
                 idle();
             }
 
             if (gamepad1.b) {
-                bibix = 1;
+                driveDirectionForward = false;
                 idle();
             }
 
-            if (bibix == 1) {
-                right = gamepad1.right_stick_y;
-                left = gamepad1.left_stick_y;
-            }
-
-            if (bibix == 2) {
-                right = -gamepad1.right_stick_y;
-                left = -gamepad1.left_stick_y;
+            if (driveDirectionForward) {
+                speed_Right = gamepad1.right_stick_y;
+                speed_Left = gamepad1.left_stick_y;
+            } else {
+                speed_Right = -gamepad1.right_stick_y;
+                speed_Left = -gamepad1.left_stick_y;
             }
 
             if (gamepad1.dpad_up) {
-                Doobi = 0.1;
-                Mcqueen = Mcqueen - 0.2;
-                while (gamepad1.dpad_up) {
-                    idle();
+                if (!speedFactorUpPressHandled) {
+                    speedFactorUpPressHandled = true;
+                    if (driveSpeedFactor == SPEED_FACTOR_4) {
+                        driveSpeedFactor = SPEED_FACTOR_3;
+                    } else if (driveSpeedFactor == SPEED_FACTOR_3) {
+                        driveSpeedFactor = SPEED_FACTOR_2;
+                    } else if (driveSpeedFactor == SPEED_FACTOR_2) {
+                        driveSpeedFactor = SPEED_FACTOR_1;
+                    }
                 }
-                idle();
+            } else {
+                speedFactorUpPressHandled = false;
             }
-
-
-            if (Doobi == 0.1) {
-                robot.leftDriveFront.setPower(left / Mcqueen);
-                robot.rightDriveFront.setPower(right / Mcqueen);
-                robot.leftDriveBack.setPower(left / Mcqueen);
-                robot.rightDriveBack.setPower(right / Mcqueen);
-                idle();
-            }
-
-
-            if (gamepad1.dpad_right) {
-                Doobi = 0.2;
-                idle();
-            }
-
-            if (Doobi == 0.2) {
-                robot.leftDriveFront.setPower(left / 1.7);
-                robot.rightDriveFront.setPower(right / 1.7);
-                robot.leftDriveBack.setPower(left / 1.7);
-                robot.rightDriveBack.setPower(right / 1.7);
-                Mcqueen = 1.7;
-                idle();
-            }
-
-            if (gamepad1.dpad_left) {
-                Doobi = 0.3;
-                idle();
-            }
-
-            if (Doobi == 0.3) {
-                robot.leftDriveFront.setPower(left / 2.5);
-                robot.rightDriveFront.setPower(right / 2.5);
-                robot.leftDriveBack.setPower(left / 2.5);
-                robot.rightDriveBack.setPower(right / 2.5);
-                Mcqueen = 2.5;
-                idle();
-            }
-
 
             if (gamepad1.dpad_down) {
-                Doobi = 0.4;
-                Mcqueen += 0.2;
-                while (gamepad1.dpad_down) {
-                    idle();
+                if (!speedFactorDownPressHandled) {
+                    speedFactorDownPressHandled = true;
+                    if (driveSpeedFactor == SPEED_FACTOR_1) {
+                        driveSpeedFactor = SPEED_FACTOR_2;
+                    } else if (driveSpeedFactor == SPEED_FACTOR_2) {
+                        driveSpeedFactor = SPEED_FACTOR_3;
+                    } else if (driveSpeedFactor == SPEED_FACTOR_3) {
+                        driveSpeedFactor = SPEED_FACTOR_4;
+                    }
                 }
-                idle();
+            } else {
+                speedFactorDownPressHandled = false;
             }
 
-            if (Doobi == 0.4) {
-                robot.leftDriveFront.setPower(left / Mcqueen);
-                robot.rightDriveFront.setPower(right / Mcqueen);
-                robot.leftDriveBack.setPower(left / Mcqueen);
-                robot.rightDriveBack.setPower(right / Mcqueen);
-                idle();
-            }
-
-
-            if (gamepad2.right_trigger > 0) {
-                robot.lift.setPower(liftSpeed);
-            }
+            robot.driveFrontLeft.setPower(speed_Left / driveSpeedFactor);
+            robot.driveFrontRight.setPower(speed_Right / driveSpeedFactor);
+            robot.driveBackLeft.setPower(speed_Left / driveSpeedFactor);
+            robot.driveBackRight.setPower(speed_Right / driveSpeedFactor);
 
             if (gamepad2.left_trigger > 0) {
-                robot.lift.setPower(-liftSpeed);
+                robot.lift.setPower(LIFT_SPEED);
+            } else if (gamepad2.right_trigger > 0) {
+                robot.lift.setPower(-LIFT_SPEED);
+            } else {
+                robot.lift.setPower(0);
             }
 
+            double deltaClawDown = -gamepad2.left_stick_y;
+            if (deltaClawDown < 0.3 && deltaClawDown > -0.3) {
+                deltaClawDown = 0;
+            }
+            double deltaClawUp = gamepad2.right_stick_y;
+            if (deltaClawUp < 0.3 && deltaClawUp > -0.3) {
+                deltaClawUp = 0;
+                telemetry.addData("deltaClawUp - clear", "%.2f", deltaClawUp);
+            }
 
-
-
-            double deltaClaw = -gamepad2.left_stick_y;
-            double deltaLift = gamepad2.right_stick_y;
-
-            clawDownPosition += deltaClaw;
+            clawDownPosition += deltaClawDown;
             clawDownPosition = Math.min(clawDownPosition, 1);
             clawDownPosition = Math.max(clawDownPosition, 0);
             robot.clawDownLeft.setPosition(clawDownPosition);
             robot.clawDownRight.setPosition(1 - clawDownPosition);
 
-            clawUpPosition += deltaLift;
+            clawUpPosition += deltaClawUp;
             clawUpPosition = Math.min(clawUpPosition, 1);
             clawUpPosition = Math.max(clawUpPosition, 0);
             robot.clawUpLeft.setPosition(clawUpPosition);
             robot.clawUpRight.setPosition(1 - clawUpPosition);
 
-
-            telemetry.addData("left", "%.2f", left);
-            telemetry.addData("right", "%.2f", right);
-            telemetry.addData("claw position", "%.2f", robot.clawDownLeft.getPosition());
-            telemetry.addData("speed", "%.2f", Mcqueen);
-            telemetry.addData("lift position", "%.2f", robot.clawUpLeft.getPosition());
+            telemetry.addData("left", "%.2f", speed_Left);
+            telemetry.addData("right", "%.2f", speed_Right);
+            telemetry.addData("claw down position", "%.2f", robot.clawDownLeft.getPosition());
+            telemetry.addData("speed", "%.2f", driveSpeedFactor);
+            telemetry.addData("claw up position", "%.2f", robot.clawUpLeft.getPosition());
+            telemetry.addData("deltaClawUp", "%.2f", deltaClawUp);
+            telemetry.addData("drive speed factor", "%.2f", driveSpeedFactor);
+         // telemetry.addData("drive direction forward", "%.2f", driveDirectionForward);
             telemetry.update();
-
 
             // Pace this loop so jaw action is reasonable speed.
             sleep(50);
         }
     }
-
 }
