@@ -11,7 +11,7 @@ public class AutoRedWall extends AutoMain {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot.init(hardwareMap);
+        apolloInit();
 
         waitForStart();
 
