@@ -45,15 +45,22 @@ public class HardwareApollo {
     public DcMotor driveFrontRight = null;
     public DcMotor driveBackLeft = null;
     public DcMotor driveBackRight = null;
+    public DcMotor lift = null;
     public Servo clawDownLeft = null;
     public Servo clawDownRight = null;
     public Servo clawUpLeft = null;
     public Servo clawUpRight = null;
-    public DcMotor lift = null;
+    public Servo armUpDown = null;
+    public Servo armRightLeft = null;
+    public TouchSensor sensorTouch;
+    public ColorSensor sensorColor;
+
     // public ColorSensor sensor_color = null;
     // public TouchSensor sensor_button = null;
     public static final double start_Position_clawUp = 0.1;
     public static final double start_Position_clawDown = 0.9;
+    private static final double start_Position_armUpDown = 0.5;
+    private static final double start_Position_armRightLeft = 0.5;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -67,13 +74,14 @@ public class HardwareApollo {
         // Define and Initialize Motors
         driveBackLeft = hwMap.get(DcMotor.class, "drive_back_left");
         driveBackRight = hwMap.get(DcMotor.class, "drive_back_right");
-        driveBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        driveBackRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
         driveFrontLeft = hwMap.get(DcMotor.class, "drive_front_left");
         driveFrontRight = hwMap.get(DcMotor.class, "drive_front_right");
+        lift = hwMap.get(DcMotor.class, "lift");
+
+        driveBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        driveBackRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
         driveFrontLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         driveFrontRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        lift = hwMap.get(DcMotor.class, "lift");
         lift.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
 
         // Set all motors to zero power
@@ -95,15 +103,19 @@ public class HardwareApollo {
         clawDownRight = hwMap.get(Servo.class, "claw_down_right");
         clawUpLeft = hwMap.get(Servo.class, "claw_up_left");
         clawUpRight = hwMap.get(Servo.class, "claw_up_right");
+        armRightLeft = hwMap.get(Servo.class, "arm_right_left");
+        armUpDown = hwMap.get(Servo.class, "armRightLeft");
 
         clawDownLeft.setPosition(start_Position_clawDown);
         clawDownRight.setPosition(start_Position_clawDown);
         clawUpLeft.setPosition(start_Position_clawUp);
         clawUpRight.setPosition(start_Position_clawUp);
-        /*
-        sensor_color = hwMap.get(ColorSensor.class, "sensor_color");
-        sensor_button = hwMap.get(TouchSensor.class, "sensor_button");
-        */
+        armUpDown.setPosition(start_Position_armUpDown);
+        armRightLeft.setPosition(start_Position_armRightLeft);
+
+
+        sensorColor = hwMap.get(ColorSensor.class, "sensor_color");
+        sensorTouch = hwMap.get(TouchSensor.class, "sensor_touch");
     }
 }
 
