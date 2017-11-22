@@ -110,8 +110,8 @@ public class HardwareApollo {
         clawDownRight.setPosition(start_Position_clawDown);
         clawUpLeft.setPosition(start_Position_clawUp);
         clawUpRight.setPosition(start_Position_clawUp);
-        armUpDown.setPosition(start_Position_armUpDown);
-        armRightLeft.setPosition(start_Position_armRightLeft);
+        //armUpDown.setPosition(start_Position_armUpDown);
+        //armRightLeft.setPosition(start_Position_armRightLeft);
 
 
         sensorColor = hwMap.get(ColorSensor.class, "sensor_color");

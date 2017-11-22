@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
@@ -20,6 +21,14 @@ public abstract class AutoMain extends LinearOpMode {
     HardwareApollo robot = new HardwareApollo();
     VuforiaLocalizer vuforia;
     VuforiaTrackable relicTemplate;
+    static final double DROP_RIGHT_BALL_POSITION = 0.05;
+    static final double DROP_LEFT_BALL_POSITION = 0.05;
+    static final double CHECK_COLOR_POSITION = 0.05;
+    static final double START_POSITION = 0.05;
+    static final int TICK_TO_CRYPTO_BOX = 300;
+    int newLeftTarget = 0;
+    int newRightTarget = 0;
+    double speed = 0.2;
 
     public void apolloInit(){
         robot.init(hardwareMap);
@@ -30,13 +39,32 @@ public abstract class AutoMain extends LinearOpMode {
         ballsTask(isRed);
         RelicRecoveryVuMark column = readPhoto();
         moveToCryptoBox(isRed, isCorner);
-        putCube (column);
+        putCube(column);
         park();
     }
 
     // Balls task: Move the ball with the other color aside.
     private void ballsTask(boolean isRed){
-        // TODO(): implement.
+        robot.armUpDown.setPosition(CHECK_COLOR_POSITION);
+
+        telemetry.addData("ball color blue", robot.sensorColor.blue());
+        telemetry.addData("ball color red", robot.sensorColor.red());
+
+        if (robot.sensorColor.blue()>20){
+            if (isRed){
+                robot.armRightLeft.setPosition(DROP_RIGHT_BALL_POSITION);
+            }else {
+                robot.armRightLeft.setPosition(DROP_LEFT_BALL_POSITION);
+            }
+        }else if (robot.sensorColor.red()>10){
+            if (isRed){
+                robot.armRightLeft.setPosition(DROP_LEFT_BALL_POSITION);
+            }else{
+                robot.armRightLeft.setPosition(DROP_RIGHT_BALL_POSITION);
+            }
+        }
+
+        robot.armUpDown.setPosition(START_POSITION);
     }
 
     // Read photo and return the column to put the cube in.
@@ -52,7 +80,50 @@ public abstract class AutoMain extends LinearOpMode {
 
     // Move to crypto box
     private void moveToCryptoBox(boolean isRed, boolean isCorner){
-        // TODO(): implement.
+
+        robot.driveBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.driveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.driveFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.driveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        robot.driveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.driveBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.driveFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.driveFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        if (isCorner){
+            newLeftTarget = robot.driveBackLeft.getCurrentPosition() + TICK_TO_CRYPTO_BOX;
+            newRightTarget = robot.driveBackRight.getCurrentPosition() + TICK_TO_CRYPTO_BOX;
+            robot.driveBackLeft.setTargetPosition(newLeftTarget);
+            robot.driveBackRight.setTargetPosition(newRightTarget);
+
+            robot.driveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.driveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            robot.driveBackLeft.setPower(speed);
+            robot.driveBackRight.setPower(speed);
+            robot.driveFrontLeft.setPower(speed);
+            robot.driveFrontRight.setPower(speed);
+
+            while (opModeIsActive() &&
+                    (robot.driveBackLeft.isBusy() || robot.driveBackRight.isBusy()||
+                            robot.driveFrontLeft.isBusy() || robot.driveFrontRight.isBusy())){
+                idle();
+            }
+
+            robot.driveBackLeft.setPower(0);
+            robot.driveBackRight.setPower(0);
+            robot.driveFrontLeft.setPower(0);
+            robot.driveFrontRight.setPower(0);
+        }else {
+            newLeftTarget = robot.driveBackLeft.getCurrentPosition() + TICK_TO_CRYPTO_BOX;
+            newRightTarget = robot.driveBackRight.getCurrentPosition() + TICK_TO_CRYPTO_BOX;
+            robot.driveBackLeft.setTargetPosition(newLeftTarget);
+            robot.driveBackRight.setTargetPosition(newRightTarget);
+
+            robot.driveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.driveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
 
     // Put the cube
