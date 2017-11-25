@@ -133,10 +133,7 @@ public class ApolloTeleop extends LinearOpMode {
                 speedFactorDownPressHandled = false;
             }
 
-            robot.driveFrontLeft.setPower(speed_Left / driveSpeedFactor);
-            robot.driveFrontRight.setPower(speed_Right / driveSpeedFactor);
-            robot.driveBackLeft.setPower(speed_Left / driveSpeedFactor);
-            robot.driveBackRight.setPower(speed_Right / driveSpeedFactor);
+            robot.setPowerAllDriveMotors(speed_Left / driveSpeedFactor);
 
             if (gamepad2.left_trigger > 0) {
                 robot.lift.setPower(LIFT_SPEED);

@@ -25,9 +25,7 @@ public abstract class AutoMain extends LinearOpMode {
     static final double DROP_LEFT_BALL_POSITION = 0.05;
     static final double CHECK_COLOR_POSITION = 0.05;
     static final double START_POSITION = 0.05;
-    static final int TICK_TO_CRYPTO_BOX = 300;
-    int newLeftTarget = 0;
-    int newRightTarget = 0;
+
     double speed = 0.2;
 
     public void apolloInit(){
@@ -38,28 +36,28 @@ public abstract class AutoMain extends LinearOpMode {
     void apolloRun(boolean isRed, boolean isCorner){
         ballsTask(isRed);
         RelicRecoveryVuMark column = readPhoto();
-        moveToCryptoBox(isRed, isCorner);
-        putCube(column);
-        park();
+        moveToCryptoBox(isRed, isCorner, column);
+        putCube();
     }
 
     // Balls task: Move the ball with the other color aside.
-    private void ballsTask(boolean isRed){
+    public void ballsTask(boolean isRed){
         robot.armUpDown.setPosition(CHECK_COLOR_POSITION);
 
         telemetry.addData("ball color blue", robot.sensorColor.blue());
         telemetry.addData("ball color red", robot.sensorColor.red());
+        telemetry.update();
 
-        if (robot.sensorColor.blue()>20){
+        if (robot.sensorColor.blue() > 20) {
             if (isRed){
                 robot.armRightLeft.setPosition(DROP_RIGHT_BALL_POSITION);
-            }else {
+            } else {
                 robot.armRightLeft.setPosition(DROP_LEFT_BALL_POSITION);
             }
-        }else if (robot.sensorColor.red()>10){
+        } else if (robot.sensorColor.red() > 10) {
             if (isRed){
                 robot.armRightLeft.setPosition(DROP_LEFT_BALL_POSITION);
-            }else{
+            } else {
                 robot.armRightLeft.setPosition(DROP_RIGHT_BALL_POSITION);
             }
         }
@@ -68,7 +66,7 @@ public abstract class AutoMain extends LinearOpMode {
     }
 
     // Read photo and return the column to put the cube in.
-    private RelicRecoveryVuMark readPhoto(){
+    public RelicRecoveryVuMark readPhoto(){
         for (int i=0; i<3; i++){
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
             if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
@@ -79,63 +77,49 @@ public abstract class AutoMain extends LinearOpMode {
     }
 
     // Move to crypto box
-    private void moveToCryptoBox(boolean isRed, boolean isCorner){
+    public void moveToCryptoBox(boolean isRed, boolean isCorner, RelicRecoveryVuMark column) {
+        robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        robot.driveBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.driveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.driveFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.driveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        int direction = isRed ? 1 : -1;
 
-        robot.driveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.driveBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.driveFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.driveFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        final int TICK_TO_CRYPTO_BOX_CORNER = 300;
+        final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 20;
+        final int TURN_1_CRYPTO_BOX_WALL = 30;
+        final int TURN_2_CRYPTO_BOX_WALL = 30;
+        final int TURN_CRYPTO_BOX_CORNER = 30;
 
         if (isCorner){
-            newLeftTarget = robot.driveBackLeft.getCurrentPosition() + TICK_TO_CRYPTO_BOX;
-            newRightTarget = robot.driveBackRight.getCurrentPosition() + TICK_TO_CRYPTO_BOX;
-            robot.driveBackLeft.setTargetPosition(newLeftTarget);
-            robot.driveBackRight.setTargetPosition(newRightTarget);
-
-            robot.driveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.driveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            robot.driveBackLeft.setPower(speed);
-            robot.driveBackRight.setPower(speed);
-            robot.driveFrontLeft.setPower(speed);
-            robot.driveFrontRight.setPower(speed);
-
-            while (opModeIsActive() &&
-                    (robot.driveBackLeft.isBusy() || robot.driveBackRight.isBusy()||
-                            robot.driveFrontLeft.isBusy() || robot.driveFrontRight.isBusy())){
-                idle();
+            if (column == RelicRecoveryVuMark.LEFT) {
+                driveStrait(speed, TICK_TO_CRYPTO_BOX_CORNER * direction);
+            } else if (column == RelicRecoveryVuMark.CENTER) {
+                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 10) * direction);
+            } else {
+                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 40) * direction);
             }
 
-            robot.driveBackLeft.setPower(0);
-            robot.driveBackRight.setPower(0);
-            robot.driveFrontLeft.setPower(0);
-            robot.driveFrontRight.setPower(0);
-        }else {
-            newLeftTarget = robot.driveBackLeft.getCurrentPosition() + TICK_TO_CRYPTO_BOX;
-            newRightTarget = robot.driveBackRight.getCurrentPosition() + TICK_TO_CRYPTO_BOX;
-            robot.driveBackLeft.setTargetPosition(newLeftTarget);
-            robot.driveBackRight.setTargetPosition(newRightTarget);
+            turn(speed, TURN_CRYPTO_BOX_CORNER * direction, -1 * TURN_CRYPTO_BOX_CORNER * direction);
+        } else{
+            driveStrait(speed, 300 * direction);
+            turn(speed, -1 * TURN_1_CRYPTO_BOX_WALL * direction, TURN_1_CRYPTO_BOX_WALL * direction);
 
-            robot.driveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.driveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (column == RelicRecoveryVuMark.LEFT) {
+                driveStrait(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL * direction);
+            } else if (column == RelicRecoveryVuMark.CENTER) {
+                driveStrait(speed, (TICK_TO_CRYPTO_BOX_COLUMN_WALL + 10) * direction);
+            } else {
+                driveStrait(speed, (TICK_TO_CRYPTO_BOX_COLUMN_WALL + 40) * direction);
+            }
+
+            turn(speed, TURN_2_CRYPTO_BOX_WALL * direction, -1 * TURN_2_CRYPTO_BOX_WALL * direction);
         }
     }
 
     // Put the cube
-    private void putCube (RelicRecoveryVuMark column){
+    public void putCube(){
         // TODO(): implement.
     }
 
-    // Park the robot
-    private void park (){
-        // TODO(): implement.
-    }
-
+    //init vuforia
     public void initVuforia() {
         /*
          * To start up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
@@ -179,5 +163,37 @@ public abstract class AutoMain extends LinearOpMode {
         relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
 
+    }
+
+    public void driveStrait(double speed, int tick) {
+        encoderDrive(speed, tick, tick);
+    }
+
+    public void turn(double speed, int tickRight, int tickLeft) {
+        encoderDrive(speed, tickRight, tickLeft);
+    }
+
+    //function drive encoder
+    public void encoderDrive(double speed, int tickRight, int tickLeft){
+        int newLeftTarget = 0;
+        int newRightTarget = 0;
+
+        newLeftTarget = robot.driveBackLeft.getCurrentPosition() + tickLeft;
+        newRightTarget = robot.driveBackRight.getCurrentPosition() + tickRight;
+        robot.driveBackLeft.setTargetPosition(newLeftTarget);
+        robot.driveBackRight.setTargetPosition(newRightTarget);
+
+        robot.driveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.driveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robot.setPowerAllDriveMotors(speed);
+
+        while (opModeIsActive() &&
+                (robot.driveBackLeft.isBusy() || robot.driveBackRight.isBusy()||
+                        robot.driveFrontLeft.isBusy() || robot.driveFrontRight.isBusy())){
+            idle();
+        }
+
+        robot.setPowerAllDriveMotors(0);
     }
 }

@@ -29,7 +29,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -85,18 +84,12 @@ public class HardwareApollo {
         lift.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
 
         // Set all motors to zero power
-        driveFrontLeft.setPower(0);
-        driveBackRight.setPower(0);
-        driveBackLeft.setPower(0);
-        driveFrontRight.setPower(0);
+        setPowerAllDriveMotors(0);
         lift.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        driveFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        driveFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        driveBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        driveBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        setDriveMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         clawDownLeft = hwMap.get(Servo.class, "claw_down_left");
@@ -116,6 +109,22 @@ public class HardwareApollo {
 
         sensorColor = hwMap.get(ColorSensor.class, "sensor_color");
         sensorTouch = hwMap.get(TouchSensor.class, "sensor_touch");
+    }
+
+    //Function: set mode run using encoder
+    public void setDriveMotorsMode(DcMotor.RunMode runMode){
+        driveBackLeft.setMode(runMode);
+        driveBackRight.setMode(runMode);
+        driveFrontLeft.setMode(runMode);
+        driveFrontRight.setMode(runMode);
+    }
+
+    //Function: set power to all the motors
+    public void setPowerAllDriveMotors(double speed){
+        driveBackLeft.setPower(speed);
+        driveBackRight.setPower(speed);
+        driveFrontLeft.setPower(speed);
+        driveFrontRight.setPower(speed);
     }
 }
 
