@@ -82,21 +82,29 @@ public abstract class AutoMain extends LinearOpMode {
     public void moveToCryptoBox(boolean isRed, boolean isCorner, RelicRecoveryVuMark column) {
         robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        int direction = isRed ? 1 : -1;
+        int direction = isRed ? -1 : 1;
 
-        final int TICK_TO_CRYPTO_BOX_CORNER = 300;
-        final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 20;
-        final int TURN_1_CRYPTO_BOX_WALL = 30;
-        final int TURN_2_CRYPTO_BOX_WALL = 30;
-        final int TURN_CRYPTO_BOX_CORNER = 30;
+        final int TICK_TO_CRYPTO_BOX_CORNER = 2500;
+        final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 1700;
+        final int TURN_1_CRYPTO_BOX_WALL = 1200;
+        final int TURN_2_CRYPTO_BOX_WALL = 1200;
+        final int TURN_CRYPTO_BOX_CORNER = 1200;
+
+        if (isRed){
+            if (column == RelicRecoveryVuMark.LEFT) {
+                column = RelicRecoveryVuMark.RIGHT;
+            } else  if (column == RelicRecoveryVuMark.RIGHT){
+                column = RelicRecoveryVuMark.LEFT;
+            }
+        }
 
         if (isCorner) {
             if (column == RelicRecoveryVuMark.LEFT) {
                 driveStrait(speed, TICK_TO_CRYPTO_BOX_CORNER * direction);
             } else if (column == RelicRecoveryVuMark.CENTER) {
-                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 10) * direction);
+                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 1000) * direction);
             } else {
-                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 40) * direction);
+                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 1000) * direction);
             }
 
             turn(speed, TURN_CRYPTO_BOX_CORNER * direction, -1 * TURN_CRYPTO_BOX_CORNER * direction);
@@ -107,9 +115,9 @@ public abstract class AutoMain extends LinearOpMode {
             if (column == RelicRecoveryVuMark.LEFT) {
                 driveStrait(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL * direction);
             } else if (column == RelicRecoveryVuMark.CENTER) {
-                driveStrait(speed, (TICK_TO_CRYPTO_BOX_COLUMN_WALL + 10) * direction);
+                driveStrait(speed, (TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1000) * direction);
             } else {
-                driveStrait(speed, (TICK_TO_CRYPTO_BOX_COLUMN_WALL + 40) * direction);
+                driveStrait(speed, (TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1000) * direction);
             }
 
             turn(speed, TURN_2_CRYPTO_BOX_WALL * direction, -1 * TURN_2_CRYPTO_BOX_WALL * direction);
@@ -185,9 +193,13 @@ public abstract class AutoMain extends LinearOpMode {
         newRightTarget = robot.driveBackRight.getCurrentPosition() + tickRight;
         robot.driveBackLeft.setTargetPosition(newLeftTarget);
         robot.driveBackRight.setTargetPosition(newRightTarget);
+        //robot.driveFrontLeft.setTargetPosition(newLeftTarget);
+        //robot.driveFrontRight.setTargetPosition(newRightTarget);
 
         robot.driveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.driveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //robot.driveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //robot.driveFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         robot.setPowerAllDriveMotors(speed);
 

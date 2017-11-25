@@ -80,7 +80,7 @@ public class ApolloTeleop extends LinearOpMode {
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Say", "Go Go Apollo");    //
+        telemetry.addData("Version", "1");
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
