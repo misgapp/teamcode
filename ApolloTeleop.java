@@ -69,6 +69,8 @@ public class ApolloTeleop extends LinearOpMode {
         boolean driveDirectionForward = true;
         boolean speedFactorUpPressHandled = false;
         boolean speedFactorDownPressHandled = false;
+        boolean armRelic = true;
+        boolean clawRelic = true;
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
@@ -133,7 +135,10 @@ public class ApolloTeleop extends LinearOpMode {
                 speedFactorDownPressHandled = false;
             }
 
-            robot.setPowerAllDriveMotors(speed_Left / driveSpeedFactor);
+            robot.driveBackLeft.setPower(speed_Left / driveSpeedFactor);
+            robot.driveBackRight.setPower(speed_Right / driveSpeedFactor);
+            robot.driveFrontLeft.setPower(speed_Left / driveSpeedFactor);
+            robot.driveFrontRight.setPower(speed_Right / driveSpeedFactor);
 
             if (gamepad2.left_trigger > 0) {
                 robot.lift.setPower(LIFT_SPEED);
@@ -144,10 +149,13 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             double deltaClawDown = -gamepad2.left_stick_y;
+
             if (deltaClawDown < 0.3 && deltaClawDown > -0.3) {
                 deltaClawDown = 0;
             }
+
             double deltaClawUp = gamepad2.right_stick_y;
+
             if (deltaClawUp < 0.3 && deltaClawUp > -0.3) {
                 deltaClawUp = 0;
                 telemetry.addData("deltaClawUp - clear", "%.2f", deltaClawUp);
@@ -165,14 +173,40 @@ public class ApolloTeleop extends LinearOpMode {
             robot.clawUpLeft.setPosition(clawUpPosition);
             robot.clawUpRight.setPosition(1 - clawUpPosition);
 
+            if (gamepad2.x){
+                if (armRelic){
+                    robot.relicArm.setPosition(0.2);
+                    armRelic = false;
+                } else {
+                    robot.relicArm.setPosition(0.5);
+                    armRelic = true;
+                }
+            }
+
+            if (gamepad2.a){
+                if (clawRelic){
+                    robot.relicClaw.setPosition(0.2);
+                    clawRelic = false;
+                } else {
+                    robot.relicClaw.setPosition(0.5);
+                    clawRelic = true;
+                }
+            }
+
             telemetry.addData("left", "%.2f", speed_Left);
             telemetry.addData("right", "%.2f", speed_Right);
-            telemetry.addData("claw down position", "%.2f", robot.clawDownLeft.getPosition());
             telemetry.addData("speed", "%.2f", driveSpeedFactor);
+            telemetry.addData("claw down position", "%.2f", robot.clawDownLeft.getPosition());
             telemetry.addData("claw up position", "%.2f", robot.clawUpLeft.getPosition());
+            telemetry.addData("arm Right Left", "%.2f", robot.armRightLeft.getPosition());
+            telemetry.addData("relic Claw", "%.2f", robot.relicClaw.getPosition());
+            telemetry.addData("relic Arm", "%.2f", robot.relicArm.getPosition());
+            telemetry.addData("arm up Down", "%.2f", robot.armUpDown.getPosition());
             telemetry.addData("deltaClawUp", "%.2f", deltaClawUp);
             telemetry.addData("drive speed factor", "%.2f", driveSpeedFactor);
-         // telemetry.addData("drive direction forward", "%.2f", driveDirectionForward);
+            telemetry.addData("tick left", "%d", robot.driveBackLeft.getCurrentPosition());
+            telemetry.addData("tick right", "%d", robot.driveBackRight.getCurrentPosition());
+            //telemetry.addData("drive direction forward", "%.2f", driveDirectionForward);
             telemetry.update();
 
             // Pace this loop so jaw action is reasonable speed.

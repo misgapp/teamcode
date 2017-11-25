@@ -51,92 +51,92 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
+
+/*
 @TeleOp(name = "Sensor: MR Color", group = "Sensor")
 //@Disabled
-
-
 public class SensorMRColor extends LinearOpMode {
-  HardwareApollo robot = new HardwareApollo();
+    HardwareApollo robot = new HardwareApollo();
 
 
+    @Override
+    public void runOpMode() {
 
-  @Override
-  public void runOpMode() {
+        // hsvValues is an array that will hold the hue, saturation, and value information.
+        float hsvValues[] = {0F, 0F, 0F};
 
-    // hsvValues is an array that will hold the hue, saturation, and value information.
-    float hsvValues[] = {0F,0F,0F};
+        // values is a reference to the hsvValues array.
+        final float values[] = hsvValues;
 
-    // values is a reference to the hsvValues array.
-    final float values[] = hsvValues;
+        // get a reference to the RelativeLayout so we can change the background
+        // color of the Robot Controller app to match the hue detected by the RGB sensor.
+        int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
+        final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
 
-    // get a reference to the RelativeLayout so we can change the background
-    // color of the Robot Controller app to match the hue detected by the RGB sensor.
-    int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
-    final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
+        // bPrevState and bCurrState represent the previous and current state of the button.
+        boolean bPrevState = false;
+        boolean bCurrState = false;
 
-    // bPrevState and bCurrState represent the previous and current state of the button.
-    boolean bPrevState = false;
-    boolean bCurrState = false;
+        // bLedOn represents the state of the LED.
+        boolean bLedOn = true;
 
-    // bLedOn represents the state of the LED.
-    boolean bLedOn = true;
+        // get a reference to our ColorSensor object.
 
-    // get a reference to our ColorSensor object.
-
-    // Set the LED in the beginning
-    robot.sensorColor.enableLed(bLedOn);
-
-    // wait for the start button to be pressed.
-    waitForStart();
-
-    // while the op mode is active, loop and read the RGB data.
-    // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
-    while (opModeIsActive()) {
-
-      // check the status of the x button on either gamepad.
-      bCurrState = gamepad1.x;
-
-      // check for button state transitions.
-      if (bCurrState && (bCurrState != bPrevState))  {
-
-        // button is transitioning to a pressed state. So Toggle LED
-        bLedOn = !bLedOn;
+        // Set the LED in the beginning
         robot.sensorColor.enableLed(bLedOn);
-      }
 
-      // update previous state variable.
-      bPrevState = bCurrState;
+        // wait for the start button to be pressed.
+        waitForStart();
 
-      // convert the RGB values to HSV values.
-      Color.RGBToHSV(robot.sensorColor.red() * 8, robot.sensorColor.green() * 8, robot.sensorColor.blue() * 8, hsvValues);
+        // while the op mode is active, loop and read the RGB data.
+        // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
+        while (opModeIsActive()) {
 
-      // send the info back to driver station using telemetry function.
-      telemetry.addData("LED", bLedOn ? "On" : "Off");
-      telemetry.addData("Clear", robot.sensorColor.alpha());
-      telemetry.addData("Red  ", robot.sensorColor.red());
-      telemetry.addData("Green", robot.sensorColor.green());
-      telemetry.addData("Blue ", robot.sensorColor.blue());
-      telemetry.addData("Hue", hsvValues[0]);
-      telemetry.addData("servo armRightLeft", robot.armRightLeft);
-      telemetry.addData("servo armRightLeft", robot.armRightLeft);
+            // check the status of the x button on either gamepad.
+            bCurrState = gamepad1.x;
 
-      // change the background color to match the color detected by the RGB sensor.
-      // pass a reference to the hue, saturation, and value array as an argument
-      // to the HSVToColor method.
-      relativeLayout.post(new Runnable() {
-        public void run() {
-          relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
+            // check for button state transitions.
+            if (bCurrState && (bCurrState != bPrevState)) {
+
+                // button is transitioning to a pressed state. So Toggle LED
+                bLedOn = !bLedOn;
+                robot.sensorColor.enableLed(bLedOn);
+            }
+
+            // update previous state variable.
+            bPrevState = bCurrState;
+
+            // convert the RGB values to HSV values.
+            Color.RGBToHSV(robot.sensorColor.red() * 8, robot.sensorColor.green() * 8, robot.sensorColor.blue() * 8, hsvValues);
+
+            // send the info back to driver station using telemetry function.
+            telemetry.addData("LED", bLedOn ? "On" : "Off");
+            telemetry.addData("Clear", robot.sensorColor.alpha());
+            telemetry.addData("Red  ", robot.sensorColor.red());
+            telemetry.addData("Green", robot.sensorColor.green());
+            telemetry.addData("Blue ", robot.sensorColor.blue());
+            telemetry.addData("Hue", hsvValues[0]);
+            telemetry.addData("servo armRightLeft", robot.armRightLeft.getPosition());
+            telemetry.addData("servo armRightLeft", robot.armRightLeft.getPosition());
+
+            // change the background color to match the color detected by the RGB sensor.
+            // pass a reference to the hue, saturation, and value array as an argument
+            // to the HSVToColor method.
+            relativeLayout.post(new Runnable() {
+                public void run() {
+                    relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
+                }
+            });
+
+            telemetry.update();
         }
-      });
 
-      telemetry.update();
+        // Set the panel back to the default color
+        relativeLayout.post(new Runnable() {
+            public void run() {
+                relativeLayout.setBackgroundColor(Color.WHITE);
+            }
+        });
     }
-
-    // Set the panel back to the default color
-    relativeLayout.post(new Runnable() {
-      public void run() {
-        relativeLayout.setBackgroundColor(Color.WHITE);
-      }
-    });
-  }
 }
+*/

@@ -51,15 +51,19 @@ public class HardwareApollo {
     public Servo clawUpRight = null;
     public Servo armUpDown = null;
     public Servo armRightLeft = null;
+    public Servo relicArm = null;
+    public Servo relicClaw = null;
     public TouchSensor sensorTouch;
     public ColorSensor sensorColor;
 
-    // public ColorSensor sensor_color = null;
-    // public TouchSensor sensor_button = null;
-    public static final double start_Position_clawUp = 0.1;
-    public static final double start_Position_clawDown = 0.9;
-    private static final double start_Position_armUpDown = 0.5;
-    private static final double start_Position_armRightLeft = 0.5;
+    public ColorSensor sensor_color = null;
+    public TouchSensor sensor_button = null;
+    public static final double start_Position_clawUp = 0.5;
+    public static final double start_Position_clawDown = 0.5;
+    public static final double start_Position_armUpDown = 0.5;
+    public static final double start_Position_armRightLeft = 0.5;
+    public static final double start_Position_relicClaw = 0.5;
+    public static final double start_Position_relicArm = 0.5;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -97,7 +101,9 @@ public class HardwareApollo {
         clawUpLeft = hwMap.get(Servo.class, "claw_up_left");
         clawUpRight = hwMap.get(Servo.class, "claw_up_right");
         armRightLeft = hwMap.get(Servo.class, "arm_right_left");
-        armUpDown = hwMap.get(Servo.class, "armRightLeft");
+        armUpDown = hwMap.get(Servo.class, "arm_up_down");
+        relicArm = hwMap.get(Servo.class, "relic_arm");
+        relicClaw = hwMap.get(Servo.class, "relic_claw");
 
         clawDownLeft.setPosition(start_Position_clawDown);
         clawDownRight.setPosition(start_Position_clawDown);
@@ -105,14 +111,16 @@ public class HardwareApollo {
         clawUpRight.setPosition(start_Position_clawUp);
         //armUpDown.setPosition(start_Position_armUpDown);
         //armRightLeft.setPosition(start_Position_armRightLeft);
+        relicArm.setPosition(start_Position_relicArm);
+        relicClaw.setPosition(start_Position_relicClaw);
 
 
-        sensorColor = hwMap.get(ColorSensor.class, "sensor_color");
-        sensorTouch = hwMap.get(TouchSensor.class, "sensor_touch");
+        //sensorColor = hwMap.get(ColorSensor.class, "sensor_color");
+        //sensorTouch = hwMap.get(TouchSensor.class, "sensor_touch");
     }
 
     //Function: set mode run using encoder
-    public void setDriveMotorsMode(DcMotor.RunMode runMode){
+    public void setDriveMotorsMode(DcMotor.RunMode runMode) {
         driveBackLeft.setMode(runMode);
         driveBackRight.setMode(runMode);
         driveFrontLeft.setMode(runMode);
@@ -120,11 +128,19 @@ public class HardwareApollo {
     }
 
     //Function: set power to all the motors
-    public void setPowerAllDriveMotors(double speed){
+    public void setPowerAllDriveMotors(double speed) {
         driveBackLeft.setPower(speed);
         driveBackRight.setPower(speed);
         driveFrontLeft.setPower(speed);
         driveFrontRight.setPower(speed);
+    }
+
+    public void setPositionClaw(double setPositionUp, double setPositionDown) {
+        clawUpRight.setPosition(setPositionUp);
+        clawUpLeft.setPosition(setPositionUp);
+        clawDownLeft.setPosition(setPositionDown);
+        clawDownRight.setPosition(setPositionDown);
+
     }
 }
 

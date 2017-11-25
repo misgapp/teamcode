@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 /**
  * Created by Carmel on 10/11/2017.
- *
+ * <p>
  * The common class for all the auto modes.
  * each auto mode should call function apolloRun.
  */
@@ -28,20 +28,20 @@ public abstract class AutoMain extends LinearOpMode {
 
     double speed = 0.2;
 
-    public void apolloInit(){
+    public void apolloInit() {
         robot.init(hardwareMap);
         initVuforia();
     }
 
-    void apolloRun(boolean isRed, boolean isCorner){
-        ballsTask(isRed);
+    void apolloRun(boolean isRed, boolean isCorner) {
+        //ballsTask(isRed);
         RelicRecoveryVuMark column = readPhoto();
         moveToCryptoBox(isRed, isCorner, column);
         putCube();
     }
 
-    // Balls task: Move the ball with the other color aside.
-    public void ballsTask(boolean isRed){
+    /* Balls task: Move the ball with the other color aside.
+    public void ballsTask(boolean isRed) {
         robot.armUpDown.setPosition(CHECK_COLOR_POSITION);
 
         telemetry.addData("ball color blue", robot.sensorColor.blue());
@@ -49,13 +49,13 @@ public abstract class AutoMain extends LinearOpMode {
         telemetry.update();
 
         if (robot.sensorColor.blue() > 20) {
-            if (isRed){
+            if (isRed) {
                 robot.armRightLeft.setPosition(DROP_RIGHT_BALL_POSITION);
             } else {
                 robot.armRightLeft.setPosition(DROP_LEFT_BALL_POSITION);
             }
         } else if (robot.sensorColor.red() > 10) {
-            if (isRed){
+            if (isRed) {
                 robot.armRightLeft.setPosition(DROP_LEFT_BALL_POSITION);
             } else {
                 robot.armRightLeft.setPosition(DROP_RIGHT_BALL_POSITION);
@@ -65,9 +65,11 @@ public abstract class AutoMain extends LinearOpMode {
         robot.armUpDown.setPosition(START_POSITION);
     }
 
+    */
+
     // Read photo and return the column to put the cube in.
-    public RelicRecoveryVuMark readPhoto(){
-        for (int i=0; i<3; i++){
+    public RelicRecoveryVuMark readPhoto() {
+        for (int i = 0; i < 3; i++) {
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
             if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
                 return vuMark;
@@ -88,7 +90,7 @@ public abstract class AutoMain extends LinearOpMode {
         final int TURN_2_CRYPTO_BOX_WALL = 30;
         final int TURN_CRYPTO_BOX_CORNER = 30;
 
-        if (isCorner){
+        if (isCorner) {
             if (column == RelicRecoveryVuMark.LEFT) {
                 driveStrait(speed, TICK_TO_CRYPTO_BOX_CORNER * direction);
             } else if (column == RelicRecoveryVuMark.CENTER) {
@@ -98,7 +100,7 @@ public abstract class AutoMain extends LinearOpMode {
             }
 
             turn(speed, TURN_CRYPTO_BOX_CORNER * direction, -1 * TURN_CRYPTO_BOX_CORNER * direction);
-        } else{
+        } else {
             driveStrait(speed, 300 * direction);
             turn(speed, -1 * TURN_1_CRYPTO_BOX_WALL * direction, TURN_1_CRYPTO_BOX_WALL * direction);
 
@@ -115,8 +117,9 @@ public abstract class AutoMain extends LinearOpMode {
     }
 
     // Put the cube
-    public void putCube(){
-        // TODO(): implement.
+    public void putCube() {
+        robot.setPositionClaw(0.1, 0.9);
+        driveStrait(speed, 50);
     }
 
     //init vuforia
@@ -174,7 +177,7 @@ public abstract class AutoMain extends LinearOpMode {
     }
 
     //function drive encoder
-    public void encoderDrive(double speed, int tickRight, int tickLeft){
+    public void encoderDrive(double speed, int tickRight, int tickLeft) {
         int newLeftTarget = 0;
         int newRightTarget = 0;
 
@@ -189,8 +192,9 @@ public abstract class AutoMain extends LinearOpMode {
         robot.setPowerAllDriveMotors(speed);
 
         while (opModeIsActive() &&
-                (robot.driveBackLeft.isBusy() || robot.driveBackRight.isBusy()||
-                        robot.driveFrontLeft.isBusy() || robot.driveFrontRight.isBusy())){
+                (robot.driveBackLeft.isBusy() || robot.driveBackRight.isBusy()
+                        /*||
+                        robot.driveFrontLeft.isBusy() || robot.driveFrontRight.isBusy()*/)) {
             idle();
         }
 

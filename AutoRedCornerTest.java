@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
  * Created by Carmel on 10/11/2017.
  */
 
-@Autonomous(name="Apollo: Auto red corner", group="Apollo")
+@Autonomous(name="Apollo: Auto red corner test", group="Apollo")
 public class AutoRedCornerTest extends AutoMain {
 
     @Override
@@ -17,7 +17,7 @@ public class AutoRedCornerTest extends AutoMain {
         waitForStart();
 
         while (opModeIsActive()) {
-            ballsTask(true);
+            //ballsTask(true);
         }
     }
 }
