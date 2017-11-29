@@ -148,13 +148,13 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.lift.setPower(0);
             }
 
-            double deltaClawDown = -gamepad2.left_stick_y;
+            double deltaClawDown = gamepad2.left_stick_y;
 
             if (deltaClawDown < 0.3 && deltaClawDown > -0.3) {
                 deltaClawDown = 0;
             }
 
-            double deltaClawUp = gamepad2.right_stick_y;
+            double deltaClawUp = - gamepad2.right_stick_y;
 
             if (deltaClawUp < 0.3 && deltaClawUp > -0.3) {
                 deltaClawUp = 0;
@@ -173,6 +173,15 @@ public class ApolloTeleop extends LinearOpMode {
             robot.clawUpLeft.setPosition(clawUpPosition);
             robot.clawUpRight.setPosition(1 - clawUpPosition);
 
+            if (gamepad2.a){
+                robot.relicArm.setPosition(0.2);
+            }
+
+            if (gamepad2.x){
+                robot.relicClaw.setPosition(0.5);
+            }
+
+            /*
             if (gamepad2.x){
                 if (armRelic){
                     robot.relicArm.setPosition(0.2);
@@ -191,7 +200,8 @@ public class ApolloTeleop extends LinearOpMode {
                     robot.relicClaw.setPosition(0.5);
                     clawRelic = true;
                 }
-            }
+           }
+           */
 
             telemetry.addData("left", "%.2f", speed_Left);
             telemetry.addData("right", "%.2f", speed_Right);
