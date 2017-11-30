@@ -15,34 +15,45 @@ public class AutoTestRunWithEncoder extends LinearOpMode {
     public void runOpMode() {
         robot.init(hardwareMap);
 
-        robot.driveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.driveBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.driveBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.driveBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.driveFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.driveFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.driveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.driveBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.driveFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.driveFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        int ticksLeft = robot.driveBackLeft.getCurrentPosition();
-        int ticksRight = robot.driveBackRight.getCurrentPosition();
+
+        int ticksLeft = robot.driveFrontLeft.getCurrentPosition();
+        int ticksRight = robot.driveFrontRight.getCurrentPosition();
 
         waitForStart();
 
         robot.setPowerAllDriveMotors(-0.2);
 
         while (opModeIsActive() &&
-                (robot.driveBackLeft.getCurrentPosition() > ticksLeft + 2500
-                   ||
-                    robot.driveBackLeft.getCurrentPosition() > ticksRight + 2500)){
-            idle();
+                robot.driveFrontLeft.getCurrentPosition() < ticksLeft + 2500 &&
+                robot.driveFrontRight.getCurrentPosition() < ticksLeft + 2500 &&
+                robot.driveBackRight.getCurrentPosition() < ticksLeft + 2500 &&
+                robot.driveBackLeft.getCurrentPosition() < ticksRight + 2500){
+
 
             telemetry.addData("tick left", "%d", robot.driveBackLeft.getCurrentPosition());
             telemetry.addData("tick right", "%d", robot.driveBackRight.getCurrentPosition());
+            telemetry.addData("tick left", "%d", robot.driveFrontLeft.getCurrentPosition());
+            telemetry.addData("tick right", "%d", robot.driveFrontLeft.getCurrentPosition());
             //telemetry.addData("drive direction forward", "%.2f", driveDirectionForward);
             telemetry.update();
+            idle();
         }
 
         robot.setPowerAllDriveMotors(0);
 
         telemetry.addData("tick left", "%d", robot.driveBackLeft.getCurrentPosition());
         telemetry.addData("tick right", "%d", robot.driveBackRight.getCurrentPosition());
+        telemetry.addData("tick left", "%d", robot.driveFrontLeft.getCurrentPosition());
+        telemetry.addData("tick right", "%d", robot.driveFrontLeft.getCurrentPosition());
 
 
     }

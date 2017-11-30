@@ -28,8 +28,8 @@ public class AutoTestOR extends LinearOpMode {
         int newLeftTarget = 0;
         int newRightTarget = 0;
 
-        newLeftTarget = robot.driveBackLeft.getCurrentPosition() + 2500;
-        newRightTarget = robot.driveBackRight.getCurrentPosition() + 2500;
+        newLeftTarget = robot.driveBackLeft.getCurrentPosition() + 1000;
+        newRightTarget = robot.driveBackRight.getCurrentPosition() + 1000;
         robot.driveBackLeft.setTargetPosition(newLeftTarget);
         robot.driveBackRight.setTargetPosition(newRightTarget);
 
