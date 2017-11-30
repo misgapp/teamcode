@@ -71,6 +71,8 @@ public class ApolloTeleop extends LinearOpMode {
         boolean speedFactorDownPressHandled = false;
         boolean armRelic = true;
         boolean clawRelic = true;
+        boolean gamepad2_x_previous_pressed = false;
+        boolean gamepad2_a_previous_pressed = false;
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
@@ -78,7 +80,7 @@ public class ApolloTeleop extends LinearOpMode {
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Say", "Go Go Apollo");    //
+        telemetry.addData("Version", "1");
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -181,27 +183,36 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.relicClaw.setPosition(0.5);
             }
 
-            /*
+
             if (gamepad2.x){
-                if (armRelic){
-                    robot.relicArm.setPosition(0.2);
-                    armRelic = false;
-                } else {
-                    robot.relicArm.setPosition(0.5);
-                    armRelic = true;
+                if (!gamepad2_x_previous_pressed) {
+                    gamepad2_x_previous_pressed = true;
+                    if (armRelic) {
+                        robot.relicArm.setPosition(0.2);
+                        armRelic = false;
+                    } else {
+                        robot.relicArm.setPosition(0.5);
+                        armRelic = true;
+                    }
                 }
+            } else {
+                gamepad2_x_previous_pressed = false;
             }
 
-            if (gamepad2.a){
-                if (clawRelic){
-                    robot.relicClaw.setPosition(0.2);
-                    clawRelic = false;
-                } else {
-                    robot.relicClaw.setPosition(0.5);
-                    clawRelic = true;
+            if (gamepad2.a) {
+                if (!gamepad2_a_previous_pressed) {
+                    gamepad2_a_previous_pressed = true;
+                    if (clawRelic){
+                        robot.relicClaw.setPosition(0.2);
+                        clawRelic = false;
+                    } else {
+                        robot.relicClaw.setPosition(0.5);
+                        clawRelic = true;
+                    }
                 }
+           } else {
+                gamepad2_a_previous_pressed = false;
            }
-           */
 
             telemetry.addData("left", "%.2f", speed_Left);
             telemetry.addData("right", "%.2f", speed_Right);
