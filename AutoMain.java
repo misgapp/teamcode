@@ -184,29 +184,54 @@ public abstract class AutoMain extends LinearOpMode {
         encoderDrive(speed, tickRight, tickLeft);
     }
 
-    //function drive encoder
+    // function drive encoder
+    // speed - power level between 0 and 1. Is always positive.
+    // tickRight - ticks of right side to drive. If positive driving towards cube claw.
+    //   If negative drives to the other direction.
     public void encoderDrive(double speed, int tickRight, int tickLeft) {
         int newLeftTarget = 0;
         int newRightTarget = 0;
 
+        speed = Math.abs(speed);
+        double leftSpeed = tickLeft > 0 ? -speed : speed;
+        double rightSpeed = tickRight > 0 ? -speed : speed;
+
         newLeftTarget = robot.driveBackLeft.getCurrentPosition() + tickLeft;
         newRightTarget = robot.driveBackRight.getCurrentPosition() + tickRight;
-        robot.driveBackLeft.setTargetPosition(newLeftTarget);
-        robot.driveBackRight.setTargetPosition(newRightTarget);
-        //robot.driveFrontLeft.setTargetPosition(newLeftTarget);
-        //robot.driveFrontRight.setTargetPosition(newRightTarget);
 
-        robot.driveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.driveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //robot.driveFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //robot.driveFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        robot.setPowerAllDriveMotors(speed);
+        robot.setPowerLeftDriveMotors(leftSpeed);
+        robot.setPowerRightDriveMotors(rightSpeed);
 
-        while (opModeIsActive() &&
-                (robot.driveBackLeft.isBusy() || robot.driveBackRight.isBusy()
-                        /*||
-                        robot.driveFrontLeft.isBusy() || robot.driveFrontRight.isBusy()*/)) {
+        while (opModeIsActive()) {
+            if (tickLeft < 0) {
+                if (robot.driveBackLeft.getCurrentPosition() >= newLeftTarget ||
+                        robot.driveFrontLeft.getCurrentPosition() >= newLeftTarget) {
+                    break;
+                }
+            } else {
+                if (robot.driveBackLeft.getCurrentPosition() <= newLeftTarget ||
+                        robot.driveFrontLeft.getCurrentPosition() <= newLeftTarget) {
+                    break;
+                }
+            }
+            if (tickRight < 0) {
+                if (robot.driveBackRight.getCurrentPosition() >= newRightTarget ||
+                        robot.driveFrontRight.getCurrentPosition() >= newRightTarget) {
+                    break;
+                }
+            } else {
+                if (robot.driveBackRight.getCurrentPosition() <= newRightTarget ||
+                        robot.driveFrontRight.getCurrentPosition() <= newRightTarget) {
+                    break;
+                }
+            }
+            telemetry.addData("tick left", "%d", robot.driveBackLeft.getCurrentPosition());
+            telemetry.addData("tick right", "%d", robot.driveBackRight.getCurrentPosition());
+            telemetry.addData("tick left", "%d", robot.driveFrontLeft.getCurrentPosition());
+            telemetry.addData("tick right", "%d", robot.driveFrontLeft.getCurrentPosition());
+            telemetry.update();
             idle();
         }
 

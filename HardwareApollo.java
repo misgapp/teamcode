@@ -135,6 +135,18 @@ public class HardwareApollo {
         driveFrontRight.setPower(speed);
     }
 
+    //Function: set power to all the motors
+    public void setPowerLeftDriveMotors(double speed) {
+        driveBackLeft.setPower(speed);
+        driveFrontLeft.setPower(speed);
+    }
+
+    //Function: set power to all the motors
+    public void setPowerRightDriveMotors(double speed) {
+        driveBackRight.setPower(speed);
+        driveFrontRight.setPower(speed);
+    }
+
     public void setPositionClaw(double setPositionUp, double setPositionDown) {
         clawUpRight.setPosition(setPositionUp);
         clawUpLeft.setPosition(setPositionUp);

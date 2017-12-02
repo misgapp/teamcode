@@ -38,7 +38,6 @@ public class AutoTestRunWithEncoder extends LinearOpMode {
                 robot.driveBackRight.getCurrentPosition() < ticksLeft + 2500 &&
                 robot.driveBackLeft.getCurrentPosition() < ticksRight + 2500){
 
-
             telemetry.addData("tick left", "%d", robot.driveBackLeft.getCurrentPosition());
             telemetry.addData("tick right", "%d", robot.driveBackRight.getCurrentPosition());
             telemetry.addData("tick left", "%d", robot.driveFrontLeft.getCurrentPosition());
