@@ -30,17 +30,17 @@ public abstract class AutoMain extends LinearOpMode {
 
     public void apolloInit() {
         robot.init(hardwareMap);
-        //initVuforia();
+        initVuforia();
     }
 
     void apolloRun(boolean isRed, boolean isCorner) {
-        ballsTask(isRed);
+        //ballsTask(isRed);
         RelicRecoveryVuMark column = readPhoto();
         moveToCryptoBox(isRed, isCorner, column);
         putCube();
     }
 
-    // Balls task: Move the ball with the other color aside.
+    /* Balls task: Move the ball with the other color aside.
     public void ballsTask(boolean isRed) {
         robot.armUpDown.setPosition(CHECK_COLOR_POSITION);
 
@@ -64,6 +64,8 @@ public abstract class AutoMain extends LinearOpMode {
 
         robot.armUpDown.setPosition(START_POSITION);
     }
+
+    */
 
     // Read photo and return the column to put the cube in.
     public RelicRecoveryVuMark readPhoto() {
@@ -186,8 +188,6 @@ public abstract class AutoMain extends LinearOpMode {
     // speed - power level between 0 and 1. Is always positive.
     // tickRight - ticks of right side to drive. If positive driving towards cube claw.
     //   If negative drives to the other direction.
-    // tickLeft - ticks of left side to drive. If positive driving towards cube claw.
-    //   If negative drives to the other direction.
     public void encoderDrive(double speed, int tickRight, int tickLeft) {
         int newLeftTarget = 0;
         int newRightTarget = 0;
@@ -196,8 +196,16 @@ public abstract class AutoMain extends LinearOpMode {
         double leftSpeed = tickLeft > 0 ? -speed : speed;
         double rightSpeed = tickRight > 0 ? -speed : speed;
 
-        newLeftTarget = robot.driveBackLeft.getCurrentPosition() + tickLeft;
-        newRightTarget = robot.driveBackRight.getCurrentPosition() + tickRight;
+        //tickLeft = tickLeft < 0 ? -tickLeft : tickLeft;
+        tickRight = tickRight < 0 ? -tickRight : tickRight;
+
+        newLeftTarget = tickLeft > 0 ? robot.driveBackLeft.getCurrentPosition() + tickLeft :
+                robot.driveBackLeft.getCurrentPosition() - tickLeft;
+        newRightTarget = tickLeft > 0 ? robot.driveBackRight.getCurrentPosition() + tickLeft :
+                robot.driveBackRight.getCurrentPosition() - tickLeft;
+
+        //newLeftTarget = robot.driveBackLeft.getCurrentPosition() + tickLeft;
+        //newRightTarget = robot.driveBackRight.getCurrentPosition() + tickRight;
 
         robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
