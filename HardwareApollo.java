@@ -111,11 +111,11 @@ public class HardwareApollo {
         clawUpRight.setPosition(start_Position_clawUp);
         //armUpDown.setPosition(start_Position_armUpDown);
         //armRightLeft.setPosition(start_Position_armRightLeft);
-        relicArm.setPosition(start_Position_relicArm);
-        relicClaw.setPosition(start_Position_relicClaw);
+        //relicArm.setPosition(start_Position_relicArm);
+        //relicClaw.setPosition(start_Position_relicClaw);
 
 
-        //sensorColor = hwMap.get(ColorSensor.class, "sensor_color");
+        sensorColor = hwMap.get(ColorSensor.class, "sensor_color");
         //sensorTouch = hwMap.get(TouchSensor.class, "sensor_touch");
     }
 

@@ -17,7 +17,7 @@ public class AutoRedCornerTest extends AutoMain {
         waitForStart();
 
         while (opModeIsActive()) {
-            //ballsTask(true);
+            driveStrait(0.3, 1000);
         }
     }
 }

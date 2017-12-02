@@ -103,8 +103,8 @@ public class ApolloTeleop extends LinearOpMode {
                 speed_Right = gamepad1.right_stick_y;
                 speed_Left = gamepad1.left_stick_y;
             } else {
-                speed_Right = -gamepad1.right_stick_y;
-                speed_Left = -gamepad1.left_stick_y;
+                speed_Left = -gamepad1.right_stick_y;
+                speed_Right = -gamepad1.left_stick_y;
             }
 
             if (gamepad1.dpad_up) {
@@ -150,13 +150,13 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.lift.setPower(0);
             }
 
-            double deltaClawDown = gamepad2.left_stick_y;
+            double deltaClawDown = gamepad2.left_stick_y/2;
 
             if (deltaClawDown < 0.3 && deltaClawDown > -0.3) {
                 deltaClawDown = 0;
             }
 
-            double deltaClawUp = - gamepad2.right_stick_y;
+            double deltaClawUp = -gamepad2.right_stick_y/2;
 
             if (deltaClawUp < 0.3 && deltaClawUp > -0.3) {
                 deltaClawUp = 0;
