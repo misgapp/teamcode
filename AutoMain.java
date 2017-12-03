@@ -107,10 +107,12 @@ public abstract class AutoMain extends LinearOpMode {
                 driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 1000) * direction);
             }
 
-            turn(speed, TURN_CRYPTO_BOX_CORNER * direction, -1 * TURN_CRYPTO_BOX_CORNER * direction);
+            //turn(speed, TURN_CRYPTO_BOX_CORNER * direction, -1 * TURN_CRYPTO_BOX_CORNER * direction);
+            turn(speed, isRed);
         } else {
             driveStrait(speed, 300 * direction);
-            turn(speed, -1 * TURN_1_CRYPTO_BOX_WALL * direction, TURN_1_CRYPTO_BOX_WALL * direction);
+            //turn(speed, -1 * TURN_1_CRYPTO_BOX_WALL * direction, TURN_1_CRYPTO_BOX_WALL * direction);
+            turn(speed, !isRed);
 
             if (column == RelicRecoveryVuMark.LEFT) {
                 driveStrait(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL * direction);
@@ -120,7 +122,8 @@ public abstract class AutoMain extends LinearOpMode {
                 driveStrait(speed, (TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1000) * direction);
             }
 
-            turn(speed, TURN_2_CRYPTO_BOX_WALL * direction, -1 * TURN_2_CRYPTO_BOX_WALL * direction);
+            //turn(speed, TURN_2_CRYPTO_BOX_WALL * direction, -1 * TURN_2_CRYPTO_BOX_WALL * direction);
+            turn(speed, isRed);
         }
     }
 
@@ -180,10 +183,86 @@ public abstract class AutoMain extends LinearOpMode {
         encoderDrive(speed, tick, tick);
     }
 
-    public void turn(double speed, int tickRight, int tickLeft) {
-        encoderDrive(speed, tickRight, tickLeft);
+    public void turn(double speed, boolean turn_left) {
+        int ticks = 2000;
+        encoderDrive(speed, turn_left ? ticks : -ticks, turn_left ? -ticks : ticks);
     }
 
+    // function drive encoder
+    // speed - power level between 0 and 1. Is always positive.
+    // tickRight - ticks of right side to drive. If positive driving towards cube claw.
+    //   If negative drives to the other direction.
+    public void encoderDrive(double speed, int tickRight, int tickLeft) {
+        robot.setDriveMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int newLeftTarget = 0;
+        int newRightTarget = 0;
+
+        speed = Math.abs(speed);
+        double leftSpeed = tickLeft > 0 ? -speed : speed;
+        double rightSpeed = tickRight > 0 ? -speed : speed;
+
+        newLeftTarget = robot.driveBackLeft.getCurrentPosition() + tickLeft;
+        newRightTarget = robot.driveBackRight.getCurrentPosition() + tickRight;
+
+        robot.setPowerLeftDriveMotors(leftSpeed);
+        robot.setPowerRightDriveMotors(rightSpeed);
+
+        while (opModeIsActive()) {
+            if (tickLeft > 0) {
+                if (robot.driveBackLeft.getCurrentPosition() >= newLeftTarget ||
+                        robot.driveFrontLeft.getCurrentPosition() >= newLeftTarget) {
+                    telemetry.addData("break", "1");
+                    break;
+                }
+            } else {
+                if (robot.driveBackLeft.getCurrentPosition() <= newLeftTarget ||
+                        robot.driveFrontLeft.getCurrentPosition() <= newLeftTarget) {
+                    telemetry.addData("break", "2");
+                    break;
+                }
+            }
+            if (tickRight > 0) {
+                if (robot.driveBackRight.getCurrentPosition() >= newRightTarget ||
+                        robot.driveFrontRight.getCurrentPosition() >= newRightTarget) {
+                    telemetry.addData("break", "3");
+                    break;
+                }
+            } else {
+                if (robot.driveBackRight.getCurrentPosition() <= newRightTarget ||
+                        robot.driveFrontRight.getCurrentPosition() <= newRightTarget) {
+                    telemetry.addData("break", "4");
+                    break;
+                }
+            }
+            telemetry.addData("tick left", "%d", robot.driveBackLeft.getCurrentPosition());
+            telemetry.addData("tick right", "%d", robot.driveBackRight.getCurrentPosition());
+            telemetry.addData("tick left", "%d", robot.driveFrontLeft.getCurrentPosition());
+            telemetry.addData("tick right", "%d", robot.driveFrontRight.getCurrentPosition());
+            telemetry.update();
+            idle();
+        }
+        robot.setPowerAllDriveMotors(0);
+
+
+        /*
+        telemetry.addData("newLeftTarget", "%d", newLeftTarget);
+        telemetry.addData("newRightTarget", "%d", newRightTarget);
+        telemetry.addData("tickLeft", "%d", tickLeft);
+        telemetry.addData("tickRight", "%d", tickRight);
+
+        telemetry.addData("tick left", "%d", robot.driveBackLeft.getCurrentPosition());
+        telemetry.addData("tick right", "%d", robot.driveBackRight.getCurrentPosition());
+        telemetry.addData("tick left", "%d", robot.driveFrontLeft.getCurrentPosition());
+        telemetry.addData("tick right", "%d", robot.driveFrontRight.getCurrentPosition());
+        telemetry.update();
+       */
+
+    }
+
+
+    /*
     // function drive encoder
     // speed - power level between 0 and 1. Is always positive.
     // tickRight - ticks of right side to drive. If positive driving towards cube claw.
@@ -196,13 +275,13 @@ public abstract class AutoMain extends LinearOpMode {
         double leftSpeed = tickLeft > 0 ? -speed : speed;
         double rightSpeed = tickRight > 0 ? -speed : speed;
 
-        //tickLeft = tickLeft < 0 ? -tickLeft : tickLeft;
+        tickLeft = tickLeft < 0 ? -tickLeft : tickLeft;
         tickRight = tickRight < 0 ? -tickRight : tickRight;
 
-        newLeftTarget = tickLeft > 0 ? robot.driveBackLeft.getCurrentPosition() + tickLeft :
-                robot.driveBackLeft.getCurrentPosition() - tickLeft;
-        newRightTarget = tickLeft > 0 ? robot.driveBackRight.getCurrentPosition() + tickLeft :
-                robot.driveBackRight.getCurrentPosition() - tickLeft;
+        //newLeftTarget = tickLeft > 0 ? robot.driveBackLeft.getCurrentPosition() + tickLeft :
+                //robot.driveBackLeft.getCurrentPosition() - tickLeft;
+        //newRightTarget = tickLeft > 0 ? robot.driveBackRight.getCurrentPosition() + tickLeft :
+                //robot.driveBackRight.getCurrentPosition() - tickLeft;
 
         //newLeftTarget = robot.driveBackLeft.getCurrentPosition() + tickLeft;
         //newRightTarget = robot.driveBackRight.getCurrentPosition() + tickRight;
@@ -243,6 +322,9 @@ public abstract class AutoMain extends LinearOpMode {
             idle();
         }
 
+
         robot.setPowerAllDriveMotors(0);
     }
+
+    */
 }

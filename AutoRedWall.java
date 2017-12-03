@@ -15,9 +15,10 @@ public class AutoRedWall extends AutoMain {
 
         waitForStart();
 
-        while (opModeIsActive()) {
-            driveStrait(0.3, 1000);
-            //apolloRun(true, false);
-        }
+        driveStrait(0.2, 5000);
+        turn(0.2, false);
+        driveStrait(0.2, 1000);
+
+        //apolloRun(true, false);
     }
 }

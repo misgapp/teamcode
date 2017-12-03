@@ -150,7 +150,7 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.lift.setPower(0);
             }
 
-            double deltaClawDown = gamepad2.left_stick_y/2;
+            double deltaClawDown = -gamepad2.left_stick_y/2;
 
             if (deltaClawDown < 0.3 && deltaClawDown > -0.3) {
                 deltaClawDown = 0;
@@ -164,14 +164,14 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             clawDownPosition += deltaClawDown;
-            clawDownPosition = Math.min(clawDownPosition, 1);
-            clawDownPosition = Math.max(clawDownPosition, 0);
+            clawDownPosition = Math.min(clawDownPosition, 0.55);
+            clawDownPosition = Math.max(clawDownPosition, 0.15);
             robot.clawDownLeft.setPosition(clawDownPosition);
             robot.clawDownRight.setPosition(1 - clawDownPosition);
 
             clawUpPosition += deltaClawUp;
-            clawUpPosition = Math.min(clawUpPosition, 1);
-            clawUpPosition = Math.max(clawUpPosition, 0);
+            clawUpPosition = Math.min(clawUpPosition, 0);
+            clawUpPosition = Math.max(clawUpPosition, 0.40);
             robot.clawUpLeft.setPosition(clawUpPosition);
             robot.clawUpRight.setPosition(1 - clawUpPosition);
 
