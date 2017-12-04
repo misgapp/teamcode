@@ -17,8 +17,6 @@ public class AutoRedWall extends AutoMain {
 
         waitForStart();
 
-        moveToCryptoBox(true, true, RelicRecoveryVuMark.LEFT);
-
-        //apolloRun(true, false);
+       apolloRun(true, false);
     }
 }

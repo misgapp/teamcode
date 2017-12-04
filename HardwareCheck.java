@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 /**
@@ -7,14 +8,20 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
  *
  * Check robot hardware.
  */
-public class HardwareCheck extends OpMode{
-    @Override
-    public void init() {
+public class HardwareCheck extends AutoMain{
 
+    HardwareApollo robot = new HardwareApollo();
+    @Override
+    public void runOpMode() {
+        robot.init(hardwareMap);
+
+        // Wait for the game to start (driver presses PLAY)
+        waitForStart();
+
+        driveStrait(0.3, 3250);
+        driveStrait(0.3, -3250);
+        turn(0.3, true);
+        turn(0.3, false);
     }
 
-    @Override
-    public void loop() {
-
-    }
 }

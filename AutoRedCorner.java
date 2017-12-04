@@ -16,8 +16,7 @@ public class AutoRedCorner extends AutoMain {
 
         waitForStart();
 
-        while (opModeIsActive()) {
-            apolloRun(true, true);
-        }
+        apolloRun(true, true);
+
     }
 }
