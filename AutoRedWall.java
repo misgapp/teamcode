@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+
 /**
  * Created by Carmel on 10/11/2017.
  */
@@ -15,9 +17,7 @@ public class AutoRedWall extends AutoMain {
 
         waitForStart();
 
-        driveStrait(0.2, 5000);
-        turn(0.2, false);
-        driveStrait(0.2, 1000);
+        moveToCryptoBox(true, true, RelicRecoveryVuMark.LEFT);
 
         //apolloRun(true, false);
     }

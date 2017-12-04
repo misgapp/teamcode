@@ -30,13 +30,13 @@ public abstract class AutoMain extends LinearOpMode {
 
     public void apolloInit() {
         robot.init(hardwareMap);
-        initVuforia();
+        //initVuforia();
     }
 
     void apolloRun(boolean isRed, boolean isCorner) {
         //ballsTask(isRed);
-        RelicRecoveryVuMark column = readPhoto();
-        moveToCryptoBox(isRed, isCorner, column);
+        //RelicRecoveryVuMark column = readPhoto();
+        moveToCryptoBox(isRed, isCorner, RelicRecoveryVuMark.LEFT);
         putCube();
     }
 
@@ -84,7 +84,7 @@ public abstract class AutoMain extends LinearOpMode {
 
         int direction = isRed ? -1 : 1;
 
-        final int TICK_TO_CRYPTO_BOX_CORNER = 2500;
+        final int TICK_TO_CRYPTO_BOX_CORNER = 4250;
         final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 1700;
         final int TURN_1_CRYPTO_BOX_WALL = 1200;
         final int TURN_2_CRYPTO_BOX_WALL = 1200;
@@ -102,17 +102,20 @@ public abstract class AutoMain extends LinearOpMode {
             if (column == RelicRecoveryVuMark.LEFT) {
                 driveStrait(speed, TICK_TO_CRYPTO_BOX_CORNER * direction);
             } else if (column == RelicRecoveryVuMark.CENTER) {
-                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 1000) * direction);
+                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 1050) * direction);
             } else {
-                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 1000) * direction);
+                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 1980) * direction);
             }
 
             //turn(speed, TURN_CRYPTO_BOX_CORNER * direction, -1 * TURN_CRYPTO_BOX_CORNER * direction);
-            turn(speed, isRed);
+            turn(speed, !isRed);
+            if (isRed){
+                driveStrait(speed, 1600);
+            }
         } else {
             driveStrait(speed, 300 * direction);
             //turn(speed, -1 * TURN_1_CRYPTO_BOX_WALL * direction, TURN_1_CRYPTO_BOX_WALL * direction);
-            turn(speed, !isRed);
+            turn(speed, isRed);
 
             if (column == RelicRecoveryVuMark.LEFT) {
                 driveStrait(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL * direction);
@@ -184,7 +187,7 @@ public abstract class AutoMain extends LinearOpMode {
     }
 
     public void turn(double speed, boolean turn_left) {
-        int ticks = 2000;
+        int ticks = 1800;
         encoderDrive(speed, turn_left ? ticks : -ticks, turn_left ? -ticks : ticks);
     }
 
@@ -260,71 +263,4 @@ public abstract class AutoMain extends LinearOpMode {
        */
 
     }
-
-
-    /*
-    // function drive encoder
-    // speed - power level between 0 and 1. Is always positive.
-    // tickRight - ticks of right side to drive. If positive driving towards cube claw.
-    //   If negative drives to the other direction.
-    public void encoderDrive(double speed, int tickRight, int tickLeft) {
-        int newLeftTarget = 0;
-        int newRightTarget = 0;
-
-        speed = Math.abs(speed);
-        double leftSpeed = tickLeft > 0 ? -speed : speed;
-        double rightSpeed = tickRight > 0 ? -speed : speed;
-
-        tickLeft = tickLeft < 0 ? -tickLeft : tickLeft;
-        tickRight = tickRight < 0 ? -tickRight : tickRight;
-
-        //newLeftTarget = tickLeft > 0 ? robot.driveBackLeft.getCurrentPosition() + tickLeft :
-                //robot.driveBackLeft.getCurrentPosition() - tickLeft;
-        //newRightTarget = tickLeft > 0 ? robot.driveBackRight.getCurrentPosition() + tickLeft :
-                //robot.driveBackRight.getCurrentPosition() - tickLeft;
-
-        //newLeftTarget = robot.driveBackLeft.getCurrentPosition() + tickLeft;
-        //newRightTarget = robot.driveBackRight.getCurrentPosition() + tickRight;
-
-        robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        robot.setPowerLeftDriveMotors(leftSpeed);
-        robot.setPowerRightDriveMotors(rightSpeed);
-
-        while (opModeIsActive()) {
-            if (tickLeft < 0) {
-                if (robot.driveBackLeft.getCurrentPosition() >= newLeftTarget ||
-                        robot.driveFrontLeft.getCurrentPosition() >= newLeftTarget) {
-                    break;
-                }
-            } else {
-                if (robot.driveBackLeft.getCurrentPosition() <= newLeftTarget ||
-                        robot.driveFrontLeft.getCurrentPosition() <= newLeftTarget) {
-                    break;
-                }
-            }
-            if (tickRight < 0) {
-                if (robot.driveBackRight.getCurrentPosition() >= newRightTarget ||
-                        robot.driveFrontRight.getCurrentPosition() >= newRightTarget) {
-                    break;
-                }
-            } else {
-                if (robot.driveBackRight.getCurrentPosition() <= newRightTarget ||
-                        robot.driveFrontRight.getCurrentPosition() <= newRightTarget) {
-                    break;
-                }
-            }
-            telemetry.addData("tick left", "%d", robot.driveBackLeft.getCurrentPosition());
-            telemetry.addData("tick right", "%d", robot.driveBackRight.getCurrentPosition());
-            telemetry.addData("tick left", "%d", robot.driveFrontLeft.getCurrentPosition());
-            telemetry.addData("tick right", "%d", robot.driveFrontLeft.getCurrentPosition());
-            telemetry.update();
-            idle();
-        }
-
-
-        robot.setPowerAllDriveMotors(0);
-    }
-
-    */
 }
