@@ -85,12 +85,12 @@ public abstract class AutoMain extends LinearOpMode {
         int direction = isRed ? -1 : 1;
 
         final int TICK_TO_CRYPTO_BOX_CORNER = 4250;
-        final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 1700;
+        final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 500;
         final int TURN_1_CRYPTO_BOX_WALL = 1200;
         final int TURN_2_CRYPTO_BOX_WALL = 1200;
         final int TURN_CRYPTO_BOX_CORNER = 1200;
 
-        if (isRed){
+        if (!isRed){
             if (column == RelicRecoveryVuMark.LEFT) {
                 column = RelicRecoveryVuMark.RIGHT;
             } else  if (column == RelicRecoveryVuMark.RIGHT){
@@ -113,20 +113,21 @@ public abstract class AutoMain extends LinearOpMode {
                 driveStrait(speed, 1600);
             }
         } else {
-            driveStrait(speed, 300 * direction);
+            driveStrait(speed, 4200 * direction);
             //turn(speed, -1 * TURN_1_CRYPTO_BOX_WALL * direction, TURN_1_CRYPTO_BOX_WALL * direction);
             turn(speed, isRed);
 
             if (column == RelicRecoveryVuMark.LEFT) {
-                driveStrait(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL * direction);
+                driveStrait(speed, -1 * TICK_TO_CRYPTO_BOX_COLUMN_WALL * direction);
             } else if (column == RelicRecoveryVuMark.CENTER) {
-                driveStrait(speed, (TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1000) * direction);
+                driveStrait(speed, ( -1 * (TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1000)) * direction);
             } else {
-                driveStrait(speed, (TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1000) * direction);
+                driveStrait(speed, ( -1 * (TICK_TO_CRYPTO_BOX_COLUMN_WALL + 2000)) * direction);
             }
 
             //turn(speed, TURN_2_CRYPTO_BOX_WALL * direction, -1 * TURN_2_CRYPTO_BOX_WALL * direction);
             turn(speed, isRed);
+            driveStrait(speed, 1300);
         }
     }
 

@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
  * Created by Carmel on 10/11/2017.
  */
 
-@Autonomous(name="Apollo: Auto red corner test", group="Apollo")
+@Autonomous(name="Apollo: Auto test", group="Apollo")
 public class AutoTest extends AutoMain {
 
     @Override
