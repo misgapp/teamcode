@@ -29,8 +29,12 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorColor;
 
 /**
  * This OpMode uses the common Apollo hardware class to define the devices on the robot.

@@ -29,9 +29,11 @@
 
 package org.firstinspires.ftc.teamcode;
 
+//import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -53,10 +55,10 @@ public class HardwareApollo {
     public Servo armRightLeft = null;
     public Servo relicArm = null;
     public Servo relicClaw = null;
-    public TouchSensor sensorTouch;
-    public ColorSensor sensorColor;
+    public TouchSensor sensorTouch = null;
+    //public ColorSensor sensorColor;
+    public NormalizedColorSensor sensorColor = null;
 
-    public ColorSensor sensor_color = null;
     public TouchSensor sensor_button = null;
     public static final double start_Position_clawUp = 0.5;
     public static final double start_Position_clawDown = 0.5;
@@ -115,7 +117,8 @@ public class HardwareApollo {
         //relicClaw.setPosition(start_Position_relicClaw);
 
 
-        sensorColor = hwMap.get(ColorSensor.class, "sensor_color");
+        //sensorColor = hwMap.get(ColorSensor.class, "sensor_color");
+        sensorColor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
         //sensorTouch = hwMap.get(TouchSensor.class, "sensor_touch");
     }
 
