@@ -69,7 +69,7 @@ public class ApolloTeleop extends LinearOpMode {
         double clawUpPosition = 0.1;
         double speed_Left = 0;
         double speed_Right = 0;
-        double driveSpeedFactor = SPEED_FACTOR_3;
+        double driveSpeedFactor = SPEED_FACTOR_1;
         boolean driveDirectionForward = true;
         boolean speedFactorUpPressHandled = false;
         boolean speedFactorDownPressHandled = false;

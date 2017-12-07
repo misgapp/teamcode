@@ -32,6 +32,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.I2cAddr;
+import com.qualcomm.robotcore.hardware.I2cDevice;
+import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
+import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -54,13 +58,17 @@ public class HardwareApollo {
     public Servo relicArm = null;
     public Servo relicClaw = null;
     public TouchSensor sensorTouch = null;
-    public ColorSensor sensorColor = null;
+    //public ColorSensor sensorColor = null;
+    public I2cAddr colorAddr = I2cAddr.create8bit(0x3c);
+    public I2cDevice color = null;
+    public I2cDeviceSynch colorReader = null;
+
     public TouchSensor sensor_button = null;
 
     public static final double start_Position_clawUp = 0.5;
     public static final double start_Position_clawDown = 0.5;
-    public static final double start_Position_armUpDown = 0.15;
-    public static final double start_Position_armRightLeft = 0.83;
+    public static final double start_Position_armUpDown = 0.75;
+    public static final double start_Position_armRightLeft = 0.1;
     public static final double start_Position_relicClaw = 0.5;
     public static final double start_Position_relicArm = 0.5;
 
@@ -99,8 +107,8 @@ public class HardwareApollo {
         clawDownRight = hwMap.get(Servo.class, "claw_down_right");
         clawUpLeft = hwMap.get(Servo.class, "claw_up_left");
         clawUpRight = hwMap.get(Servo.class, "claw_up_right");
-        //armRightLeft = hwMap.get(Servo.class, "arm_right_left");
-        //armUpDown = hwMap.get(Servo.class, "arm_up_down");
+        armRightLeft = hwMap.get(Servo.class, "arm_right_left");
+        armUpDown = hwMap.get(Servo.class, "arm_up_down");
         //relicArm = hwMap.get(Servo.class, "relic_arm");
         //relicClaw = hwMap.get(Servo.class, "relic_claw");
 
@@ -108,13 +116,16 @@ public class HardwareApollo {
         clawDownRight.setPosition(start_Position_clawDown);
         clawUpLeft.setPosition(start_Position_clawUp);
         clawUpRight.setPosition(start_Position_clawUp);
-        //armUpDown.setPosition(start_Position_armUpDown);
-        //armRightLeft.setPosition(start_Position_armRightLeft);
+        armUpDown.setPosition(start_Position_armUpDown);
+        armRightLeft.setPosition(start_Position_armRightLeft);
         //relicArm.setPosition(start_Position_relicArm);
         //relicClaw.setPosition(start_Position_relicClaw);
 
 
-        sensorColor = hwMap.get(ColorSensor.class, "sensor_color");
+        //sensorColor = hwMap.get(ColorSensor.class, "sensor_color");
+        color = hwMap.i2cDevice.get("sc");
+        colorReader = new I2cDeviceSynchImpl(color, colorAddr, false);
+        colorReader.engage();
         //sensorColor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
         //sensorTouch = hwMap.get(TouchSensor.class, "sensor_touch");
     }

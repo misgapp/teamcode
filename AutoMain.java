@@ -21,12 +21,12 @@ public abstract class AutoMain extends LinearOpMode {
     HardwareApollo robot = new HardwareApollo();
     VuforiaLocalizer vuforia;
     VuforiaTrackable relicTemplate;
+    VuforiaTrackables relicTrackables;
     static final double DROP_RIGHT_BALL_POSITION = 0.05;
     static final double DROP_LEFT_BALL_POSITION = 0.05;
-    static final double CHECK_COLOR_POSITION = 0.05;
+    public static final double drop_Position_armUpDown = 0.15;
+    public static final double drop_Position_armRightLeft = 0.83;
     static final double START_POSITION = 0.05;
-
-    final int TICK_TO_CRYPTO_BOX_CORNER = 4250;
 
     double speed = 0.2;
 
@@ -36,27 +36,60 @@ public abstract class AutoMain extends LinearOpMode {
     }
 
     void apolloRun(boolean isRed, boolean isCorner) {
-        //ballsTask(isRed);
-        //RelicRecoveryVuMark column = readPhoto();
+        ballsTask(isRed);
+        RelicRecoveryVuMark column = readPhoto();
         moveToCryptoBox(isRed, isCorner, RelicRecoveryVuMark.LEFT);
         putCube();
     }
 
-    /* Balls task: Move the ball with the other color aside.
-    public void ballsTask(boolean isRed) {
-        robot.armUpDown.setPosition(CHECK_COLOR_POSITION);
 
-        telemetry.addData("ball color blue", robot.sensorColor.blue());
-        telemetry.addData("ball color red", robot.sensorColor.red());
+    void readColor() {
+        final int LED_ON = 0;
+        //   final int LED_OFF = 1;
+        //  final int COLOR_BLUE = 3;
+        // final int COLOR_RED = 10;
+
+        robot.colorReader.write8(3, LED_ON);
+
+        while (opModeIsActive()) {
+            int color = robot.colorReader.read8(4);
+
+            telemetry.addData("ball color: ", color);
+            telemetry.update();
+            idle();
+        }
+    }
+
+    // Balls task: Move the ball with the other color aside.
+    public void ballsTask(boolean isRed) {
+        robot.armUpDown.setPosition(drop_Position_armUpDown);
+        robot.armUpDown.setPosition(drop_Position_armRightLeft);
+
+        final int LED_ON = 0;
+        final int LED_OFF = 1;
+        final int COLOR_BLUE = 3;
+        final int COLOR_RED = 10;
+
+        robot.colorReader.write8(3, LED_ON);
+
+        int color = 0;
+        for (int i = 0 ; i < 100 ; i++) {
+            color = robot.colorReader.read8(4);
+            if (color != 0) {
+                break;
+            }
+        }
+
+        telemetry.addData("ball color: ", color);
         telemetry.update();
 
-        if (robot.sensorColor.blue() > 20) {
+        if (color == COLOR_BLUE) {
             if (isRed) {
                 robot.armRightLeft.setPosition(DROP_RIGHT_BALL_POSITION);
             } else {
                 robot.armRightLeft.setPosition(DROP_LEFT_BALL_POSITION);
             }
-        } else if (robot.sensorColor.red() > 10) {
+        } else if (color == COLOR_RED) {
             if (isRed) {
                 robot.armRightLeft.setPosition(DROP_LEFT_BALL_POSITION);
             } else {
@@ -64,13 +97,13 @@ public abstract class AutoMain extends LinearOpMode {
             }
         }
 
-        robot.armUpDown.setPosition(START_POSITION);
+        robot.armRightLeft.setPosition(robot.start_Position_armRightLeft);
+        robot.armUpDown.setPosition(robot.start_Position_armUpDown);
     }
-
-    */
 
     // Read photo and return the column to put the cube in.
     public RelicRecoveryVuMark readPhoto() {
+        relicTrackables.activate();
         for (int i = 0; i < 3; i++) {
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
             if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
@@ -102,13 +135,16 @@ public abstract class AutoMain extends LinearOpMode {
         }
         */
 
+        //close servo claw
+        //robot.setPositionClaw(up,down);
+
         if (isCorner) {
             if (column == RelicRecoveryVuMark.LEFT) {
-                //driveStrait(speed, TICK_TO_CRYPTO_BOX_CORNER * direction);
+                driveStrait(speed, TICK_TO_CRYPTO_BOX_CORNER * direction);
             } else if (column == RelicRecoveryVuMark.CENTER) {
-                driveStrait(speed, (/*TICK_TO_CRYPTO_BOX_CORNER +*/ 1050) * direction);
+                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 1050) * direction);
             } else {
-                driveStrait(speed, (/*TICK_TO_CRYPTO_BOX_CORNER +*/ 1980) * direction);
+                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 1980) * direction);
             }
 
             //turn(speed, TURN_CRYPTO_BOX_CORNER * direction, -1 * TURN_CRYPTO_BOX_CORNER * direction);
@@ -175,7 +211,7 @@ public abstract class AutoMain extends LinearOpMode {
          * Here we chose the back (HiRes) camera (for greater range), but
          * for a competition robot, the front camera might be more convenient.
          */
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
         /**
@@ -184,7 +220,7 @@ public abstract class AutoMain extends LinearOpMode {
          * but differ in their instance id information.
          * @see VuMarkInstanceId
          */
-        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
         relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
 
