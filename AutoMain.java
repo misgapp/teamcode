@@ -26,11 +26,13 @@ public abstract class AutoMain extends LinearOpMode {
     static final double CHECK_COLOR_POSITION = 0.05;
     static final double START_POSITION = 0.05;
 
+    final int TICK_TO_CRYPTO_BOX_CORNER = 4250;
+
     double speed = 0.2;
 
     public void apolloInit() {
         robot.init(hardwareMap);
-        //initVuforia();
+        initVuforia();
     }
 
     void apolloRun(boolean isRed, boolean isCorner) {
@@ -90,6 +92,7 @@ public abstract class AutoMain extends LinearOpMode {
         final int TURN_2_CRYPTO_BOX_WALL = 1200;
         final int TURN_CRYPTO_BOX_CORNER = 1200;
 
+        /*
         if (!isRed){
             if (column == RelicRecoveryVuMark.LEFT) {
                 column = RelicRecoveryVuMark.RIGHT;
@@ -97,21 +100,25 @@ public abstract class AutoMain extends LinearOpMode {
                 column = RelicRecoveryVuMark.LEFT;
             }
         }
+        */
 
         if (isCorner) {
             if (column == RelicRecoveryVuMark.LEFT) {
-                driveStrait(speed, TICK_TO_CRYPTO_BOX_CORNER * direction);
+                //driveStrait(speed, TICK_TO_CRYPTO_BOX_CORNER * direction);
             } else if (column == RelicRecoveryVuMark.CENTER) {
-                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 1050) * direction);
+                driveStrait(speed, (/*TICK_TO_CRYPTO_BOX_CORNER +*/ 1050) * direction);
             } else {
-                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 1980) * direction);
+                driveStrait(speed, (/*TICK_TO_CRYPTO_BOX_CORNER +*/ 1980) * direction);
             }
 
             //turn(speed, TURN_CRYPTO_BOX_CORNER * direction, -1 * TURN_CRYPTO_BOX_CORNER * direction);
             turn(speed, !isRed);
+            driveStrait(speed, 1600);
+            /*
             if (isRed){
                 driveStrait(speed, 1600);
             }
+            */
         } else {
             driveStrait(speed, 4200 * direction);
             //turn(speed, -1 * TURN_1_CRYPTO_BOX_WALL * direction, TURN_1_CRYPTO_BOX_WALL * direction);

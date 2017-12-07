@@ -34,7 +34,7 @@ import android.graphics.Color;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.SensorColor;
+//import org.firstinspires.ftc.robotcontroller.external.samples.SensorColor;
 
 /**
  * This OpMode uses the common Apollo hardware class to define the devices on the robot.
@@ -223,10 +223,10 @@ public class ApolloTeleop extends LinearOpMode {
             telemetry.addData("speed", "%.2f", driveSpeedFactor);
             telemetry.addData("claw down position", "%.2f", robot.clawDownLeft.getPosition());
             telemetry.addData("claw up position", "%.2f", robot.clawUpLeft.getPosition());
-            telemetry.addData("arm Right Left", "%.2f", robot.armRightLeft.getPosition());
-            telemetry.addData("relic Claw", "%.2f", robot.relicClaw.getPosition());
-            telemetry.addData("relic Arm", "%.2f", robot.relicArm.getPosition());
-            telemetry.addData("arm up Down", "%.2f", robot.armUpDown.getPosition());
+            //telemetry.addData("arm Right Left", "%.2f", robot.armRightLeft.getPosition());
+            //telemetry.addData("relic Claw", "%.2f", robot.relicClaw.getPosition());
+            //telemetry.addData("relic Arm", "%.2f", robot.relicArm.getPosition());
+            //telemetry.addData("arm up Down", "%.2f", robot.armUpDown.getPosition());
             telemetry.addData("deltaClawUp", "%.2f", deltaClawUp);
             telemetry.addData("drive speed factor", "%.2f", driveSpeedFactor);
             telemetry.addData("tick left", "%d", robot.driveBackLeft.getCurrentPosition());
