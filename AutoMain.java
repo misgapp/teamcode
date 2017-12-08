@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ThreadPool;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
@@ -22,10 +23,11 @@ public abstract class AutoMain extends LinearOpMode {
     VuforiaLocalizer vuforia;
     VuforiaTrackable relicTemplate;
     VuforiaTrackables relicTrackables;
-    static final double DROP_RIGHT_BALL_POSITION = 0.05;
-    static final double DROP_LEFT_BALL_POSITION = 0.05;
-    public static final double drop_Position_armUpDown = 0.15;
-    public static final double drop_Position_armRightLeft = 0.83;
+    static final double DROP_RIGHT_BALL_POSITION = 1;
+    static final double DROP_LEFT_BALL_POSITION = 0.5;
+    public static final double DROP_POSITION_ARM_UP_DOWN = 0.1;
+    public static final double START_POSITION_ARM_UP_DOWN = 1;
+    public static final double DROP_POSITION_ARM_RIGHT_LEFT = 0.8;
     static final double START_POSITION = 0.05;
 
     double speed = 0.2;
@@ -36,10 +38,11 @@ public abstract class AutoMain extends LinearOpMode {
     }
 
     void apolloRun(boolean isRed, boolean isCorner) {
-        ballsTask(isRed);
-        RelicRecoveryVuMark column = readPhoto();
+        robot.setPositionClaw(0.7, 0.7);
+        //ballsTask(isRed);
+        //RelicRecoveryVuMark column = readPhoto();
         moveToCryptoBox(isRed, isCorner, RelicRecoveryVuMark.LEFT);
-        putCube();
+        //putCube();
     }
 
 
@@ -62,8 +65,14 @@ public abstract class AutoMain extends LinearOpMode {
 
     // Balls task: Move the ball with the other color aside.
     public void ballsTask(boolean isRed) {
-        robot.armUpDown.setPosition(drop_Position_armUpDown);
-        robot.armUpDown.setPosition(drop_Position_armRightLeft);
+        robot.armUpDown.setPosition(DROP_POSITION_ARM_UP_DOWN);
+        robot.armRightLeft.setPosition(DROP_POSITION_ARM_RIGHT_LEFT);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         final int LED_ON = 0;
         final int LED_OFF = 1;
@@ -97,8 +106,15 @@ public abstract class AutoMain extends LinearOpMode {
             }
         }
 
-        robot.armRightLeft.setPosition(robot.start_Position_armRightLeft);
-        robot.armUpDown.setPosition(robot.start_Position_armUpDown);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        robot.armRightLeft.setPosition(DROP_POSITION_ARM_RIGHT_LEFT);
+        robot.armUpDown.setPosition(START_POSITION_ARM_UP_DOWN);
     }
 
     // Read photo and return the column to put the cube in.
@@ -148,7 +164,7 @@ public abstract class AutoMain extends LinearOpMode {
             }
 
             //turn(speed, TURN_CRYPTO_BOX_CORNER * direction, -1 * TURN_CRYPTO_BOX_CORNER * direction);
-            turn(speed, !isRed);
+            turn(speed, false);
             driveStrait(speed, 1600);
             /*
             if (isRed){
@@ -158,14 +174,14 @@ public abstract class AutoMain extends LinearOpMode {
         } else {
             driveStrait(speed, 4200 * direction);
             //turn(speed, -1 * TURN_1_CRYPTO_BOX_WALL * direction, TURN_1_CRYPTO_BOX_WALL * direction);
-            turn(speed, isRed);
+            turn(speed, true);
 
             if (column == RelicRecoveryVuMark.LEFT) {
-                driveStrait(speed, -1 * TICK_TO_CRYPTO_BOX_COLUMN_WALL * direction);
+                driveStrait(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL);
             } else if (column == RelicRecoveryVuMark.CENTER) {
-                driveStrait(speed, ( -1 * (TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1000)) * direction);
+                driveStrait(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1000);
             } else {
-                driveStrait(speed, ( -1 * (TICK_TO_CRYPTO_BOX_COLUMN_WALL + 2000)) * direction);
+                driveStrait(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 2000);
             }
 
             //turn(speed, TURN_2_CRYPTO_BOX_WALL * direction, -1 * TURN_2_CRYPTO_BOX_WALL * direction);
@@ -176,8 +192,7 @@ public abstract class AutoMain extends LinearOpMode {
 
     // Put the cube
     public void putCube() {
-        robot.setPositionClaw(0.1, 0.9);
-        driveStrait(speed, 50);
+        robot.setPositionClaw(1, 1);
     }
 
     //init vuforia
@@ -231,7 +246,7 @@ public abstract class AutoMain extends LinearOpMode {
     }
 
     public void turn(double speed, boolean turn_left) {
-        int ticks = 1800;
+        int ticks = 2100;
         encoderDrive(speed, turn_left ? ticks : -ticks, turn_left ? -ticks : ticks);
     }
 

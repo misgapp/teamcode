@@ -18,7 +18,7 @@ public class AutoTest extends AutoMain {
 
         waitForStart();
 
-        moveToCryptoBox(true, true, RelicRecoveryVuMark.LEFT);
+        driveStrait(0.2, 1000);
 
     }
 }

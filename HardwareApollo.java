@@ -65,10 +65,10 @@ public class HardwareApollo {
 
     public TouchSensor sensor_button = null;
 
-    public static final double start_Position_clawUp = 0.5;
-    public static final double start_Position_clawDown = 0.5;
-    public static final double start_Position_armUpDown = 0.75;
-    public static final double start_Position_armRightLeft = 0.1;
+    public static final double start_Position_clawUp = 1;
+    public static final double start_Position_clawDown = 1;
+    public static final double start_Position_armUpDown = 1;
+    public static final double start_Position_armRightLeft = 0.8;
     public static final double start_Position_relicClaw = 0.5;
     public static final double start_Position_relicArm = 0.5;
 
@@ -112,10 +112,7 @@ public class HardwareApollo {
         //relicArm = hwMap.get(Servo.class, "relic_arm");
         //relicClaw = hwMap.get(Servo.class, "relic_claw");
 
-        clawDownLeft.setPosition(start_Position_clawDown);
-        clawDownRight.setPosition(start_Position_clawDown);
-        clawUpLeft.setPosition(start_Position_clawUp);
-        clawUpRight.setPosition(start_Position_clawUp);
+        setPositionClaw(start_Position_clawUp, start_Position_clawDown);
         armUpDown.setPosition(start_Position_armUpDown);
         armRightLeft.setPosition(start_Position_armRightLeft);
         //relicArm.setPosition(start_Position_relicArm);
@@ -160,8 +157,8 @@ public class HardwareApollo {
 
     public void setPositionClaw(double setPositionUp, double setPositionDown) {
         clawUpRight.setPosition(setPositionUp);
-        clawUpLeft.setPosition(setPositionUp);
-        clawDownLeft.setPosition(setPositionDown);
+        clawUpLeft.setPosition(1-setPositionUp);
+        clawDownLeft.setPosition(1-setPositionDown);
         clawDownRight.setPosition(setPositionDown);
 
     }

@@ -65,8 +65,8 @@ public class ApolloTeleop extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        double clawDownPosition = 0.9;
-        double clawUpPosition = 0.1;
+        double clawDownPosition = robot.start_Position_clawDown;
+        double clawUpPosition = robot.start_Position_clawUp;
         double speed_Left = 0;
         double speed_Right = 0;
         double driveSpeedFactor = SPEED_FACTOR_1;
@@ -168,13 +168,13 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             clawDownPosition += deltaClawDown;
-            clawDownPosition = Math.min(clawDownPosition, 0.55);
-            clawDownPosition = Math.max(clawDownPosition, 0.15);
+            clawDownPosition = Math.min(clawDownPosition, 0.7);
+            clawDownPosition = Math.max(clawDownPosition, 0);
             robot.clawDownLeft.setPosition(clawDownPosition);
             robot.clawDownRight.setPosition(1 - clawDownPosition);
 
             clawUpPosition += deltaClawUp;
-            clawUpPosition = Math.min(clawUpPosition, 1);
+            clawUpPosition = Math.min(clawUpPosition, 0.7);
             clawUpPosition = Math.max(clawUpPosition, 0);
             robot.clawUpLeft.setPosition(clawUpPosition);
             robot.clawUpRight.setPosition(1 - clawUpPosition);
