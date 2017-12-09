@@ -25,9 +25,10 @@ public abstract class AutoMain extends LinearOpMode {
     VuforiaTrackables relicTrackables;
     static final double DROP_RIGHT_BALL_POSITION = 1;
     static final double DROP_LEFT_BALL_POSITION = 0.5;
-    public static final double DROP_POSITION_ARM_UP_DOWN = 0.1;
-    public static final double START_POSITION_ARM_UP_DOWN = 1;
     public static final double DROP_POSITION_ARM_RIGHT_LEFT = 0.8;
+    public static final double DROP_POSITION_ARM_UP_DOWN = 0.05;
+    public static final double START_POSITION_ARM_UP_DOWN = 1;
+
     static final double START_POSITION = 0.05;
 
     double speed = 0.2;
@@ -38,18 +39,18 @@ public abstract class AutoMain extends LinearOpMode {
     }
 
     void apolloRun(boolean isRed, boolean isCorner) {
-        robot.setPositionClaw(0.7, 0.7);
-        //ballsTask(isRed);
-        //RelicRecoveryVuMark column = readPhoto();
-        moveToCryptoBox(isRed, isCorner, RelicRecoveryVuMark.LEFT);
-        //putCube();
+        setClaw();
+        ballsTask(isRed);
+        RelicRecoveryVuMark column = readPhoto();
+        moveToCryptoBox(isRed, isCorner, column);
+        putCube();
     }
 
 
     void readColor() {
         final int LED_ON = 0;
-        //   final int LED_OFF = 1;
-        //  final int COLOR_BLUE = 3;
+        // final int LED_OFF = 1;
+        // final int COLOR_BLUE = 3;
         // final int COLOR_RED = 10;
 
         robot.colorReader.write8(3, LED_ON);
@@ -63,16 +64,23 @@ public abstract class AutoMain extends LinearOpMode {
         }
     }
 
+    public void setClaw (){
+        robot.setPositionClaw(0.5, 0.5);
+        robot.lift.setPower(-speed);
+        sleep(1100);
+        robot.lift.setPower(0);
+    }
+
     // Balls task: Move the ball with the other color aside.
     public void ballsTask(boolean isRed) {
-        robot.armUpDown.setPosition(DROP_POSITION_ARM_UP_DOWN);
         robot.armRightLeft.setPosition(DROP_POSITION_ARM_RIGHT_LEFT);
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        robot.armUpDown.setPosition(0.5);
+        sleep(300);
+        robot.armUpDown.setPosition(0.3);
+        sleep(200);
+        robot.armUpDown.setPosition(DROP_POSITION_ARM_UP_DOWN);
+        sleep(500);
 
         final int LED_ON = 0;
         final int LED_OFF = 1;
@@ -106,15 +114,12 @@ public abstract class AutoMain extends LinearOpMode {
             }
         }
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+        sleep(1000);
 
         robot.armRightLeft.setPosition(DROP_POSITION_ARM_RIGHT_LEFT);
         robot.armUpDown.setPosition(START_POSITION_ARM_UP_DOWN);
+
+        sleep(1000);
     }
 
     // Read photo and return the column to put the cube in.
@@ -131,6 +136,7 @@ public abstract class AutoMain extends LinearOpMode {
 
     // Move to crypto box
     public void moveToCryptoBox(boolean isRed, boolean isCorner, RelicRecoveryVuMark column) {
+        telemetry.addData("column: ", column);
         robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         int direction = isRed ? -1 : 1;
@@ -157,31 +163,24 @@ public abstract class AutoMain extends LinearOpMode {
         if (isCorner) {
             if (column == RelicRecoveryVuMark.LEFT) {
                 driveStrait(speed, TICK_TO_CRYPTO_BOX_CORNER * direction);
-            } else if (column == RelicRecoveryVuMark.CENTER) {
-                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 1050) * direction);
+            } else if (column == RelicRecoveryVuMark.CENTER || column == RelicRecoveryVuMark.UNKNOWN) {
+                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 900) * direction);
             } else {
-                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 1980) * direction);
+                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 1800) * direction);
             }
 
-            //turn(speed, TURN_CRYPTO_BOX_CORNER * direction, -1 * TURN_CRYPTO_BOX_CORNER * direction);
             turn(speed, false);
             driveStrait(speed, 1600);
-            /*
-            if (isRed){
-                driveStrait(speed, 1600);
-            }
-            */
         } else {
             driveStrait(speed, 4200 * direction);
-            //turn(speed, -1 * TURN_1_CRYPTO_BOX_WALL * direction, TURN_1_CRYPTO_BOX_WALL * direction);
             turn(speed, true);
 
             if (column == RelicRecoveryVuMark.LEFT) {
                 driveStrait(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL);
-            } else if (column == RelicRecoveryVuMark.CENTER) {
-                driveStrait(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1000);
+            } else if (column == RelicRecoveryVuMark.CENTER || column == RelicRecoveryVuMark.UNKNOWN) {
+                driveStrait(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 800);
             } else {
-                driveStrait(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 2000);
+                driveStrait(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1600);
             }
 
             //turn(speed, TURN_2_CRYPTO_BOX_WALL * direction, -1 * TURN_2_CRYPTO_BOX_WALL * direction);
@@ -193,6 +192,7 @@ public abstract class AutoMain extends LinearOpMode {
     // Put the cube
     public void putCube() {
         robot.setPositionClaw(1, 1);
+        driveStrait(speed, -500);
     }
 
     //init vuforia

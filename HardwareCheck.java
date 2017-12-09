@@ -20,10 +20,19 @@ public class HardwareCheck extends AutoMain{
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        driveStrait(0.3, 3250);
-        driveStrait(0.3, -3250);
-        turn(0.3, true);
-        turn(0.3, false);
+        for (int g = 0; g<4; g++){
+            for (int i = 0; i<4; i++){
+                driveStrait(0.2, 4000);
+                turn(0.2, false);
+            }
+        }
+        turn(0.2, true);
+        for (int g = 0; g<4; g++){
+            for (int i = 0; i<4; i++){
+                driveStrait(0.2, -4000);
+                turn(0.2, true);
+            }
+        }
     }
 
 }
