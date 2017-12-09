@@ -49,9 +49,6 @@ public abstract class AutoMain extends LinearOpMode {
 
     void readColor() {
         final int LED_ON = 0;
-        // final int LED_OFF = 1;
-        // final int COLOR_BLUE = 3;
-        // final int COLOR_RED = 10;
 
         robot.colorReader.write8(3, LED_ON);
 
@@ -136,16 +133,12 @@ public abstract class AutoMain extends LinearOpMode {
 
     // Move to crypto box
     public void moveToCryptoBox(boolean isRed, boolean isCorner, RelicRecoveryVuMark column) {
-        telemetry.addData("column: ", column);
         robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         int direction = isRed ? -1 : 1;
 
         final int TICK_TO_CRYPTO_BOX_CORNER = 4250;
         final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 500;
-        final int TURN_1_CRYPTO_BOX_WALL = 1200;
-        final int TURN_2_CRYPTO_BOX_WALL = 1200;
-        final int TURN_CRYPTO_BOX_CORNER = 1200;
 
         /*
         if (!isRed){
