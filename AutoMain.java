@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ThreadPool;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -42,6 +43,7 @@ public abstract class AutoMain extends LinearOpMode {
         setClaw();
         ballsTask(isRed);
         RelicRecoveryVuMark column = readPhoto();
+        reportImage(column);
         moveToCryptoBox(isRed, isCorner, column);
         putCube();
     }
@@ -64,7 +66,7 @@ public abstract class AutoMain extends LinearOpMode {
     public void setClaw (){
         robot.setPositionClaw(0.5, 0.5);
         robot.lift.setPower(-speed);
-        sleep(1100);
+        sleep(1500);
         robot.lift.setPower(0);
     }
 
@@ -122,7 +124,9 @@ public abstract class AutoMain extends LinearOpMode {
     // Read photo and return the column to put the cube in.
     public RelicRecoveryVuMark readPhoto() {
         relicTrackables.activate();
-        for (int i = 0; i < 3; i++) {
+        ElapsedTime runtime = new ElapsedTime();
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 2.0)) {
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
             if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
                 return vuMark;
@@ -165,7 +169,7 @@ public abstract class AutoMain extends LinearOpMode {
             turn(speed, false);
             driveStrait(speed, 1600);
         } else {
-            driveStrait(speed, 4200 * direction);
+            driveStrait(speed, 3700 * direction);
             turn(speed, true);
 
             if (column == RelicRecoveryVuMark.LEFT) {
@@ -314,5 +318,18 @@ public abstract class AutoMain extends LinearOpMode {
         telemetry.update();
        */
 
+    }
+
+    void reportImage(RelicRecoveryVuMark column) {
+        if (column == RelicRecoveryVuMark.CENTER) {
+            telemetry.addData("Image", "Center");
+        } else if (column == RelicRecoveryVuMark.LEFT) {
+            telemetry.addData("Image", "Left");
+        } else if (column == RelicRecoveryVuMark.RIGHT) {
+            telemetry.addData("Image", "Right");
+        } else {
+            telemetry.addData("Image", "Unknown");
+        }
+        telemetry.update();
     }
 }
