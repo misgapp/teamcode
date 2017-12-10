@@ -144,15 +144,13 @@ public abstract class AutoMain extends LinearOpMode {
         final int TICK_TO_CRYPTO_BOX_CORNER = 4250;
         final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 500;
 
-        /*
-        if (!isRed){
+        if (isRed){
             if (column == RelicRecoveryVuMark.LEFT) {
                 column = RelicRecoveryVuMark.RIGHT;
             } else  if (column == RelicRecoveryVuMark.RIGHT){
                 column = RelicRecoveryVuMark.LEFT;
             }
         }
-        */
 
         //close servo claw
         //robot.setPositionClaw(up,down);
