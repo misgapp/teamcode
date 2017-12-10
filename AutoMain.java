@@ -139,7 +139,7 @@ public abstract class AutoMain extends LinearOpMode {
     public void moveToCryptoBox(boolean isRed, boolean isCorner, RelicRecoveryVuMark column) {
         robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        int direction = isRed ? -1 : 1;
+        int direction = isRed ? 1 : -1;
 
         final int TICK_TO_CRYPTO_BOX_CORNER = 4250;
         final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 500;
@@ -181,7 +181,7 @@ public abstract class AutoMain extends LinearOpMode {
             }
 
             //turn(speed, TURN_2_CRYPTO_BOX_WALL * direction, -1 * TURN_2_CRYPTO_BOX_WALL * direction);
-            turn(speed, isRed);
+            turn(speed, !isRed);
             driveStrait(speed, 1300);
         }
     }
