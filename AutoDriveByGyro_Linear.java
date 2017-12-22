@@ -141,9 +141,9 @@ public class AutoDriveByGyro_Linear extends LinearOpMode {
             gyroDrive(DRIVE_SPEED, 1000, 0.0);
             gyroTurn(TURN_SPEED, -90.0);
             gyroHold( TURN_SPEED, -90.0, 1.0);
-            gyroDrive(DRIVE_SPEED, 1000, 0.0);
             gyroTurn(TURN_SPEED, 90.0);
             gyroHold( TURN_SPEED, 90.0, 1.0);
+            gyroDrive(DRIVE_SPEED, -4000, 0.0);
         }
 
         telemetry.addData("Path", "Complete");
