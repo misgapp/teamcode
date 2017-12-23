@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -36,8 +37,10 @@ import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.configuration.ServoConfiguration;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 // the lift is in Remarks because we dont have another  motor
@@ -57,11 +60,14 @@ public class HardwareApollo {
     public Servo armRightLeft = null;
     public Servo relicArm = null;
     public Servo relicClaw = null;
+    public Servo ClawRight = null;
+    public Servo ClawLeft = null;
     public TouchSensor sensorTouch = null;
     //public ColorSensor sensorColor = null;
     public I2cAddr colorAddr = I2cAddr.create8bit(0x3c);
     public I2cDevice color = null;
     public I2cDeviceSynch colorReader = null;
+    ModernRoboticsI2cGyro gyro = null;
 
     public TouchSensor sensor_button = null;
 
@@ -71,6 +77,7 @@ public class HardwareApollo {
     public static final double start_Position_armRightLeft = 0.8;
     public static final double start_Position_relicClaw = 0.5;
     public static final double start_Position_relicArm = 0.5;
+    public static final double start_testServo = 0.5;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -106,11 +113,12 @@ public class HardwareApollo {
         clawDownLeft = hwMap.get(Servo.class, "claw_down_left");
         clawDownRight = hwMap.get(Servo.class, "claw_down_right");
         clawUpLeft = hwMap.get(Servo.class, "claw_up_left");
-        clawUpRight = hwMap.get(Servo.class, "claw_up_right");
+        //clawUpRight = hwMap.get(Servo.class, "claw_up_right");
         armRightLeft = hwMap.get(Servo.class, "arm_right_left");
         armUpDown = hwMap.get(Servo.class, "arm_up_down");
         //relicArm = hwMap.get(Servo.class, "relic_arm");
         //relicClaw = hwMap.get(Servo.class, "relic_claw");
+        //ClawLeft = hwMap.get(Servo.class, "sl");
 
         setPositionClaw(start_Position_clawUp, start_Position_clawDown);
         armUpDown.setPosition(start_Position_armUpDown);
@@ -118,11 +126,13 @@ public class HardwareApollo {
         //relicArm.setPosition(start_Position_relicArm);
         //relicClaw.setPosition(start_Position_relicClaw);
 
-
         //sensorColor = hwMap.get(ColorSensor.class, "sensor_color");
         color = hwMap.i2cDevice.get("sc");
         colorReader = new I2cDeviceSynchImpl(color, colorAddr, false);
         colorReader.engage();
+
+        gyro = (ModernRoboticsI2cGyro)hwMap.gyroSensor.get("gyro");
+        gyro.calibrate();
         //sensorColor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
         //sensorTouch = hwMap.get(TouchSensor.class, "sensor_touch");
     }

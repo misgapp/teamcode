@@ -18,6 +18,7 @@ public class AutoTest extends AutoMain {
 
         waitForStart();
 
+        /*
         for (int g = 0; g<4; g++){
             for (int i = 0; i<4; i++){
                 driveStrait(0.2, 4000);
@@ -32,5 +33,6 @@ public class AutoTest extends AutoMain {
             }
         }
 
+*/
     }
 }

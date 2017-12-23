@@ -37,7 +37,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 /**
  * This file illustrates the concept of driving a path based on Gyro heading and encoder counts.
@@ -77,7 +76,7 @@ public class AutoDriveByGyro_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareApollo        robot   = new HardwareApollo();   // Use a Pushbot's hardware
-    ModernRoboticsI2cGyro   gyro    = null;                    // Additional Gyro device
+    //ModernRoboticsI2cGyro   gyro    = null;                    // Additional Gyro device
 
     static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
@@ -87,7 +86,7 @@ public class AutoDriveByGyro_Linear extends LinearOpMode {
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.7;     // Nominal speed for better accuracy.
+    static final double     DRIVE_SPEED             = 0.2;     // Nominal speed for better accuracy.
     static final double     TURN_SPEED              = 0.5;     // Nominal half speed for better accuracy.
 
     static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
@@ -103,7 +102,6 @@ public class AutoDriveByGyro_Linear extends LinearOpMode {
          * The init() method of the hardware class does most of the work here
          */
         robot.init(hardwareMap);
-        gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("gyro");
 
         // Ensure the robot it stationary, then reset the encoders and calibrate the gyro.
         robot.setDriveMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -111,10 +109,9 @@ public class AutoDriveByGyro_Linear extends LinearOpMode {
         telemetry.addData(">", "Calibrating Gyro");    //
         telemetry.update();
 
-        gyro.calibrate();
 
         // make sure the gyro is calibrated before continuing
-        while (!isStopRequested() && gyro.isCalibrating())  {
+        while (!isStopRequested() && robot.gyro.isCalibrating())  {
             sleep(50);
             idle();
         }
@@ -126,16 +123,16 @@ public class AutoDriveByGyro_Linear extends LinearOpMode {
 
         // Wait for the game to start (Display Gyro value), and reset gyro before we move..
         while (!isStarted()) {
-            telemetry.addData(">", "Robot Heading = %d", gyro.getIntegratedZValue());
+            telemetry.addData(">", "Robot Heading = %d", robot.gyro.getIntegratedZValue());
             telemetry.update();
         }
-
-        gyro.resetZAxisIntegrator();
+        robot.gyro.resetZAxisIntegrator();
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
 
+        /*
         while (opModeIsActive()) {
             gyroDrive(DRIVE_SPEED, 3000, 0.0);
             gyroDrive(DRIVE_SPEED, 1000, 0.0);
@@ -144,6 +141,11 @@ public class AutoDriveByGyro_Linear extends LinearOpMode {
             gyroTurn(TURN_SPEED, 90.0);
             gyroHold( TURN_SPEED, 90.0, 1.0);
             gyroDrive(DRIVE_SPEED, -4000, 0.0);
+        }
+        */
+
+        while (opModeIsActive()) {
+            gyroDrive(DRIVE_SPEED, 3000, 0.0);
         }
 
         telemetry.addData("Path", "Complete");
@@ -166,7 +168,6 @@ public class AutoDriveByGyro_Linear extends LinearOpMode {
     public void gyroDrive ( double speed,
                             double distanceTick,
                             double angle) {
-
         int     newLeftTarget;
         int     newRightTarget;
         int     moveCounts;
@@ -192,13 +193,19 @@ public class AutoDriveByGyro_Linear extends LinearOpMode {
             robot.driveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.driveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+            robot.driveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.driveBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
             // start motion.
             speed = Range.clip(Math.abs(speed), 0.0, 1.0);
-           robot.setPowerAllDriveMotors(speed);
+            robot.setPowerAllDriveMotors(speed);
 
             // keep looping while we are still active, and BOTH motors are running.
-            while (opModeIsActive() &&
-                   (robot.driveBackLeft.isBusy() && robot.driveBackRight.isBusy())) {
+            while (opModeIsActive()) {
+                    // &&   (robot.driveBackLeft.isBusy() && robot.driveBackRight.isBusy())) {
+
+
+
 
                 // adjust relative speed based on heading error.
                 error = getError(angle);
@@ -208,9 +215,11 @@ public class AutoDriveByGyro_Linear extends LinearOpMode {
                 if (distanceTick < 0)
                     steer *= -1.0;
 
+
                 leftSpeed = speed - steer;
                 rightSpeed = speed + steer;
 
+                /*
                 // Normalize speeds if either one exceeds +/- 1.0;
                 max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
                 if (max > 1.0)
@@ -218,6 +227,20 @@ public class AutoDriveByGyro_Linear extends LinearOpMode {
                     leftSpeed /= max;
                     rightSpeed /= max;
                 }
+
+
+                */
+
+                if (steer <= -1) {
+                    rightSpeed = 0.01;
+                }
+
+                if (steer >= 1) {
+                    leftSpeed = 0.01;
+                }
+
+                //leftSpeed = Range.clip(Math.abs(leftSpeed), 0.0, 1.0);
+                //rightSpeed = Range.clip(Math.abs(rightSpeed), 0.0, 1.0);
 
                 robot.setPowerLeftDriveMotors(leftSpeed);
                 robot.setPowerRightDriveMotors(rightSpeed);
@@ -343,7 +366,7 @@ public class AutoDriveByGyro_Linear extends LinearOpMode {
         double robotError;
 
         // calculate error in -179 to +180 range  (
-        robotError = targetAngle - gyro.getIntegratedZValue();
+        robotError = targetAngle - robot.gyro.getIntegratedZValue();
         while (robotError > 180)  robotError -= 360;
         while (robotError <= -180) robotError += 360;
         return robotError;
