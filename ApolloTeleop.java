@@ -29,8 +29,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Color;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -65,8 +63,8 @@ public class ApolloTeleop extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        double clawDownPosition = robot.start_Position_clawDown;
-        double clawUpPosition = robot.start_Position_clawUp;
+        double clawDownPosition = robot.START_POSITION_CLAW_DOWN;
+        double clawUpPosition = robot.START_POSITION_CLAW_UP;
         double speed_Left = 0;
         double speed_Right = 0;
         double driveSpeedFactor = SPEED_FACTOR_1;
@@ -93,6 +91,7 @@ public class ApolloTeleop extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            //Change speed of the motors
             if (gamepad1.x) {
                 driveDirectionForward = true;
                 idle();
@@ -141,11 +140,13 @@ public class ApolloTeleop extends LinearOpMode {
                 speedFactorDownPressHandled = false;
             }
 
+            //Set power to the motor according to the change
             robot.driveBackLeft.setPower(speed_Left / driveSpeedFactor);
             robot.driveBackRight.setPower(speed_Right / driveSpeedFactor);
             robot.driveFrontLeft.setPower(speed_Left / driveSpeedFactor);
             robot.driveFrontRight.setPower(speed_Right / driveSpeedFactor);
 
+            //Set power to the lift according to the buttons
             if (gamepad2.left_trigger > 0) {
                 robot.lift.setPower(LIFT_SPEED);
             } else if (gamepad2.right_trigger > 0) {
@@ -178,6 +179,18 @@ public class ApolloTeleop extends LinearOpMode {
             clawUpPosition = Math.max(clawUpPosition, 0);
             robot.clawUpLeft.setPosition(clawUpPosition);
             robot.clawUpRight.setPosition(1 - clawUpPosition);
+
+            if (gamepad2.right_bumper){
+                robot.setPositionWheel(robot.DROP_POSITION);
+            }else{
+                robot.setPositionWheel(robot.STOP_POSITION);
+            }
+
+            if (gamepad2.left_bumper){
+                robot.setPositionWheel(robot.GRAB_POSITION);
+            }else{
+                robot.setPositionWheel(robot.STOP_POSITION);
+            }
 
             if (gamepad2.a){
                 robot.relicArm.setPosition(0.2);
@@ -223,7 +236,7 @@ public class ApolloTeleop extends LinearOpMode {
             telemetry.addData("speed", "%.2f", driveSpeedFactor);
             telemetry.addData("claw down position", "%.2f", robot.clawDownLeft.getPosition());
             telemetry.addData("claw up position", "%.2f", robot.clawUpLeft.getPosition());
-            //telemetry.addData("arm Right Left", "%.2f", robot.armRightLeft.getPosition());
+            telemetry.addData("arm Right Left", "%.2f", robot.armRightLeft.getPosition());
             //telemetry.addData("relic Claw", "%.2f", robot.relicClaw.getPosition());
             //telemetry.addData("relic Arm", "%.2f", robot.relicArm.getPosition());
             //telemetry.addData("arm up Down", "%.2f", robot.armUpDown.getPosition());

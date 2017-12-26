@@ -30,17 +30,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
-import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.hardware.configuration.ServoConfiguration;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 // the lift is in Remarks because we dont have another  motor
@@ -60,8 +57,10 @@ public class HardwareApollo {
     public Servo armRightLeft = null;
     public Servo relicArm = null;
     public Servo relicClaw = null;
-    public Servo ClawRight = null;
-    public Servo ClawLeft = null;
+    public Servo wheelDownLeft = null;
+    public Servo wheelDownRight = null;
+    public Servo wheelUpLeft = null;
+    public Servo wheelUpRight = null;
     public TouchSensor sensorTouch = null;
     //public ColorSensor sensorColor = null;
     public I2cAddr colorAddr = I2cAddr.create8bit(0x3c);
@@ -71,13 +70,15 @@ public class HardwareApollo {
 
     public TouchSensor sensor_button = null;
 
-    public static final double start_Position_clawUp = 1;
-    public static final double start_Position_clawDown = 1;
-    public static final double start_Position_armUpDown = 1;
-    public static final double start_Position_armRightLeft = 0.8;
-    public static final double start_Position_relicClaw = 0.5;
-    public static final double start_Position_relicArm = 0.5;
-    public static final double start_testServo = 0.5;
+    public static final double START_POSITION_CLAW_UP = 1;
+    public static final double START_POSITION_CLAW_DOWN = 1;
+    public static final double START_POSITION_ARM_UP_DOWN = 1;
+    public static final double START_POSITION_ARM_RIGHT_LEFT = 0.8;
+    public static final double START_POSITION_RELIC_CLAW = 0.5;
+    public static final double START_POSITION_RELIC_ARM = 0.5;
+    public static final double STOP_POSITION= 0.5;
+    public static final double DROP_POSITION= 1;
+    public static final double GRAB_POSITION= 0;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -113,18 +114,22 @@ public class HardwareApollo {
         clawDownLeft = hwMap.get(Servo.class, "claw_down_left");
         clawDownRight = hwMap.get(Servo.class, "claw_down_right");
         clawUpLeft = hwMap.get(Servo.class, "claw_up_left");
-        //clawUpRight = hwMap.get(Servo.class, "claw_up_right");
+        clawUpRight = hwMap.get(Servo.class, "claw_up_right");
         armRightLeft = hwMap.get(Servo.class, "arm_right_left");
         armUpDown = hwMap.get(Servo.class, "arm_up_down");
         //relicArm = hwMap.get(Servo.class, "relic_arm");
         //relicClaw = hwMap.get(Servo.class, "relic_claw");
-        //ClawLeft = hwMap.get(Servo.class, "sl");
+        wheelDownLeft = hwMap.get(Servo.class, "wdl");
+        wheelDownRight = hwMap.get(Servo.class, "wdr");
+        wheelUpLeft = hwMap.get(Servo.class, "wul");
+        wheelUpRight = hwMap.get(Servo.class, "wur");
 
-        setPositionClaw(start_Position_clawUp, start_Position_clawDown);
-        armUpDown.setPosition(start_Position_armUpDown);
-        armRightLeft.setPosition(start_Position_armRightLeft);
-        //relicArm.setPosition(start_Position_relicArm);
-        //relicClaw.setPosition(start_Position_relicClaw);
+        setPositionClaw(START_POSITION_CLAW_UP, START_POSITION_CLAW_DOWN);
+        //armUpDown.setPosition(START_POSITION_ARM_UP_DOWN);
+        //armRightLeft.setPosition(START_POSITION_ARM_RIGHT_LEFT);
+        //relicArm.setPosition(START_POSITION_RELIC_ARM);
+        //relicClaw.setPosition(START_POSITION_RELIC_CLAW);
+        setPositionWheel(STOP_POSITION);
 
         //sensorColor = hwMap.get(ColorSensor.class, "sensor_color");
         color = hwMap.i2cDevice.get("sc");
@@ -133,7 +138,6 @@ public class HardwareApollo {
 
         gyro = (ModernRoboticsI2cGyro)hwMap.gyroSensor.get("gyro");
         gyro.calibrate();
-        //sensorColor = hwMap.get(NormalizedColorSensor.class, "sensor_color");
         //sensorTouch = hwMap.get(TouchSensor.class, "sensor_touch");
     }
 
@@ -165,12 +169,20 @@ public class HardwareApollo {
         driveFrontRight.setPower(speed);
     }
 
+    //Function: set position to all the claws
     public void setPositionClaw(double setPositionUp, double setPositionDown) {
         clawUpRight.setPosition(setPositionUp);
         clawUpLeft.setPosition(1-setPositionUp);
         clawDownLeft.setPosition(1-setPositionDown);
         clawDownRight.setPosition(setPositionDown);
+    }
 
+    //Function: set position to all the wheel
+    public void setPositionWheel(double setPosition) {
+        wheelUpRight.setPosition(setPosition);
+        wheelUpLeft.setPosition(setPosition);
+        wheelDownLeft.setPosition(setPosition);
+        wheelDownRight.setPosition(setPosition);
     }
 }
 
