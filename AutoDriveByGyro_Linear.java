@@ -204,9 +204,6 @@ public class AutoDriveByGyro_Linear extends LinearOpMode {
             while (opModeIsActive()) {
                     // &&   (robot.driveBackLeft.isBusy() && robot.driveBackRight.isBusy())) {
 
-
-
-
                 // adjust relative speed based on heading error.
                 error = getError(angle);
                 steer = getSteer(error, P_DRIVE_COEFF);

@@ -182,11 +182,7 @@ public class ApolloTeleop extends LinearOpMode {
 
             if (gamepad2.right_bumper){
                 robot.setPositionWheel(robot.DROP_POSITION);
-            }else{
-                robot.setPositionWheel(robot.STOP_POSITION);
-            }
-
-            if (gamepad2.left_bumper){
+            }else if (gamepad2.left_bumper){
                 robot.setPositionWheel(robot.GRAB_POSITION);
             }else{
                 robot.setPositionWheel(robot.STOP_POSITION);
