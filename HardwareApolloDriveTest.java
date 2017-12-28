@@ -42,7 +42,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 // the lift is in Remarks because we dont have another  motor
 
-public class HardwareApollo {
+public class HardwareApolloDriveTest {
     /* Public OpMode members. */
     public DcMotor driveFrontLeft = null;
     public DcMotor driveFrontRight = null;
@@ -94,51 +94,51 @@ public class HardwareApollo {
         driveBackRight = hwMap.get(DcMotor.class, "drive_back_right");
         driveFrontLeft = hwMap.get(DcMotor.class, "drive_front_left");
         driveFrontRight = hwMap.get(DcMotor.class, "drive_front_right");
-        lift = hwMap.get(DcMotor.class, "lift");
+    //    lift = hwMap.get(DcMotor.class, "lift");
 
         driveBackLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         driveBackRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         driveFrontLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         driveFrontRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        lift.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+    //    lift.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
 
         // Set all motors to zero power
         setPowerAllDriveMotors(0);
-        lift.setPower(0);
+    //    lift.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         setDriveMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        clawDownLeft = hwMap.get(Servo.class, "claw_down_left");
-        clawDownRight = hwMap.get(Servo.class, "claw_down_right");
-        clawUpLeft = hwMap.get(Servo.class, "claw_up_left");
-        clawUpRight = hwMap.get(Servo.class, "claw_up_right");
-        armRightLeft = hwMap.get(Servo.class, "arm_right_left");
-        armUpDown = hwMap.get(Servo.class, "arm_up_down");
-        //relicArm = hwMap.get(Servo.class, "relic_arm");
-        //relicClaw = hwMap.get(Servo.class, "relic_claw");
-        wheelDownLeft = hwMap.get(Servo.class, "wdl");
-        wheelDownRight = hwMap.get(Servo.class, "wdr");
-        wheelUpLeft = hwMap.get(Servo.class, "wul");
-        wheelUpRight = hwMap.get(Servo.class, "wur");
-
-        setPositionClaw(START_POSITION_CLAW_UP, START_POSITION_CLAW_DOWN);
-        //armUpDown.setPosition(START_POSITION_ARM_UP_DOWN);
-        //armRightLeft.setPosition(START_POSITION_ARM_RIGHT_LEFT);
-        //relicArm.setPosition(START_POSITION_RELIC_ARM);
-        //relicClaw.setPosition(START_POSITION_RELIC_CLAW);
-        setPositionWheel(STOP_POSITION);
-
-        //sensorColor = hwMap.get(ColorSensor.class, "sensor_color");
-        color = hwMap.i2cDevice.get("sc");
-        colorReader = new I2cDeviceSynchImpl(color, colorAddr, false);
-        colorReader.engage();
-
-        gyro = (ModernRoboticsI2cGyro)hwMap.gyroSensor.get("gyro");
-        gyro.calibrate();
-        //sensorTouch = hwMap.get(TouchSensor.class, "sensor_touch");
+//        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//
+//        clawDownLeft = hwMap.get(Servo.class, "claw_down_left");
+//        clawDownRight = hwMap.get(Servo.class, "claw_down_right");
+//        clawUpLeft = hwMap.get(Servo.class, "claw_up_left");
+//        clawUpRight = hwMap.get(Servo.class, "claw_up_right");
+//        armRightLeft = hwMap.get(Servo.class, "arm_right_left");
+//        armUpDown = hwMap.get(Servo.class, "arm_up_down");
+//        //relicArm = hwMap.get(Servo.class, "relic_arm");
+//        //relicClaw = hwMap.get(Servo.class, "relic_claw");
+//        wheelDownLeft = hwMap.get(Servo.class, "wdl");
+//        wheelDownRight = hwMap.get(Servo.class, "wdr");
+//        wheelUpLeft = hwMap.get(Servo.class, "wul");
+//        wheelUpRight = hwMap.get(Servo.class, "wur");
+//
+//        setPositionClaw(START_POSITION_CLAW_UP, START_POSITION_CLAW_DOWN);
+//        //armUpDown.setPosition(START_POSITION_ARM_UP_DOWN);
+//        //armRightLeft.setPosition(START_POSITION_ARM_RIGHT_LEFT);
+//        //relicArm.setPosition(START_POSITION_RELIC_ARM);
+//        //relicClaw.setPosition(START_POSITION_RELIC_CLAW);
+//        setPositionWheel(STOP_POSITION);
+//
+//        //sensorColor = hwMap.get(ColorSensor.class, "sensor_color");
+//        color = hwMap.i2cDevice.get("sc");
+//        colorReader = new I2cDeviceSynchImpl(color, colorAddr, false);
+//        colorReader.engage();
+//
+//        gyro = (ModernRoboticsI2cGyro)hwMap.gyroSensor.get("gyro");
+//        gyro.calibrate();
+//        //sensorTouch = hwMap.get(TouchSensor.class, "sensor_touch");
     }
 
     //Function: set mode run using encoder
@@ -170,19 +170,19 @@ public class HardwareApollo {
     }
 
     //Function: set position to all the claws
-    public void setPositionClaw(double setPositionUp, double setPositionDown) {
-        clawUpRight.setPosition(setPositionUp);
-        clawUpLeft.setPosition(1-setPositionUp);
-        clawDownLeft.setPosition(1-setPositionDown);
-        clawDownRight.setPosition(setPositionDown);
-    }
+//    public void setPositionClaw(double setPositionUp, double setPositionDown) {
+//        clawUpRight.setPosition(setPositionUp);
+//        clawUpLeft.setPosition(1-setPositionUp);
+//        clawDownLeft.setPosition(1-setPositionDown);
+//        clawDownRight.setPosition(setPositionDown);
+//    }
 
     //Function: set position to all the wheel
-    public void setPositionWheel(double setPosition) {
-        wheelUpRight.setPosition(setPosition);
-        wheelUpLeft.setPosition(setPosition);
-        wheelDownLeft.setPosition(setPosition);
-        wheelDownRight.setPosition(setPosition);
-    }
+//    public void setPositionWheel(double setPosition) {
+//        wheelUpRight.setPosition(setPosition);
+//        wheelUpLeft.setPosition(setPosition);
+//        wheelDownLeft.setPosition(setPosition);
+//        wheelDownRight.setPosition(setPosition);
+//    }
 }
 
