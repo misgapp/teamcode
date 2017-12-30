@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -39,6 +41,9 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 // the lift is in Remarks because we dont have another  motor
 
@@ -66,7 +71,7 @@ public class HardwareApollo {
     public I2cAddr colorAddr = I2cAddr.create8bit(0x3c);
     public I2cDevice color = null;
     public I2cDeviceSynch colorReader = null;
-    ModernRoboticsI2cGyro gyro = null;
+    BNO055IMU imu;
 
     public TouchSensor sensor_button = null;
 
@@ -136,8 +141,22 @@ public class HardwareApollo {
         colorReader = new I2cDeviceSynchImpl(color, colorAddr, false);
         colorReader.engage();
 
-        gyro = (ModernRoboticsI2cGyro)hwMap.gyroSensor.get("gyro");
-        gyro.calibrate();
+        // Set up the parameters with which we will use our IMU. Note that integration
+        // algorithm here just reports accelerations to the logcat log; it doesn't actually
+        // provide positional information.
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
+        imu = hwMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
         //sensorTouch = hwMap.get(TouchSensor.class, "sensor_touch");
     }
 
@@ -184,5 +203,11 @@ public class HardwareApollo {
         wheelDownLeft.setPosition(setPosition);
         wheelDownRight.setPosition(setPosition);
     }
+
+    public void preaperForStart(){
+        // Start the logging of measured acceleration
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+    }
+
 }
 
