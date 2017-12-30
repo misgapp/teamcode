@@ -82,8 +82,8 @@ public class HardwareApollo {
     public static final double START_POSITION_RELIC_CLAW = 0.5;
     public static final double START_POSITION_RELIC_ARM = 0.5;
     public static final double STOP_POSITION= 0.5;
-    public static final double DROP_POSITION= 1;
-    public static final double GRAB_POSITION= 0;
+    public static final double DROP_POSITION= 0.9;
+    public static final double GRAB_POSITION= 0.1;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -95,10 +95,10 @@ public class HardwareApollo {
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        driveBackLeft = hwMap.get(DcMotor.class, "drive_back_left");
-        driveBackRight = hwMap.get(DcMotor.class, "drive_back_right");
-        driveFrontLeft = hwMap.get(DcMotor.class, "drive_front_left");
-        driveFrontRight = hwMap.get(DcMotor.class, "drive_front_right");
+        driveBackLeft = hwMap.get(DcMotor.class, "dbl");
+        driveBackRight = hwMap.get(DcMotor.class, "dbr");
+        driveFrontLeft = hwMap.get(DcMotor.class, "dfl");
+        driveFrontRight = hwMap.get(DcMotor.class, "dfr");
         lift = hwMap.get(DcMotor.class, "lift");
 
         driveBackLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
@@ -116,18 +116,18 @@ public class HardwareApollo {
         setDriveMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        clawDownLeft = hwMap.get(Servo.class, "claw_down_left");
-        clawDownRight = hwMap.get(Servo.class, "claw_down_right");
-        clawUpLeft = hwMap.get(Servo.class, "claw_up_left");
-        clawUpRight = hwMap.get(Servo.class, "claw_up_right");
-        armRightLeft = hwMap.get(Servo.class, "arm_right_left");
-        armUpDown = hwMap.get(Servo.class, "arm_up_down");
+        clawDownLeft = hwMap.get(Servo.class, "cdl");
+        clawDownRight = hwMap.get(Servo.class, "cdr");
+        //clawUpLeft = hwMap.get(Servo.class, "claw_up_left");
+        //clawUpRight = hwMap.get(Servo.class, "claw_up_right");
+        //armRightLeft = hwMap.get(Servo.class, "arm_right_left");
+        //armUpDown = hwMap.get(Servo.class, "arm_up_down");
         //relicArm = hwMap.get(Servo.class, "relic_arm");
         //relicClaw = hwMap.get(Servo.class, "relic_claw");
         wheelDownLeft = hwMap.get(Servo.class, "wdl");
         wheelDownRight = hwMap.get(Servo.class, "wdr");
-        wheelUpLeft = hwMap.get(Servo.class, "wul");
-        wheelUpRight = hwMap.get(Servo.class, "wur");
+        //wheelUpLeft = hwMap.get(Servo.class, "wul");
+        //wheelUpRight = hwMap.get(Servo.class, "wur");
 
         setPositionClaw(START_POSITION_CLAW_UP, START_POSITION_CLAW_DOWN);
         //armUpDown.setPosition(START_POSITION_ARM_UP_DOWN);
@@ -137,9 +137,9 @@ public class HardwareApollo {
         setPositionWheel(STOP_POSITION);
 
         //sensorColor = hwMap.get(ColorSensor.class, "sensor_color");
-        color = hwMap.i2cDevice.get("sc");
-        colorReader = new I2cDeviceSynchImpl(color, colorAddr, false);
-        colorReader.engage();
+        //color = hwMap.i2cDevice.get("sc");
+        //colorReader = new I2cDeviceSynchImpl(color, colorAddr, false);
+        //colorReader.engage();
 
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
@@ -190,21 +190,21 @@ public class HardwareApollo {
 
     //Function: set position to all the claws
     public void setPositionClaw(double setPositionUp, double setPositionDown) {
-        clawUpRight.setPosition(setPositionUp);
-        clawUpLeft.setPosition(1-setPositionUp);
+        //clawUpRight.setPosition(setPositionUp);
+        //clawUpLeft.setPosition(1-setPositionUp);
         clawDownLeft.setPosition(1-setPositionDown);
         clawDownRight.setPosition(setPositionDown);
     }
 
     //Function: set position to all the wheel
     public void setPositionWheel(double setPosition) {
-        wheelUpRight.setPosition(setPosition);
-        wheelUpLeft.setPosition(setPosition);
-        wheelDownLeft.setPosition(setPosition);
+        //wheelUpRight.setPosition(setPosition);
+        //wheelUpLeft.setPosition(1-setPosition);
+        wheelDownLeft.setPosition(1-setPosition);
         wheelDownRight.setPosition(setPosition);
     }
 
-    public void preaperForStart(){
+    public void prepareForStart(){
         // Start the logging of measured acceleration
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
     }

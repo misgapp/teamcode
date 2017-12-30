@@ -40,7 +40,7 @@ public abstract class AutoMain extends LinearOpMode {
     }
 
     void apolloRun(boolean isRed, boolean isCorner) {
-        robot.preaperForStart();
+        robot.prepareForStart();
         setClaw();
         ballsTask(isRed);
         RelicRecoveryVuMark column = readPhoto();

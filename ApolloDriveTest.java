@@ -48,7 +48,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name = "Apollo Teleop", group = "Apollo")
+@TeleOp(name = "Apollo Teleop1", group = "Apollo")
 //@Disabled //TODO Enable this to show program in TeleOP list - lasim lev
 public class ApolloDriveTest extends LinearOpMode {
     // the lift is in Remarks because we dont have another  motor

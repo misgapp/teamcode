@@ -177,8 +177,8 @@ public class ApolloTeleop extends LinearOpMode {
             clawUpPosition += deltaClawUp;
             clawUpPosition = Math.min(clawUpPosition, 0.7);
             clawUpPosition = Math.max(clawUpPosition, 0);
-            robot.clawUpLeft.setPosition(clawUpPosition);
-            robot.clawUpRight.setPosition(1 - clawUpPosition);
+            //robot.clawUpLeft.setPosition(clawUpPosition);
+            //robot.clawUpRight.setPosition(1 - clawUpPosition);
 
             if (gamepad2.right_bumper){
                 robot.setPositionWheel(robot.DROP_POSITION);
@@ -188,6 +188,7 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.setPositionWheel(robot.STOP_POSITION);
             }
 
+            /*
             if (gamepad2.a){
                 robot.relicArm.setPosition(0.2);
             }
@@ -226,13 +227,14 @@ public class ApolloTeleop extends LinearOpMode {
            } else {
                 gamepad2_a_previous_pressed = false;
            }
+           */
 
             telemetry.addData("left", "%.2f", speed_Left);
             telemetry.addData("right", "%.2f", speed_Right);
             telemetry.addData("speed", "%.2f", driveSpeedFactor);
             telemetry.addData("claw down position", "%.2f", robot.clawDownLeft.getPosition());
-            telemetry.addData("claw up position", "%.2f", robot.clawUpLeft.getPosition());
-            telemetry.addData("arm Right Left", "%.2f", robot.armRightLeft.getPosition());
+            //telemetry.addData("claw up position", "%.2f", robot.clawUpLeft.getPosition());
+            //telemetry.addData("arm Right Left", "%.2f", robot.armRightLeft.getPosition());
             //telemetry.addData("relic Claw", "%.2f", robot.relicClaw.getPosition());
             //telemetry.addData("relic Arm", "%.2f", robot.relicArm.getPosition());
             //telemetry.addData("arm up Down", "%.2f", robot.armUpDown.getPosition());
