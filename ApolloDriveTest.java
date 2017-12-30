@@ -36,7 +36,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 /**
  * This OpMode uses the common Apollo hardware class to define the devices on the robot.
- * All device access is managed through the HardwarePushbot class.
+ * All device access is managed through the TestHardwareSingleMotor class.
  * The code is structured as a LinearOpMode
  * <p>
  * This particular OpMode executes a POV Game style Teleop for a PushBot
@@ -63,7 +63,7 @@ public class ApolloDriveTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-      //  double clawDownPosition = robot.START_POSITION_CLAW_DOWN;
+        //  double clawDownPosition = robot.START_POSITION_CLAW_DOWN;
         //  double clawUpPosition = robot.START_POSITION_CLAW_UP;
         double speed_Left = 0;
         double speed_Right = 0;
@@ -166,7 +166,7 @@ public class ApolloDriveTest extends LinearOpMode {
             //    if (deltaClawUp < 0.3 && deltaClawUp > -0.3) {
             //        deltaClawUp = 0;
             //        telemetry.addData("deltaClawUp - clear", "%.2f", deltaClawUp);
-            }
+        }
 
         //   clawDownPosition += deltaClawDown;
         //    clawDownPosition = Math.min(clawDownPosition, 0.7);
@@ -227,9 +227,9 @@ public class ApolloDriveTest extends LinearOpMode {
 //                gamepad2_a_previous_pressed = false;
 //           }
 
-            telemetry.addData("left", "%.2f", speed_Left);
-            telemetry.addData("right", "%.2f", speed_Right);
-            telemetry.addData("speed", "%.2f", driveSpeedFactor);
+        telemetry.addData("left", "%.2f", speed_Left);
+        telemetry.addData("right", "%.2f", speed_Right);
+        telemetry.addData("speed", "%.2f", driveSpeedFactor);
 //            telemetry.addData("claw down position", "%.2f", robot.clawDownLeft.getPosition());
 //            telemetry.addData("claw up position", "%.2f", robot.clawUpLeft.getPosition());
 //            telemetry.addData("arm Right Left", "%.2f", robot.armRightLeft.getPosition());
@@ -237,14 +237,14 @@ public class ApolloDriveTest extends LinearOpMode {
 //            //telemetry.addData("relic Arm", "%.2f", robot.relicArm.getPosition());
 //            //telemetry.addData("arm up Down", "%.2f", robot.armUpDown.getPosition());
 //            telemetry.addData("deltaClawUp", "%.2f", deltaClawUp);
-            telemetry.addData("drive speed factor", "%.2f", driveSpeedFactor);
+        telemetry.addData("drive speed factor", "%.2f", driveSpeedFactor);
 //            telemetry.addData("tick left", "%d", robot.driveBackLeft.getCurrentPosition());
 //            telemetry.addData("tick right", "%d", robot.driveBackRight.getCurrentPosition());
-            //telemetry.addData("drive direction forward", "%.2f", driveDirectionForward);
-            telemetry.update();
+        //telemetry.addData("drive direction forward", "%.2f", driveDirectionForward);
+        telemetry.update();
 
-            // Pace this loop so jaw action is reasonable speed.
-            sleep(50);
-        }
+        // Pace this loop so jaw action is reasonable speed.
+        sleep(50);
     }
+}
 

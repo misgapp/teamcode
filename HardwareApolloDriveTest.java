@@ -76,9 +76,9 @@ public class HardwareApolloDriveTest {
     public static final double START_POSITION_ARM_RIGHT_LEFT = 0.8;
     public static final double START_POSITION_RELIC_CLAW = 0.5;
     public static final double START_POSITION_RELIC_ARM = 0.5;
-    public static final double STOP_POSITION= 0.5;
-    public static final double DROP_POSITION= 1;
-    public static final double GRAB_POSITION= 0;
+    public static final double STOP_POSITION = 0.5;
+    public static final double DROP_POSITION = 1;
+    public static final double GRAB_POSITION = 0;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -94,22 +94,22 @@ public class HardwareApolloDriveTest {
         driveBackRight = hwMap.get(DcMotor.class, "drive_back_right");
         driveFrontLeft = hwMap.get(DcMotor.class, "drive_front_left");
         driveFrontRight = hwMap.get(DcMotor.class, "drive_front_right");
-    //    lift = hwMap.get(DcMotor.class, "lift");
+        lift = hwMap.get(DcMotor.class, "lift");
 
         driveBackLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         driveBackRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         driveFrontLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         driveFrontRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-    //    lift.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        lift.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
 
         // Set all motors to zero power
         setPowerAllDriveMotors(0);
-    //    lift.setPower(0);
+        lift.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         setDriveMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //
 //        clawDownLeft = hwMap.get(Servo.class, "claw_down_left");
 //        clawDownRight = hwMap.get(Servo.class, "claw_down_right");
