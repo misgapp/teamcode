@@ -27,7 +27,7 @@ public abstract class AutoMain extends LinearOpMode {
     static final double DROP_RIGHT_BALL_POSITION = 1;
     static final double DROP_LEFT_BALL_POSITION = 0.5;
     public static final double DROP_POSITION_ARM_RIGHT_LEFT = 0.8;
-    public static final double DROP_POSITION_ARM_UP_DOWN = 0.05;
+    public static final double DROP_POSITION_ARM_UP_DOWN = 0.1;
     public static final double START_POSITION_ARM_UP_DOWN = 1;
 
     static final double START_POSITION = 0.05;
@@ -50,21 +50,21 @@ public abstract class AutoMain extends LinearOpMode {
     }
 
 
-    void readColor() {
-        final int LED_ON = 0;
+//    void readColor() {
+//        final int LED_ON = 0;
+//
+//        robot.colorReader.write8(3, LED_ON);
+//
+//        while (opModeIsActive()) {
+//            int color = robot.colorReader.read8(4);
+//
+//            telemetry.addData("ball color: ", color);
+//            telemetry.update();
+//            idle();
+//        }
+//    }
 
-        robot.colorReader.write8(3, LED_ON);
-
-        while (opModeIsActive()) {
-            int color = robot.colorReader.read8(4);
-
-            telemetry.addData("ball color: ", color);
-            telemetry.update();
-            idle();
-        }
-    }
-
-    public void setClaw (){
+    public void setClaw() {
         robot.setPositionClaw(0.5, 0.5);
         robot.lift.setPower(-speed);
         sleep(1500);
@@ -79,6 +79,9 @@ public abstract class AutoMain extends LinearOpMode {
         sleep(300);
         robot.armUpDown.setPosition(0.3);
         sleep(200);
+
+        robot.armRightLeft.setPosition(0.5);
+
         robot.armUpDown.setPosition(DROP_POSITION_ARM_UP_DOWN);
         sleep(500);
 
@@ -87,26 +90,39 @@ public abstract class AutoMain extends LinearOpMode {
         final int COLOR_BLUE = 3;
         final int COLOR_RED = 10;
 
-        robot.colorReader.write8(3, LED_ON);
+        //robot.colorReader.write8(3, LED_ON);
 
-        int color = 0;
-        for (int i = 0 ; i < 100 ; i++) {
-            color = robot.colorReader.read8(4);
-            if (color != 0) {
+        int colorRed = 0;
+        int colorBlue = 0;
+        for (int i = 0; i < 100; i++) {
+            colorRed = robot.colorabi.red();
+            colorBlue = robot.colorabi.blue();
+            if (colorRed != 0 && colorBlue != 0) {
                 break;
+            }
+            for (int e = 0; e < 100; e++) {
+                colorBlue = robot.colorado.red();
+                colorRed = robot.colorado.blue();
+                if (colorRed != 0 && colorBlue != 0) {
+                    break;
+                }
             }
         }
 
-        telemetry.addData("ball color: ", color);
+        int coloradoColorRed = 0;
+        int coloradoColorBlue = 0;
+
+
+        telemetry.addData("ball color: ", colorRed);
         telemetry.update();
 
-        if (color == COLOR_BLUE) {
+        if (colorRed == COLOR_BLUE) {
             if (isRed) {
                 robot.armRightLeft.setPosition(DROP_RIGHT_BALL_POSITION);
             } else {
                 robot.armRightLeft.setPosition(DROP_LEFT_BALL_POSITION);
             }
-        } else if (color == COLOR_RED) {
+        } else if (colorRed == COLOR_RED) {
             if (isRed) {
                 robot.armRightLeft.setPosition(DROP_LEFT_BALL_POSITION);
             } else {
@@ -145,10 +161,10 @@ public abstract class AutoMain extends LinearOpMode {
         final int TICK_TO_CRYPTO_BOX_CORNER = 4250;
         final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 500;
 
-        if (isRed){
+        if (isRed) {
             if (column == RelicRecoveryVuMark.LEFT) {
                 column = RelicRecoveryVuMark.RIGHT;
-            } else  if (column == RelicRecoveryVuMark.RIGHT){
+            } else if (column == RelicRecoveryVuMark.RIGHT) {
                 column = RelicRecoveryVuMark.LEFT;
             }
         }
