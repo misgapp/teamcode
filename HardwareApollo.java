@@ -31,13 +31,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.I2cAddr;
-import com.qualcomm.robotcore.hardware.I2cDevice;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -67,10 +63,11 @@ public class HardwareApollo {
     public Servo wheelUpLeft = null;
     public Servo wheelUpRight = null;
     public TouchSensor sensorTouch = null;
-    //public ColorSensor sensorColor = null;
-    public I2cAddr colorAddr = I2cAddr.create8bit(0x3c);
-    public I2cDevice color = null;
-    public I2cDeviceSynch colorReader = null;
+    public ColorSensor colorado = null;
+    public ColorSensor colorabi = null;
+    //public I2cAddr colorAddr = I2cAddr.create8bit(0x3c);
+    //public I2cDevice color = null;
+    //public I2cDeviceSynch colorReader = null;
     BNO055IMU imu;
 
     public TouchSensor sensor_button = null;
@@ -81,9 +78,9 @@ public class HardwareApollo {
     public static final double START_POSITION_ARM_RIGHT_LEFT = 0.8;
     public static final double START_POSITION_RELIC_CLAW = 0.5;
     public static final double START_POSITION_RELIC_ARM = 0.5;
-    public static final double STOP_POSITION= 0.5;
-    public static final double DROP_POSITION= 0.9;
-    public static final double GRAB_POSITION= 0.1;
+    public static final double STOP_POSITION = 0.5;
+    public static final double DROP_POSITION = 0.9;
+    public static final double GRAB_POSITION = 0.1;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -136,7 +133,8 @@ public class HardwareApollo {
         //relicClaw.setPosition(START_POSITION_RELIC_CLAW);
         setPositionWheel(STOP_POSITION);
 
-        //sensorColor = hwMap.get(ColorSensor.class, "sensor_color");
+        colorado = hwMap.get(ColorSensor.class, "sc");
+        colorabi = hwMap.get(ColorSensor.class, "sc1");
         //color = hwMap.i2cDevice.get("sc");
         //colorReader = new I2cDeviceSynchImpl(color, colorAddr, false);
         //colorReader.engage();
@@ -145,11 +143,11 @@ public class HardwareApollo {
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
@@ -192,7 +190,7 @@ public class HardwareApollo {
     public void setPositionClaw(double setPositionUp, double setPositionDown) {
         //clawUpRight.setPosition(setPositionUp);
         //clawUpLeft.setPosition(1-setPositionUp);
-        clawDownLeft.setPosition(1-setPositionDown);
+        clawDownLeft.setPosition(1 - setPositionDown);
         clawDownRight.setPosition(setPositionDown);
     }
 
@@ -200,11 +198,11 @@ public class HardwareApollo {
     public void setPositionWheel(double setPosition) {
         //wheelUpRight.setPosition(setPosition);
         //wheelUpLeft.setPosition(1-setPosition);
-        wheelDownLeft.setPosition(1-setPosition);
+        wheelDownLeft.setPosition(1 - setPosition);
         wheelDownRight.setPosition(setPosition);
     }
 
-    public void prepareForStart(){
+    public void prepareForStart() {
         // Start the logging of measured acceleration
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
     }
