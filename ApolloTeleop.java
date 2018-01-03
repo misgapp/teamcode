@@ -55,10 +55,10 @@ public class ApolloTeleop extends LinearOpMode {
     HardwareApollo robot = new HardwareApollo();
 
     static final double LIFT_SPEED = 0.6;
-    static final double SPEED_FACTOR_1 = 1.2;
-    static final double SPEED_FACTOR_2 = 1.8;
-    static final double SPEED_FACTOR_3 = 2.6;
-    static final double SPEED_FACTOR_4 = 3.5;
+    static final double SPEED_FACTOR_1 = 1.0;
+    static final double SPEED_FACTOR_2 = 1.4;
+    static final double SPEED_FACTOR_3 = 2.0;
+    static final double SPEED_FACTOR_4 = 2.5;
 
     @Override
     public void runOpMode() {
@@ -180,9 +180,35 @@ public class ApolloTeleop extends LinearOpMode {
             //robot.clawUpLeft.setPosition(clawUpPosition);
             //robot.clawUpRight.setPosition(1 - clawUpPosition);
 
-            if (gamepad2.right_bumper){
+            double deltaWheelDown = -gamepad2.left_stick_x/2;
+
+            if (deltaWheelDown < 0.3 && deltaClawDown > -0.3) {
+                deltaWheelDown = 0;
+            }
+
+            double deltaWheelsUp = -gamepad2.right_stick_x/2;
+
+            if (deltaWheelsUp < 0.3 && deltaClawUp > -0.3) {
+                deltaWheelsUp = 0;
+                telemetry.addData("deltaClawUp - clear", "%.2f", deltaClawUp);
+            }
+
+            clawDownPosition += deltaWheelDown;
+            clawDownPosition = Math.min(clawDownPosition, 1);
+            clawDownPosition = Math.max(clawDownPosition, 0);
+            robot.clawDownLeft.setPosition(clawDownPosition);
+            robot.clawDownRight.setPosition(clawDownPosition);
+
+            clawUpPosition += deltaWheelsUp;
+            clawUpPosition = Math.min(clawUpPosition, 1);
+            clawUpPosition = Math.max(clawUpPosition, 0);
+            robot.clawUpLeft.setPosition(clawUpPosition);
+            robot.clawUpRight.setPosition(clawUpPosition);
+
+
+            if (gamepad1.right_trigger>0){
                 robot.setPositionWheel(robot.DROP_POSITION);
-            }else if (gamepad2.left_bumper){
+            }else if (gamepad1.left_trigger>0){
                 robot.setPositionWheel(robot.GRAB_POSITION);
             }else{
                 robot.setPositionWheel(robot.STOP_POSITION);
