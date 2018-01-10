@@ -197,7 +197,7 @@ public class ApolloTeleop extends LinearOpMode {
             clawDownPosition = Math.min(clawDownPosition, 1);
             clawDownPosition = Math.max(clawDownPosition, 0);
             robot.clawDownLeft.setPosition(clawDownPosition);
-            robot.clawDownRight.setPosition(clawDownPosition);
+            robot.clawDownRight.setPosition(1 - clawDownPosition);
 
             clawUpPosition += deltaWheelsUp;
             clawUpPosition = Math.min(clawUpPosition, 1);
