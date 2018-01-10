@@ -52,19 +52,19 @@ public class HardwareApollo {
     public DcMotor lift = null;
     public Servo clawDownLeft = null;
     public Servo clawDownRight = null;
-    public Servo clawUpLeft = null;
-    public Servo clawUpRight = null;
-    public Servo armUpDown = null;
-    public Servo armRightLeft = null;
-    public Servo relicArm = null;
-    public Servo relicClaw = null;
+   // public Servo clawUpLeft = null;
+    //public Servo clawUpRight = null;
+    //public Servo armUpDown = null;
+    //public Servo armRightLeft = null;
+    //public Servo relicArm = null;
+    //public Servo relicClaw = null;
     public Servo wheelDownLeft = null;
     public Servo wheelDownRight = null;
     public Servo wheelUpLeft = null;
     public Servo wheelUpRight = null;
     public TouchSensor sensorTouch = null;
-    public ColorSensor colorado = null;
-    public ColorSensor colorabi = null;
+    //public ColorSensor colorado = null;
+    //public ColorSensor colorabi = null;
     //public I2cAddr colorAddr = I2cAddr.create8bit(0x3c);
     //public I2cDevice color = null;
     //public I2cDeviceSynch colorReader = null;
@@ -133,8 +133,8 @@ public class HardwareApollo {
         //relicClaw.setPosition(START_POSITION_RELIC_CLAW);
         setPositionWheel(STOP_POSITION);
 
-        colorado = hwMap.get(ColorSensor.class, "sc");
-        colorabi = hwMap.get(ColorSensor.class, "sc1");
+      //  colorado = hwMap.get(ColorSensor.class, "sc");
+        //colorabi = hwMap.get(ColorSensor.class, "sc1");
         //color = hwMap.i2cDevice.get("sc");
         //colorReader = new I2cDeviceSynchImpl(color, colorAddr, false);
         //colorReader.engage();

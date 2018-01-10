@@ -73,16 +73,16 @@ public abstract class AutoMain extends LinearOpMode {
 
     // Balls task: Move the ball with the other color aside.
     public void ballsTask(boolean isRed) {
-        robot.armRightLeft.setPosition(DROP_POSITION_ARM_RIGHT_LEFT);
+        //robot.armRightLeft.setPosition(DROP_POSITION_ARM_RIGHT_LEFT);
 
-        robot.armUpDown.setPosition(0.5);
+        //robot.armUpDown.setPosition(0.5);
         sleep(300);
-        robot.armUpDown.setPosition(0.3);
+        //robot.armUpDown.setPosition(0.3);
         sleep(200);
 
-        robot.armRightLeft.setPosition(0.5);
+        //robot.armRightLeft.setPosition(0.5);
 
-        robot.armUpDown.setPosition(DROP_POSITION_ARM_UP_DOWN);
+        //robot.armUpDown.setPosition(DROP_POSITION_ARM_UP_DOWN);
         sleep(500);
 
         final int LED_ON = 0;
@@ -95,14 +95,14 @@ public abstract class AutoMain extends LinearOpMode {
         int colorRed = 0;
         int colorBlue = 0;
         for (int i = 0; i < 100; i++) {
-            colorRed = robot.colorabi.red();
-            colorBlue = robot.colorabi.blue();
+            //colorRed = robot.colorabi.red();
+            //colorBlue = robot.colorabi.blue();
             if (colorRed != 0 && colorBlue != 0) {
                 break;
             }
             for (int e = 0; e < 100; e++) {
-                colorBlue = robot.colorado.red();
-                colorRed = robot.colorado.blue();
+                //colorBlue = robot.colorado.red();
+                //colorRed = robot.colorado.blue();
                 if (colorRed != 0 && colorBlue != 0) {
                     break;
                 }
@@ -118,22 +118,22 @@ public abstract class AutoMain extends LinearOpMode {
 
         if (colorRed == COLOR_BLUE) {
             if (isRed) {
-                robot.armRightLeft.setPosition(DROP_RIGHT_BALL_POSITION);
+                //robot.armRightLeft.setPosition(DROP_RIGHT_BALL_POSITION);
             } else {
-                robot.armRightLeft.setPosition(DROP_LEFT_BALL_POSITION);
+                //robot.armRightLeft.setPosition(DROP_LEFT_BALL_POSITION);
             }
         } else if (colorRed == COLOR_RED) {
             if (isRed) {
-                robot.armRightLeft.setPosition(DROP_LEFT_BALL_POSITION);
+                //robot.armRightLeft.setPosition(DROP_LEFT_BALL_POSITION);
             } else {
-                robot.armRightLeft.setPosition(DROP_RIGHT_BALL_POSITION);
+                //robot.armRightLeft.setPosition(DROP_RIGHT_BALL_POSITION);
             }
         }
 
         sleep(1000);
 
-        robot.armRightLeft.setPosition(DROP_POSITION_ARM_RIGHT_LEFT);
-        robot.armUpDown.setPosition(START_POSITION_ARM_UP_DOWN);
+        //robot.armRightLeft.setPosition(DROP_POSITION_ARM_RIGHT_LEFT);
+        //robot.armUpDown.setPosition(START_POSITION_ARM_UP_DOWN);
 
         sleep(1000);
     }
