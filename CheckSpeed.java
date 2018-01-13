@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Check robot hardware.
  */
 @Autonomous(name="Apollo: speed check", group="Apollo")
-public class CheckSpeed extends AutoMain{
+public class CheckSpeed extends AutoMain {
 
     HardwareApollo robot = new HardwareApollo();
     @Override
