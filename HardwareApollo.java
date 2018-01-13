@@ -52,7 +52,7 @@ public class HardwareApollo {
     public DcMotor lift = null;
     public Servo clawDownLeft = null;
     public Servo clawDownRight = null;
-   // public Servo clawUpLeft = null;
+    // public Servo clawUpLeft = null;
     //public Servo clawUpRight = null;
     //public Servo armUpDown = null;
     //public Servo armRightLeft = null;
@@ -72,8 +72,8 @@ public class HardwareApollo {
 
     public TouchSensor sensor_button = null;
 
-    public static final double START_POSITION_CLAW_UP = 1;
-    public static final double START_POSITION_CLAW_DOWN = 1;
+    public static final double START_POSITION_CLAW_UP = 0.5;
+    public static final double START_POSITION_CLAW_DOWN = 0.5;
     public static final double START_POSITION_ARM_UP_DOWN = 1;
     public static final double START_POSITION_ARM_RIGHT_LEFT = 0.8;
     public static final double START_POSITION_RELIC_CLAW = 0.5;
@@ -133,7 +133,7 @@ public class HardwareApollo {
         //relicClaw.setPosition(START_POSITION_RELIC_CLAW);
         setPositionWheel(STOP_POSITION);
 
-      //  colorado = hwMap.get(ColorSensor.class, "sc");
+        //  colorado = hwMap.get(ColorSensor.class, "sc");
         //colorabi = hwMap.get(ColorSensor.class, "sc1");
         //color = hwMap.i2cDevice.get("sc");
         //colorReader = new I2cDeviceSynchImpl(color, colorAddr, false);

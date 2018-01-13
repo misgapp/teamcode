@@ -155,13 +155,13 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.lift.setPower(0);
             }
 
-            double deltaClawDown = -gamepad2.left_stick_y/2;
+            double deltaClawDown = -gamepad2.left_stick_y / 2;
 
             if (deltaClawDown < 0.3 && deltaClawDown > -0.3) {
                 deltaClawDown = 0;
             }
 
-            double deltaClawUp = -gamepad2.right_stick_y/2;
+            double deltaClawUp = -gamepad2.right_stick_y / 2;
 
             if (deltaClawUp < 0.3 && deltaClawUp > -0.3) {
                 deltaClawUp = 0;
@@ -170,23 +170,23 @@ public class ApolloTeleop extends LinearOpMode {
 
             clawDownPosition += deltaClawDown;
             clawDownPosition = Math.min(clawDownPosition, 0.7);
-            clawDownPosition = Math.max(clawDownPosition, 0);
+            clawDownPosition = Math.max(clawDownPosition, 0.5);
             robot.clawDownLeft.setPosition(clawDownPosition);
             robot.clawDownRight.setPosition(1 - clawDownPosition);
 
             clawUpPosition += deltaClawUp;
             clawUpPosition = Math.min(clawUpPosition, 0.7);
-            clawUpPosition = Math.max(clawUpPosition, 0);
+            clawUpPosition = Math.max(clawUpPosition, 0.5);
             //robot.clawUpLeft.setPosition(clawUpPosition);
             //robot.clawUpRight.setPosition(1 - clawUpPosition);
 
-            double deltaWheelDown = -gamepad2.left_stick_x/2;
+            double deltaWheelDown = -gamepad2.left_stick_x / 2;
 
             if (deltaWheelDown < 0.3 && deltaClawDown > -0.3) {
                 deltaWheelDown = 0;
             }
 
-            double deltaWheelsUp = -gamepad2.right_stick_x/2;
+            double deltaWheelsUp = -gamepad2.right_stick_x / 2;
 
             if (deltaWheelsUp < 0.3 && deltaClawUp > -0.3) {
                 deltaWheelsUp = 0;
@@ -206,12 +206,17 @@ public class ApolloTeleop extends LinearOpMode {
             //robot.clawUpRight.setPosition(clawUpPosition);
 
 
-            if (gamepad1.right_trigger>0){
+            if (gamepad1.right_trigger > 0) {
                 robot.setPositionWheel(robot.DROP_POSITION);
-            }else if (gamepad1.left_trigger>0){
+            } else if (gamepad1.left_trigger > 0) {
                 robot.setPositionWheel(robot.GRAB_POSITION);
-            }else{
+            } else {
                 robot.setPositionWheel(robot.STOP_POSITION);
+            }
+
+            if (gamepad2.y) {
+                robot.clawDownLeft.setPosition(0.85);
+                robot.clawDownRight.setPosition(0.15);
             }
 
 
