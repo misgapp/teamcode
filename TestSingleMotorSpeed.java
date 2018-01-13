@@ -90,7 +90,7 @@ public class TestSingleMotorSpeed extends LinearOpMode {
         telemetry.addData("position: ", motor.getCurrentPosition());
         telemetry.update();
         sleep(2000);
-        
+
 
     }
 }
