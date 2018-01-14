@@ -52,8 +52,8 @@ public class HardwareApollo {
     public DcMotor lift = null;
     public Servo clawDownLeft = null;
     public Servo clawDownRight = null;
-    // public Servo clawUpLeft = null;
-    //public Servo clawUpRight = null;
+    public Servo clawUpLeft = null;
+    public Servo clawUpRight = null;
     //public Servo armUpDown = null;
     //public Servo armRightLeft = null;
     //public Servo relicArm = null;
@@ -115,16 +115,16 @@ public class HardwareApollo {
 
         clawDownLeft = hwMap.get(Servo.class, "cdl");
         clawDownRight = hwMap.get(Servo.class, "cdr");
-        //clawUpLeft = hwMap.get(Servo.class, "claw_up_left");
-        //clawUpRight = hwMap.get(Servo.class, "claw_up_right");
+        clawUpLeft = hwMap.get(Servo.class, "cul");
+        clawUpRight = hwMap.get(Servo.class, "cur");
         //armRightLeft = hwMap.get(Servo.class, "arm_right_left");
         //armUpDown = hwMap.get(Servo.class, "arm_up_down");
         //relicArm = hwMap.get(Servo.class, "relic_arm");
         //relicClaw = hwMap.get(Servo.class, "relic_claw");
         wheelDownLeft = hwMap.get(Servo.class, "wdl");
         wheelDownRight = hwMap.get(Servo.class, "wdr");
-        //wheelUpLeft = hwMap.get(Servo.class, "wul");
-        //wheelUpRight = hwMap.get(Servo.class, "wur");
+        wheelUpLeft = hwMap.get(Servo.class, "wul");
+        wheelUpRight = hwMap.get(Servo.class, "wur");
 
         setPositionClaw(START_POSITION_CLAW_UP, START_POSITION_CLAW_DOWN);
         //armUpDown.setPosition(START_POSITION_ARM_UP_DOWN);
@@ -196,10 +196,11 @@ public class HardwareApollo {
 
     //Function: set position to all the wheel
     public void setPositionWheel(double setPosition) {
-        //wheelUpRight.setPosition(setPosition);
-        //wheelUpLeft.setPosition(1-setPosition);
-        wheelDownLeft.setPosition(1 - setPosition);
+        wheelUpRight.setPosition(setPosition);
+        wheelUpLeft.setPosition(1-setPosition);
         wheelDownRight.setPosition(setPosition);
+        wheelDownLeft.setPosition(1 - setPosition);
+
     }
 
     public void prepareForStart() {

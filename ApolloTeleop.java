@@ -54,7 +54,7 @@ public class ApolloTeleop extends LinearOpMode {
     // the lift is in Remarks because we dont have another  motor
     HardwareApollo robot = new HardwareApollo();
 
-    static final double LIFT_SPEED = 0.6;
+    static final double LIFT_SPEED = 0.75;
     static final double SPEED_FACTOR_1 = 1.0;
     static final double SPEED_FACTOR_2 = 1.4;
     static final double SPEED_FACTOR_3 = 2.0;
@@ -161,7 +161,7 @@ public class ApolloTeleop extends LinearOpMode {
                 deltaClawDown = 0;
             }
 
-            double deltaClawUp = -gamepad2.right_stick_y / 2;
+            double deltaClawUp = gamepad2.right_stick_y / 2;
 
             if (deltaClawUp < 0.3 && deltaClawUp > -0.3) {
                 deltaClawUp = 0;
@@ -177,8 +177,8 @@ public class ApolloTeleop extends LinearOpMode {
             clawUpPosition += deltaClawUp;
             clawUpPosition = Math.min(clawUpPosition, 0.7);
             clawUpPosition = Math.max(clawUpPosition, 0.5);
-            //robot.clawUpLeft.setPosition(clawUpPosition);
-            //robot.clawUpRight.setPosition(1 - clawUpPosition);
+            robot.clawUpLeft.setPosition(clawUpPosition);
+            robot.clawUpRight.setPosition(1 - clawUpPosition);
 
             double deltaWheelDown = -gamepad2.left_stick_x / 2;
 
@@ -213,6 +213,7 @@ public class ApolloTeleop extends LinearOpMode {
             } else {
                 robot.setPositionWheel(robot.STOP_POSITION);
             }
+
 
             if (gamepad2.y) {
                 robot.clawDownLeft.setPosition(0.85);
