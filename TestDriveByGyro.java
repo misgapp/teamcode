@@ -1,31 +1,3 @@
-/* Copyright (c) 2017 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 
 package org.firstinspires.ftc.teamcode;
 
@@ -42,41 +14,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 
-/**
- * This file illustrates the concept of driving a path based on Gyro heading and encoder counts.
- * It uses the common Pushbot hardware class to define the drive on the robot.
- * The code is structured as a LinearOpMode
- *
- * The code REQUIRES that you DO have encoders on the wheels,
- *   otherwise you would use: PushbotAutoDriveByTime;
- *
- *  This code ALSO requires that you have a Modern Robotics I2C gyro with the name "gyro"
- *   otherwise you would use: PushbotAutoDriveByEncoder;
- *
- *  This code requires that the drive Motors have been configured such that a positive
- *  power command moves them forward, and causes the encoders to count UP.
- *
- *  This code uses the RUN_TO_POSITION mode to enable the Motor controllers to generate the run profile
- *
- *  In order to calibrate the Gyro correctly, the robot must remain stationary during calibration.
- *  This is performed when the INIT button is pressed on the Driver Station.
- *  This code assumes that the robot is stationary when the INIT button is pressed.
- *  If this is not the case, then the INIT should be performed again.
- *
- *  Note: in this example, all angles are referenced to the initial coordinate frame set during the
- *  the Gyro Calibration process, or whenever the program issues a resetZAxisIntegrator() call on the Gyro.
- *
- *  The angle of movement/rotation is assumed to be a standardized rotation around the robot Z axis,
- *  which means that a Positive rotation is Counter Clock Wise, looking down on the field.
- *  This is consistent with the FTC field coordinate conventions set out in the document:
- *  ftc_app\doc\tutorial\FTC_FieldCoordinateSystemDefinition.pdf
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
 
-@Autonomous(name="Apollo: Auto Drive By Gyro", group="Apollo")
-public class AutoDriveByGyroRev_Linear extends LinearOpMode {
+@Autonomous(name="Apollo: Test Drive By Gyro", group="Apollo")
+public class TestDriveByGyro extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareApollo        robot   = new HardwareApollo();   // Use a Pushbot's hardware
@@ -117,8 +57,6 @@ public class AutoDriveByGyroRev_Linear extends LinearOpMode {
         telemetry.update();
 
 
-        robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         // Wait for the game to start (Display Gyro value), and reset gyro before we move..
         waitForStart();
 
@@ -126,24 +64,22 @@ public class AutoDriveByGyroRev_Linear extends LinearOpMode {
         robot.imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
 
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        // Put a hold after each turn
+        for (int g = 0; g<4; g++){
+            gyroDrive(0.5, 3000, 0.0);
+            gyroTurn(0.5, 90.0);
+            gyroHold(0.5, 90.0, 0.5);
 
-        /*
-        while (opModeIsActive()) {
-            gyroDrive(DRIVE_SPEED, 3000, 0.0);
-            gyroDrive(DRIVE_SPEED, 1000, 0.0);
-            gyroTurn(TURN_SPEED, -90.0);
-            gyroHold( TURN_SPEED, -90.0, 1.0);
-            gyroTurn(TURN_SPEED, 90.0);
-            gyroHold( TURN_SPEED, 90.0, 1.0);
-            gyroDrive(DRIVE_SPEED, -4000, 0.0);
-        }
-        */
+            gyroDrive(0.5, 3000, 90.0);
+            gyroTurn(0.5, 180.0);
+            gyroHold(0.5, 180.0, 0.5);
 
-        while (opModeIsActive()) {
-            gyroDrive(DRIVE_SPEED, 3000, 0.0);
+            gyroDrive(0.5, 3000, 180.0);
+            gyroTurn(0.5, 270.0);
+            gyroHold(0.5, 270.0, 0.5);
+
+            gyroDrive(0.5, 3000, 270.0);
+            gyroTurn(0.5, 0.0);
+            gyroHold(0.5, 0, 0.5);
         }
 
         telemetry.addData("Path", "Complete");
@@ -166,8 +102,10 @@ public class AutoDriveByGyroRev_Linear extends LinearOpMode {
     public void gyroDrive ( double speed,
                             double distanceTick,
                             double angle) {
-        int     newLeftTarget;
-        int     newRightTarget;
+        int     newBackLeftTarget;
+        int     newBackRightTarget;
+        int     newFrontLeftTarget;
+        int     newFrontRightTarget;
         int     moveCounts;
         double  max;
         double  error;
@@ -177,30 +115,33 @@ public class AutoDriveByGyroRev_Linear extends LinearOpMode {
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
-
+            robot.setDriveMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             // Determine new target position, and pass to motor controller
             //moveCounts = (int)(distance * COUNTS_PER_INCH);
             moveCounts = (int)(distanceTick);
-            newLeftTarget = robot.driveBackLeft.getCurrentPosition() + moveCounts;
-            newRightTarget = robot.driveBackRight.getCurrentPosition() + moveCounts;
+            newBackLeftTarget = robot.driveBackLeft.getCurrentPosition() + moveCounts;
+            newBackRightTarget = robot.driveBackRight.getCurrentPosition() + moveCounts;
+            newFrontLeftTarget = robot.driveFrontLeft.getCurrentPosition() + moveCounts;
+            newFrontRightTarget = robot.driveFrontRight.getCurrentPosition() + moveCounts;
 
             // Set Target and Turn On RUN_TO_POSITION
-            robot.driveBackLeft.setTargetPosition(newLeftTarget);
-            robot.driveBackRight.setTargetPosition(newRightTarget);
+            robot.driveBackLeft.setTargetPosition(newBackLeftTarget);
+            robot.driveBackRight.setTargetPosition(newBackRightTarget);
+            robot.driveFrontLeft.setTargetPosition(newFrontLeftTarget);
+            robot.driveFrontRight.setTargetPosition(newFrontRightTarget);
 
-            robot.driveBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.driveBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            robot.driveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.driveBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.setDriveMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // start motion.
             speed = Range.clip(Math.abs(speed), 0.0, 1.0);
             robot.setPowerAllDriveMotors(speed);
 
             // keep looping while we are still active, and BOTH motors are running.
-            while (opModeIsActive()) {
-                    // &&   (robot.driveBackLeft.isBusy() && robot.driveBackRight.isBusy())) {
+            while (opModeIsActive() &&
+                    robot.driveBackLeft.isBusy() &&
+                    robot.driveBackRight.isBusy() &&
+                    robot.driveFrontLeft.isBusy() &&
+                    robot.driveFrontRight.isBusy()) {
 
                 // adjust relative speed based on heading error.
                 error = getError(angle);
@@ -210,11 +151,9 @@ public class AutoDriveByGyroRev_Linear extends LinearOpMode {
                 if (distanceTick < 0)
                     steer *= -1.0;
 
-
                 leftSpeed = speed - steer;
                 rightSpeed = speed + steer;
 
-                /*
                 // Normalize speeds if either one exceeds +/- 1.0;
                 max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
                 if (max > 1.0)
@@ -222,27 +161,12 @@ public class AutoDriveByGyroRev_Linear extends LinearOpMode {
                     leftSpeed /= max;
                     rightSpeed /= max;
                 }
-
-
-                */
-
-                if (steer <= -1) {
-                    rightSpeed = 0.01;
-                }
-
-                if (steer >= 1) {
-                    leftSpeed = 0.01;
-                }
-
-                //leftSpeed = Range.clip(Math.abs(leftSpeed), 0.0, 1.0);
-                //rightSpeed = Range.clip(Math.abs(rightSpeed), 0.0, 1.0);
-
                 robot.setPowerLeftDriveMotors(leftSpeed);
                 robot.setPowerRightDriveMotors(rightSpeed);
 
                 // Display drive status for the driver.
                 telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
-                telemetry.addData("Target",  "%7d:%7d",      newLeftTarget,  newRightTarget);
+                telemetry.addData("Target",  "%7d:%7d",      newBackLeftTarget,  newBackRightTarget);
                 telemetry.addData("Actual",  "%7d:%7d",      robot.driveBackLeft.getCurrentPosition(),
                                                              robot.driveBackRight.getCurrentPosition());
                 telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
@@ -253,8 +177,8 @@ public class AutoDriveByGyroRev_Linear extends LinearOpMode {
             robot.setPowerAllDriveMotors(0);
 
             // Turn off RUN_TO_POSITION
-            robot.driveBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.driveBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         }
     }
 
@@ -270,7 +194,8 @@ public class AutoDriveByGyroRev_Linear extends LinearOpMode {
      *                   If a relative angle is required, add/subtract from current heading.
      */
     public void gyroTurn (double speed, double angle) {
-
+        robot.setDriveMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // keep looping while we are still active, and not on heading.
         while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
             // Update telemetry & Allow time for other processes to run.
