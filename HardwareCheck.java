@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 @Autonomous(name="Apollo: Hardware check", group="Apollo")
 public class HardwareCheck extends AutoMain{
 
-    HardwareApollo robot = new HardwareApollo();
+
     @Override
     public void runOpMode() {
         robot.init(hardwareMap);
@@ -22,15 +22,19 @@ public class HardwareCheck extends AutoMain{
 
         for (int g = 0; g<4; g++){
             for (int i = 0; i<4; i++){
-                driveStrait(0.2, 4000);
-                turn(0.2, false);
+                driveStrait(0.5, 4000);
+                robot.setPowerAllDriveMotors(0);
+                turn(0.5, false);
+                robot.setPowerAllDriveMotors(0);
             }
         }
-        turn(0.2, true);
+        turn(0.5, true);
         for (int g = 0; g<4; g++){
             for (int i = 0; i<4; i++){
-                driveStrait(0.2, -4000);
-                turn(0.2, true);
+                driveStrait(0.5, -4000);
+                robot.setPowerAllDriveMotors(0);
+                turn(0.5, true);
+                robot.setPowerAllDriveMotors(0);
             }
         }
     }

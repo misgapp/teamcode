@@ -33,6 +33,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -92,16 +93,16 @@ public class HardwareApollo {
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        driveBackLeft = hwMap.get(DcMotor.class, "dbl");
-        driveBackRight = hwMap.get(DcMotor.class, "dbr");
-        driveFrontLeft = hwMap.get(DcMotor.class, "dfl");
-        driveFrontRight = hwMap.get(DcMotor.class, "dfr");
+        driveBackLeft = hwMap.get(DcMotor.class, "dlb");
+        driveBackRight = hwMap.get(DcMotor.class, "drb");
+        driveFrontLeft = hwMap.get(DcMotor.class, "dlf");
+        driveFrontRight = hwMap.get(DcMotor.class, "drf");
         lift = hwMap.get(DcMotor.class, "lift");
 
-        driveBackLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        driveBackRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
-        driveFrontLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        driveFrontRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        driveBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        driveBackRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        driveFrontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        driveFrontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         lift.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
 
         // Set all motors to zero power
@@ -196,8 +197,8 @@ public class HardwareApollo {
 
     //Function: set position to all the wheel
     public void setPositionWheel(double setPosition) {
-        wheelUpRight.setPosition(setPosition);
-        wheelUpLeft.setPosition(1-setPosition);
+        wheelUpRight.setPosition(1-setPosition);
+        wheelUpLeft.setPosition(setPosition);
         wheelDownRight.setPosition(setPosition);
         wheelDownLeft.setPosition(1 - setPosition);
 

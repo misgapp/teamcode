@@ -116,13 +116,13 @@ public abstract class AutoMain extends LinearOpMode {
         telemetry.addData("ball color: ", colorRed);
         telemetry.update();
 
-        if (colorRed == COLOR_BLUE) {
+        if (colorRed < colorBlue) {
             if (isRed) {
                 //robot.armRightLeft.setPosition(DROP_RIGHT_BALL_POSITION);
             } else {
                 //robot.armRightLeft.setPosition(DROP_LEFT_BALL_POSITION);
             }
-        } else if (colorRed == COLOR_RED) {
+        } else if (colorRed < colorBlue) {
             if (isRed) {
                 //robot.armRightLeft.setPosition(DROP_LEFT_BALL_POSITION);
             } else {
@@ -274,8 +274,8 @@ public abstract class AutoMain extends LinearOpMode {
         int newRightTarget = 0;
 
         speed = Math.abs(speed);
-        double leftSpeed = tickLeft > 0 ? -speed : speed;
-        double rightSpeed = tickRight > 0 ? -speed : speed;
+        double leftSpeed = tickLeft > 0 ? speed : -speed;
+        double rightSpeed = tickRight > 0 ? speed : -speed;
 
         newLeftTarget = robot.driveBackLeft.getCurrentPosition() + tickLeft;
         newRightTarget = robot.driveBackRight.getCurrentPosition() + tickRight;

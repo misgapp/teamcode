@@ -24,12 +24,12 @@ public class CheckSpeed extends AutoMain {
         runtime.reset();
         double time1;
         double time2;
-        encoderDrive(0.05,6000,6000);
+        encoderDrive(0.1,6000,6000);
         time1 = runtime.milliseconds();
 
         sleep(1000);
         runtime.reset();
-        encoderDrive(0.5,6000,6000);
+        encoderDrive(0.9,6000,6000);
         time2 = runtime.milliseconds();
         telemetry.addData("time1", "%f", time1);
         telemetry.addData("time2", "%f  ", time2);
@@ -47,8 +47,8 @@ public class CheckSpeed extends AutoMain {
         int newRightTarget = 0;
 
         speed = Math.abs(speed);
-        double leftSpeed = tickLeft > 0 ? -speed : speed;
-        double rightSpeed = tickRight > 0 ? -speed : speed;
+        double leftSpeed = tickLeft > 0 ? speed : -speed;
+        double rightSpeed = tickRight > 0 ? speed : -speed;
 
         newLeftTarget = robot.driveBackLeft.getCurrentPosition() + tickLeft;
         newRightTarget = robot.driveBackRight.getCurrentPosition() + tickRight;
@@ -83,10 +83,10 @@ public class CheckSpeed extends AutoMain {
                     break;
                 }
             }
-            telemetry.addData("tick left", "%d", robot.driveBackLeft.getCurrentPosition());
-            telemetry.addData("tick right", "%d", robot.driveBackRight.getCurrentPosition());
-            telemetry.addData("tick left", "%d", robot.driveFrontLeft.getCurrentPosition());
-            telemetry.addData("tick right", "%d", robot.driveFrontRight.getCurrentPosition());
+            telemetry.addData("tick bleft", "%d", robot.driveBackLeft.getCurrentPosition());
+            telemetry.addData("tick bright", "%d", robot.driveBackRight.getCurrentPosition());
+            telemetry.addData("tick fleft", "%d", robot.driveFrontLeft.getCurrentPosition());
+            telemetry.addData("tick fright", "%d", robot.driveFrontRight.getCurrentPosition());
             telemetry.update();
             idle();
         }
