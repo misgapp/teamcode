@@ -51,12 +51,10 @@ public abstract class AutoMain extends LinearOpMode {
         robot.prepareForStart();
         setClaw();
         ballsTask(isRed);
-        /*
         RelicRecoveryVuMark column = readPhoto();
         reportImage(column);
         moveToCryptoBox(isRed, isCorner, column);
         putCube();
-        */
     }
 
 
