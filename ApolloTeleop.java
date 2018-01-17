@@ -98,16 +98,17 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             if (gamepad1.b) {
+
                 driveDirectionForward = false;
                 idle();
             }
 
             if (driveDirectionForward) {
-                speed_Right = gamepad1.right_stick_y;
-                speed_Left = gamepad1.left_stick_y;
+                speed_Left = gamepad1.right_stick_y;
+                speed_Right = gamepad1.left_stick_y;
             } else {
-                speed_Left = -gamepad1.right_stick_y;
-                speed_Right = -gamepad1.left_stick_y;
+                speed_Right = -gamepad1.right_stick_y;
+                speed_Left = -gamepad1.left_stick_y;
             }
 
             if (gamepad1.dpad_up) {
@@ -144,12 +145,12 @@ public class ApolloTeleop extends LinearOpMode {
             robot.driveBackLeft.setPower(speed_Left / driveSpeedFactor);
             robot.driveBackRight.setPower(speed_Right / driveSpeedFactor);
             robot.driveFrontLeft.setPower(speed_Left / driveSpeedFactor);
-            robot.driveFrontRight.setPower(speed_Right / driveSpeedFactor);
+            robot.driveFrontRight.setPower(speed_Right/ driveSpeedFactor);
 
             //Set power to the lift according to the buttons
-            if (gamepad2.left_trigger > 0) {
+            if (gamepad2.right_trigger > 0) {
                 robot.lift.setPower(LIFT_SPEED);
-            } else if (gamepad2.right_trigger > 0) {
+            } else if (gamepad2.left_trigger > 0) {
                 robot.lift.setPower(-LIFT_SPEED);
             } else {
                 robot.lift.setPower(0);
@@ -180,32 +181,6 @@ public class ApolloTeleop extends LinearOpMode {
             robot.clawUpLeft.setPosition(clawUpPosition);
             robot.clawUpRight.setPosition(1 - clawUpPosition);
 
-            double deltaWheelDown = -gamepad2.left_stick_x / 2;
-
-            if (deltaWheelDown < 0.3 && deltaClawDown > -0.3) {
-                deltaWheelDown = 0;
-            }
-
-            double deltaWheelsUp = -gamepad2.right_stick_x / 2;
-
-            if (deltaWheelsUp < 0.3 && deltaClawUp > -0.3) {
-                deltaWheelsUp = 0;
-                telemetry.addData("deltaClawUp - clear", "%.2f", deltaClawUp);
-            }
-
-            clawDownPosition += deltaWheelDown;
-            clawDownPosition = Math.min(clawDownPosition, 1);
-            clawDownPosition = Math.max(clawDownPosition, 0);
-            robot.clawDownLeft.setPosition(clawDownPosition);
-            robot.clawDownRight.setPosition(1 - clawDownPosition);
-
-            clawUpPosition += deltaWheelsUp;
-            clawUpPosition = Math.min(clawUpPosition, 1);
-            clawUpPosition = Math.max(clawUpPosition, 0);
-            //robot.clawUpLeft.setPosition(clawUpPosition);
-            //robot.clawUpRight.setPosition(clawUpPosition);
-
-
             if (gamepad1.right_trigger > 0) {
                 robot.setPositionWheel(robot.DROP_POSITION);
             } else if (gamepad1.left_trigger > 0) {
@@ -219,8 +194,6 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.clawDownLeft.setPosition(0.85);
                 robot.clawDownRight.setPosition(0.15);
             }
-
-
 
             /*
             if (gamepad2.a){
