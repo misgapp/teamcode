@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 
 
-@Autonomous(name="Apollo: Test Drive By Gyro", group="Apollo")
+@Autonomous(name="Apollo: Test Drive By Gyro2", group="Apollo")
 public class TestDriveByGyro extends LinearOpMode {
 
     /* Declare OpMode members. */
