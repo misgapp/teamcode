@@ -33,7 +33,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -55,8 +54,8 @@ public class HardwareApollo {
     public Servo clawDownRight = null;
     public Servo clawUpLeft = null;
     public Servo clawUpRight = null;
-    //public Servo armUpDown = null;
-    //public Servo armRightLeft = null;
+    public Servo armUpDown = null;
+    public Servo armRightLeft = null;
     //public Servo relicArm = null;
     //public Servo relicClaw = null;
     public Servo wheelDownLeft = null;
@@ -64,8 +63,8 @@ public class HardwareApollo {
     public Servo wheelUpLeft = null;
     public Servo wheelUpRight = null;
     public TouchSensor sensorTouch = null;
-    //public ColorSensor colorado = null;
-    //public ColorSensor colorabi = null;
+    public ColorSensor colorFront = null;
+    public ColorSensor colorBack = null;
     //public I2cAddr colorAddr = I2cAddr.create8bit(0x3c);
     //public I2cDevice color = null;
     //public I2cDeviceSynch colorReader = null;
@@ -118,8 +117,8 @@ public class HardwareApollo {
         clawDownRight = hwMap.get(Servo.class, "cdr");
         clawUpLeft = hwMap.get(Servo.class, "cul");
         clawUpRight = hwMap.get(Servo.class, "cur");
-        //armRightLeft = hwMap.get(Servo.class, "arm_right_left");
-        //armUpDown = hwMap.get(Servo.class, "arm_up_down");
+        armRightLeft = hwMap.get(Servo.class, "arl");
+        armUpDown = hwMap.get(Servo.class, "aud");
         //relicArm = hwMap.get(Servo.class, "relic_arm");
         //relicClaw = hwMap.get(Servo.class, "relic_claw");
         wheelDownLeft = hwMap.get(Servo.class, "wdl");
@@ -134,8 +133,8 @@ public class HardwareApollo {
         //relicClaw.setPosition(START_POSITION_RELIC_CLAW);
         setPositionWheel(STOP_POSITION);
 
-        //  colorado = hwMap.get(ColorSensor.class, "sc");
-        //colorabi = hwMap.get(ColorSensor.class, "sc1");
+        colorFront = hwMap.get(ColorSensor.class, "sc");
+        colorBack = hwMap.get(ColorSensor.class, "sc1");
         //color = hwMap.i2cDevice.get("sc");
         //colorReader = new I2cDeviceSynchImpl(color, colorAddr, false);
         //colorReader.engage();
