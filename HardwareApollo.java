@@ -133,8 +133,8 @@ public class HardwareApollo {
         //relicClaw.setPosition(START_POSITION_RELIC_CLAW);
         setPositionWheel(STOP_POSITION);
 
-        colorFront = hwMap.get(ColorSensor.class, "sc");
-        colorBack = hwMap.get(ColorSensor.class, "sc1");
+        colorFront = hwMap.get(ColorSensor.class, "cf");
+        colorBack = hwMap.get(ColorSensor.class, "cb");
         //color = hwMap.i2cDevice.get("sc");
         //colorReader = new I2cDeviceSynchImpl(color, colorAddr, false);
         //colorReader.engage();
@@ -196,10 +196,10 @@ public class HardwareApollo {
 
     //Function: set position to all the wheel
     public void setPositionWheel(double setPosition) {
-        wheelUpRight.setPosition(1-setPosition);
+        wheelUpRight.setPosition(setPosition);
         wheelUpLeft.setPosition(setPosition);
         wheelDownRight.setPosition(setPosition);
-        wheelDownLeft.setPosition(1 - setPosition);
+        wheelDownLeft.setPosition(setPosition);
 
     }
 

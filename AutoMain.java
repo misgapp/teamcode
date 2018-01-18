@@ -23,17 +23,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  */
 public abstract class AutoMain extends LinearOpMode {
 
-    private static final int RED_THRESHOLD = 10;
-    private static final int BLUE_THRESHOLD = 10;
+    private static final int RED_THRESHOLD = 50;
+    private static final int BLUE_THRESHOLD = 50;
 
 
     HardwareApollo robot = new HardwareApollo();
     VuforiaLocalizer vuforia;
     VuforiaTrackable relicTemplate;
     VuforiaTrackables relicTrackables;
-    public static final double DROP_POSITION_ARM_RIGHT_LEFT = 0.7;
-    public static final double DROP_POSITION_ARM_UP_DOWN = 0.1;
-    public static final double START_POSITION_ARM_UP_DOWN = 1;
+    public static final double DROP_POSITION_ARM_RIGHT_LEFT = 0.4;
+    public static final double DROP_POSITION_ARM_UP_DOWN = 1;
+    public static final double START_POSITION_ARM_UP_DOWN = 0.2;
     static final double HEADING_THRESHOLD = 1 ;
     static final double P_TURN_COEFF = 0.1;
     static final double P_DRIVE_COEFF = 0.15;
@@ -74,6 +74,9 @@ public abstract class AutoMain extends LinearOpMode {
 
     public void setClaw() {
         robot.setPositionClaw(0.5, 0.5);
+        robot.setPositionWheel(robot.GRAB_POSITION);
+        sleep(1000);
+        robot.setPositionWheel(robot.STOP_POSITION);
         robot.lift.setPower(-speed);
         sleep(1500);
         robot.lift.setPower(0);
@@ -85,16 +88,20 @@ public abstract class AutoMain extends LinearOpMode {
 
         robot.armUpDown.setPosition(0.5);
         sleep(300);
-        robot.armUpDown.setPosition(0.3);
+        robot.armUpDown.setPosition(0.8);
+        sleep(200);
+        robot.armUpDown.setPosition(0.9);
         sleep(200);
 
-        robot.armUpDown.setPosition(DROP_POSITION_ARM_UP_DOWN);
+        robot.armUpDown.setPosition(0.95);
         sleep(500);
 
         boolean colorDetected = false;
         boolean frontIsRed = false;
 
-        for (int i = 0; i < 100; i++) {
+        ElapsedTime runtime = new ElapsedTime();
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 2.0)) {
             if (robot.colorFront.red() > RED_THRESHOLD) {
                 frontIsRed = true;
                 colorDetected = true;
@@ -124,15 +131,28 @@ public abstract class AutoMain extends LinearOpMode {
 
         if (colorDetected) {
             if (isRed == frontIsRed) {
-                robot.armRightLeft.setPosition(1);
+                robot.armRightLeft.setPosition(0.7);
+                telemetry.addData("from is red ", frontIsRed);
+                telemetry.addData("color detected ", colorDetected);
+                telemetry.addData("going back ", colorDetected);
+                telemetry.update();
+                sleep(500);
+                robot.armRightLeft.setPosition(0.6);
+                sleep(500);
+                robot.armRightLeft.setPosition(0.5);
+
             } else {
+                robot.armRightLeft.setPosition(0.3);
+                telemetry.addData("from is red ", frontIsRed);
+                telemetry.addData("color detected ", colorDetected);
+                telemetry.addData("going front ", colorDetected);
+                telemetry.update();
+                sleep(500);
+                robot.armRightLeft.setPosition(0.4);
+                sleep(500);
                 robot.armRightLeft.setPosition(0.5);
             }
-            sleep(1000);
-            robot.armRightLeft.setPosition(DROP_POSITION_ARM_RIGHT_LEFT);
-            sleep(1000);
         }
-
         robot.armUpDown.setPosition(START_POSITION_ARM_UP_DOWN);
 
         sleep(1000);
@@ -157,6 +177,7 @@ public abstract class AutoMain extends LinearOpMode {
         robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         int direction = isRed ? 1 : -1;
+        int turnVlue = isRed ? 90*direction : 0;
 
         final int TICK_TO_CRYPTO_BOX_CORNER = 4250;
         final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 500;
@@ -174,37 +195,40 @@ public abstract class AutoMain extends LinearOpMode {
 
         if (isCorner) {
             if (column == RelicRecoveryVuMark.LEFT) {
-                driveStrait(speed, TICK_TO_CRYPTO_BOX_CORNER * direction);
+                gyroDrive(speed, TICK_TO_CRYPTO_BOX_CORNER * direction, 0);
             } else if (column == RelicRecoveryVuMark.CENTER || column == RelicRecoveryVuMark.UNKNOWN) {
-                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 900) * direction);
+                gyroDrive(speed, (TICK_TO_CRYPTO_BOX_CORNER + 900) * direction, 0);
             } else {
-                driveStrait(speed, (TICK_TO_CRYPTO_BOX_CORNER + 1800) * direction);
+                gyroDrive(speed, (TICK_TO_CRYPTO_BOX_CORNER + 1800) * direction, 0);
             }
 
-            turn(speed, false);
-            driveStrait(speed, 1600);
+            gyroTurn(speed, 90);
+            gyroHold(speed, 90, 1);
+            gyroDrive(speed, 1600, 90);
         } else {
-            driveStrait(speed, 3700 * direction);
-            turn(speed, true);
+            gyroDrive(speed, 3700 * direction, 90);
 
+            gyroTurn(speed, 90);
+            gyroHold(speed, 90, 1);
             if (column == RelicRecoveryVuMark.LEFT) {
-                driveStrait(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL);
+                gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL, 0);
             } else if (column == RelicRecoveryVuMark.CENTER || column == RelicRecoveryVuMark.UNKNOWN) {
-                driveStrait(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 800);
+                gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 800, 0);
             } else {
-                driveStrait(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1600);
+                gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1600, 0);
             }
 
             //turn(speed, TURN_2_CRYPTO_BOX_WALL * direction, -1 * TURN_2_CRYPTO_BOX_WALL * direction);
-            turn(speed, !isRed);
-            driveStrait(speed, 1300);
+            gyroTurn(speed, 90*direction);
+            gyroHold(speed, 90, 1);
+            gyroDrive(speed, 1300, turnVlue);
         }
     }
 
     // Put the cube
     public void putCube() {
         robot.setPositionClaw(1, 1);
-        driveStrait(speed, -500);
+        robot.setPositionWheel(robot.GRAB_POSITION);
     }
 
     //init vuforia
