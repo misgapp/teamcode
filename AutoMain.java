@@ -31,7 +31,7 @@ public abstract class AutoMain extends LinearOpMode {
     VuforiaLocalizer vuforia;
     VuforiaTrackable relicTemplate;
     VuforiaTrackables relicTrackables;
-    public static final double DROP_POSITION_ARM_RIGHT_LEFT = 0.4;
+    public static final double DROP_POSITION_ARM_RIGHT_LEFT = 0.5;
     public static final double DROP_POSITION_ARM_UP_DOWN = 1;
     public static final double START_POSITION_ARM_UP_DOWN = 0.2;
     static final double HEADING_THRESHOLD = 1 ;
@@ -40,7 +40,7 @@ public abstract class AutoMain extends LinearOpMode {
 
     static final double START_POSITION = 0.05;
 
-    double speed = 0.2;
+    double speed = 0.4;
 
     public void apolloInit() {
         robot.init(hardwareMap);
@@ -77,7 +77,7 @@ public abstract class AutoMain extends LinearOpMode {
         robot.setPositionWheel(robot.GRAB_POSITION);
         sleep(1000);
         robot.setPositionWheel(robot.STOP_POSITION);
-        robot.lift.setPower(-speed);
+        robot.lift.setPower(speed);
         sleep(1500);
         robot.lift.setPower(0);
     }
@@ -202,8 +202,8 @@ public abstract class AutoMain extends LinearOpMode {
                 gyroDrive(speed, (TICK_TO_CRYPTO_BOX_CORNER + 1800) * direction, 0);
             }
 
-            gyroTurn(speed, 90);
-            gyroHold(speed, 90, 1);
+            gyroTurn(speed, -90);
+            gyroHold(speed, -90, 1);
             gyroDrive(speed, 1600, 90);
         } else {
             gyroDrive(speed, 3700 * direction, 90);

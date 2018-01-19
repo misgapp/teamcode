@@ -72,15 +72,15 @@ public class HardwareApollo {
 
     public TouchSensor sensor_button = null;
 
-    public static final double START_POSITION_CLAW_UP = 0.5;
-    public static final double START_POSITION_CLAW_DOWN = 0.5;
+    public static final double START_POSITION_CLAW_UP = 0.28;
+    public static final double START_POSITION_CLAW_DOWN = 0.58;
     public static final double START_POSITION_ARM_UP_DOWN = 1;
     public static final double START_POSITION_ARM_RIGHT_LEFT = 0.8;
     public static final double START_POSITION_RELIC_CLAW = 0.5;
     public static final double START_POSITION_RELIC_ARM = 0.5;
     public static final double STOP_POSITION = 0.5;
-    public static final double DROP_POSITION = 0.9;
-    public static final double GRAB_POSITION = 0.1;
+    public static final double DROP_POSITION = 0.1;
+    public static final double GRAB_POSITION = 0.9;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -188,17 +188,17 @@ public class HardwareApollo {
 
     //Function: set position to all the claws
     public void setPositionClaw(double setPositionUp, double setPositionDown) {
-        //clawUpRight.setPosition(setPositionUp);
-        //clawUpLeft.setPosition(1-setPositionUp);
+        clawUpRight.setPosition(setPositionUp);
+        clawUpLeft.setPosition(1-setPositionUp);
         clawDownLeft.setPosition(1 - setPositionDown);
         clawDownRight.setPosition(setPositionDown);
     }
 
     //Function: set position to all the wheel
     public void setPositionWheel(double setPosition) {
-        wheelUpRight.setPosition(setPosition);
+        wheelUpRight.setPosition(1-setPosition);
         wheelUpLeft.setPosition(setPosition);
-        wheelDownRight.setPosition(setPosition);
+        wheelDownRight.setPosition(1-setPosition);
         wheelDownLeft.setPosition(setPosition);
 
     }
