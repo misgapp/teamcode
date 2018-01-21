@@ -72,8 +72,8 @@ public class HardwareApollo {
 
     public TouchSensor sensor_button = null;
 
-    public static final double START_POSITION_CLAW_UP = 0.28;
-    public static final double START_POSITION_CLAW_DOWN = 0.58;
+    public static final double START_POSITION_CLAW_UP = 0.22;
+    public static final double START_POSITION_CLAW_DOWN = 0.64;
     public static final double START_POSITION_ARM_UP_DOWN = 1;
     public static final double START_POSITION_ARM_RIGHT_LEFT = 0.8;
     public static final double START_POSITION_RELIC_CLAW = 0.5;

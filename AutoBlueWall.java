@@ -17,6 +17,6 @@ public class AutoBlueWall extends AutoMain {
 
         //apolloRun(false, false);
 
-        ballsTask(true);
+        apolloRun(false, false);
     }
 }

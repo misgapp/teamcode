@@ -175,9 +175,11 @@ public abstract class AutoMain extends LinearOpMode {
 
         int direction = isRed ? 1 : -1;
         int columnticks = isRed ? -1500 : 0;
+        int gyro = isRed ? 0 : 180;
+        int blue = isRed ? 0 : 1200;
 
         final int TICK_TO_CRYPTO_BOX_CORNER = 5700;
-        final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 500;
+        final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 1000;
 
         if (isRed) {
             if (column == RelicRecoveryVuMark.LEFT) {
@@ -207,18 +209,18 @@ public abstract class AutoMain extends LinearOpMode {
 
             gyroTurn(speed, 90);
             gyroHold(speed, 90, 1);
-            if (column == RelicRecoveryVuMark.LEFT) {
-                gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL, 0);
-            } else if (column == RelicRecoveryVuMark.CENTER || column == RelicRecoveryVuMark.UNKNOWN) {
-                gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1200, 0);
+            if (column == RelicRecoveryVuMark.LEFT|| column == RelicRecoveryVuMark.UNKNOWN) {
+                gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL, 90);
+            } else if (column == RelicRecoveryVuMark.CENTER ) {
+                gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1300, 90);
             } else {
-                gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 2500, 0);
+                gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 2550, 90);
             }
 
             //turn(speed, TURN_2_CRYPTO_BOX_WALL * direction, -1 * TURN_2_CRYPTO_BOX_WALL * direction);
-            gyroTurn(speed, -90*direction);
-            gyroHold(speed, -90*direction, 1);
-            gyroDrive(speed, 1750, -90*direction);
+            gyroTurn(speed, 0+gyro);
+            gyroHold(speed, 0+gyro, 1);
+            driveStrait(speed, 200+blue);
         }
     }
 
@@ -228,8 +230,8 @@ public abstract class AutoMain extends LinearOpMode {
         sleep(800);
         robot.setPositionWheel(robot.STOP_POSITION);
         robot.setPositionClaw(1, 1);
-        driveStrait(speed, 400);
-        driveStrait(speed, -400);
+        driveStrait(speed, 1000);
+        driveStrait(speed, -600);
     }
 
     //init vuforia
