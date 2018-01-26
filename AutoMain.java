@@ -87,11 +87,11 @@ public abstract class AutoMain extends LinearOpMode {
         robot.armRightLeft.setPosition(DROP_POSITION_ARM_RIGHT_LEFT);
 
         robot.armUpDown.setPosition(0.5);
-        sleep(200);
+        sleep(300);
         robot.armUpDown.setPosition(0.8);
-        sleep(200);
+        sleep(400);
         robot.armUpDown.setPosition(0.9);
-        sleep(200);
+        sleep(400);
 
         boolean colorDetected = false;
         boolean frontIsRed = false;
@@ -122,31 +122,39 @@ public abstract class AutoMain extends LinearOpMode {
             }
         }
 
-        telemetry.addData("from is red ", frontIsRed);
+        telemetry.addData("front is red ", frontIsRed);
         telemetry.addData("color detected ", colorDetected);
         telemetry.update();
 
         if (colorDetected) {
             if (isRed == frontIsRed) {
                 robot.armRightLeft.setPosition(0.80);
-                telemetry.addData("from is red ", frontIsRed);
+                telemetry.addData("front is red ", frontIsRed);
                 telemetry.addData("color detected ", colorDetected);
                 telemetry.addData("going back ", colorDetected);
+                telemetry.addData("Blue back ", robot.colorBack.blue());
+                telemetry.addData("Red back ", robot.colorBack.red());
+                telemetry.addData("Blue front", robot.colorFront.blue());
+                telemetry.addData("Red front", robot.colorFront.red());
                 telemetry.update();
                 sleep(400);
                 robot.armRightLeft.setPosition(0.6);
-                sleep(500);
+                sleep(700);
                 robot.armRightLeft.setPosition(0.55);
 
             } else {
                 robot.armRightLeft.setPosition(0.20);
-                telemetry.addData("from is red ", frontIsRed);
+                telemetry.addData("front is red ", frontIsRed);
                 telemetry.addData("color detected ", colorDetected);
                 telemetry.addData("going front ", colorDetected);
+                telemetry.addData("Blue back ", robot.colorBack.blue());
+                telemetry.addData("Red back ", robot.colorBack.red());
+                telemetry.addData("Blue front", robot.colorFront.blue());
+                telemetry.addData("Red front", robot.colorFront.red());
                 telemetry.update();
                 sleep(400);
                 robot.armRightLeft.setPosition(0.4);
-                sleep(500);
+                sleep(700);
                 robot.armRightLeft.setPosition(0.45);
             }
         }
@@ -282,18 +290,19 @@ public abstract class AutoMain extends LinearOpMode {
 
     public void moreCubs(boolean isCorner){
         if (isCorner){
-            gyroTurn(speed, 180);
-            gyroHold(speed, 180, 2);
-            gyroDrive(speed, 6000, 180);
+            gyroTurn(speed, 90);
+            gyroHold(speed, 90, 2);
+            gyroDrive(speed, 6000, 90);
+            robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
             robot.setPositionWheel(robot.GRAB_POSITION);
             sleep(700);
             robot.setPositionClaw(0.6, 0.4);
             sleep(900);
             robot.setPositionWheel(robot.STOP_POSITION);
             robot.setPositionClaw(0.7, 0.3);
-            gyroTurn(speed, -180);
-            gyroHold(speed, -180, 2);
-            gyroDrive(speed, 6000, -180);
+            gyroTurn(speed, -90);
+            gyroHold(speed, -90, 2);
+            gyroDrive(speed, 5000, -90);
 
         }
 
@@ -392,6 +401,44 @@ public abstract class AutoMain extends LinearOpMode {
             telemetry.addData("Image", "Unknown");
         }
         telemetry.update();
+    }
+
+    // function drive encoder
+    // speed - power level between 0 and 1. Is always positive.
+    // tickRight - ticks of right side to drive. If positive driving towards cube claw.
+    //   If negative drives to the other direction.
+    public void encoderDriveLift(double speed, int tick) {
+        robot.setDriveMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int newLeftTarget = 0;
+        int newRightTarget = 0;
+
+        speed = Math.abs(speed);
+        double Speed = tick > 0 ? speed : -speed;
+
+        newLeftTarget = robot.driveBackLeft.getCurrentPosition() + tick;
+
+        robot.setPowerLeftDriveMotors(Speed);
+
+        while (opModeIsActive()) {
+            if (tick > 0) {
+                if (robot.lift.getCurrentPosition() >= newLeftTarget) {
+                    telemetry.addData("break", "1");
+                    break;
+                }
+            } else {
+                if (robot.lift.getCurrentPosition() <= newLeftTarget) {
+                    telemetry.addData("break", "2");
+                    break;
+                }
+            }
+
+            telemetry.addData("tick lift", "%d", robot.lift.getCurrentPosition());
+            telemetry.update();
+            idle();
+        }
+        robot.lift.setPower(0);
     }
 
     /**

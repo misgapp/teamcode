@@ -81,6 +81,9 @@ public class ApolloTeleop extends LinearOpMode {
          */
         robot.init(hardwareMap);
 
+        //lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Version", "1");
         telemetry.update();
@@ -148,9 +151,9 @@ public class ApolloTeleop extends LinearOpMode {
             robot.driveFrontRight.setPower(speed_Right/ driveSpeedFactor);
 
             //Set power to the lift according to the buttons
-            if (gamepad2.right_trigger > 0) {
+            if (gamepad2.right_trigger > 0 /*&& 10000 > robot.lift.getCurrentPosition() && robot.lift.getCurrentPosition() > 500*/) {
                 robot.lift.setPower(LIFT_SPEED);
-            } else if (gamepad2.left_trigger > 0) {
+            } else if (gamepad2.left_trigger > 0/*&& 10000 > robot.lift.getCurrentPosition() && robot.lift.getCurrentPosition() > 500*/) {
                 robot.lift.setPower(-LIFT_SPEED);
             } else {
                 robot.lift.setPower(0);

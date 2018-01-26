@@ -112,6 +112,8 @@ public class HardwareApollo {
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         setDriveMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         clawDownLeft = hwMap.get(Servo.class, "cdl");
         clawDownRight = hwMap.get(Servo.class, "cdr");
