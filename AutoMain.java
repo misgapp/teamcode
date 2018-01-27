@@ -23,15 +23,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  */
 public abstract class AutoMain extends LinearOpMode {
 
-    private static final int RED_THRESHOLD = 50;
-    private static final int BLUE_THRESHOLD = 50;
+    private static final int RED_THRESHOLD = 40;
+    private static final int BLUE_THRESHOLD = 40;
 
 
     HardwareApollo robot = new HardwareApollo();
     VuforiaLocalizer vuforia;
     VuforiaTrackable relicTemplate;
     VuforiaTrackables relicTrackables;
-    public static final double DROP_POSITION_ARM_RIGHT_LEFT = 0.55;
+    public static final double DROP_POSITION_ARM_RIGHT_LEFT = 0.54;
     public static final double DROP_POSITION_ARM_UP_DOWN = 1;
     public static final double START_POSITION_ARM_UP_DOWN = 0.2;
     static final double HEADING_THRESHOLD = 1 ;
@@ -87,11 +87,11 @@ public abstract class AutoMain extends LinearOpMode {
         robot.armRightLeft.setPosition(DROP_POSITION_ARM_RIGHT_LEFT);
 
         robot.armUpDown.setPosition(0.5);
-        sleep(300);
+        sleep(400);
         robot.armUpDown.setPosition(0.8);
-        sleep(400);
-        robot.armUpDown.setPosition(0.9);
-        sleep(400);
+        sleep(500);
+        robot.armUpDown.setPosition(0.85);
+        sleep(600);
 
         boolean colorDetected = false;
         boolean frontIsRed = false;
@@ -128,7 +128,7 @@ public abstract class AutoMain extends LinearOpMode {
 
         if (colorDetected) {
             if (isRed == frontIsRed) {
-                robot.armRightLeft.setPosition(0.80);
+                robot.armRightLeft.setPosition(0.90);
                 telemetry.addData("front is red ", frontIsRed);
                 telemetry.addData("color detected ", colorDetected);
                 telemetry.addData("going back ", colorDetected);
@@ -143,7 +143,7 @@ public abstract class AutoMain extends LinearOpMode {
                 robot.armRightLeft.setPosition(0.55);
 
             } else {
-                robot.armRightLeft.setPosition(0.20);
+                robot.armRightLeft.setPosition(0.10);
                 telemetry.addData("front is red ", frontIsRed);
                 telemetry.addData("color detected ", colorDetected);
                 telemetry.addData("going front ", colorDetected);
@@ -182,8 +182,8 @@ public abstract class AutoMain extends LinearOpMode {
         robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         int direction = isRed ? 1 : -1;
-        int columnticks = isRed ? -1500 : 0;
-        int gyro = isRed ? 0 : 180;
+        int columnTicks = isRed ? -1500 : 0;
+        int gyroDegrees = isRed ? 0 : 180;
         int blue = isRed ? 0 : 1200;
 
         final int TICK_TO_CRYPTO_BOX_CORNER = 5700;
@@ -202,11 +202,11 @@ public abstract class AutoMain extends LinearOpMode {
 
         if (isCorner) {
             if (column == RelicRecoveryVuMark.LEFT) {
-                gyroDrive(speed, columnticks + TICK_TO_CRYPTO_BOX_CORNER * direction, 0);
+                gyroDrive(speed, columnTicks + TICK_TO_CRYPTO_BOX_CORNER * direction, 0);
             } else if (column == RelicRecoveryVuMark.CENTER || column == RelicRecoveryVuMark.UNKNOWN) {
-                gyroDrive(speed, (columnticks + TICK_TO_CRYPTO_BOX_CORNER + 1200) * direction, 0);
+                gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER + 1200) * direction, 0);
             } else {
-                gyroDrive(speed, (columnticks + TICK_TO_CRYPTO_BOX_CORNER + 2500) * direction, 0);
+                gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER + 2500) * direction, 0);
             }
 
             gyroTurn(speed, -90);
@@ -226,8 +226,8 @@ public abstract class AutoMain extends LinearOpMode {
             }
 
             //turn(speed, TURN_2_CRYPTO_BOX_WALL * direction, -1 * TURN_2_CRYPTO_BOX_WALL * direction);
-            gyroTurn(speed, 0+gyro);
-            gyroHold(speed, 0+gyro, 1);
+            gyroTurn(speed, 0+gyroDegrees);
+            gyroHold(speed, 0+gyroDegrees, 1);
             driveStrait(speed, 200+blue);
         }
     }
