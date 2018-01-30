@@ -50,19 +50,20 @@ public class HardwareApollo {
     public DcMotor driveBackLeft = null;
     public DcMotor driveBackRight = null;
     public DcMotor lift = null;
+    public DcMotor relicLift = null;
+    public DcMotor clawRoll = null;
     public Servo clawDownLeft = null;
     public Servo clawDownRight = null;
     public Servo clawUpLeft = null;
     public Servo clawUpRight = null;
     public Servo armUpDown = null;
     public Servo armRightLeft = null;
-    //public Servo relicArm = null;
-    //public Servo relicClaw = null;
+    public Servo relicUpDown = null;
+    public Servo relicClaw = null;
     public Servo wheelDownLeft = null;
     public Servo wheelDownRight = null;
     public Servo wheelUpLeft = null;
     public Servo wheelUpRight = null;
-    public TouchSensor sensorTouch = null;
     public ColorSensor colorFront = null;
     public ColorSensor colorBack = null;
     //public I2cAddr colorAddr = I2cAddr.create8bit(0x3c);
@@ -97,21 +98,29 @@ public class HardwareApollo {
         driveFrontLeft = hwMap.get(DcMotor.class, "dlf");
         driveFrontRight = hwMap.get(DcMotor.class, "drf");
         lift = hwMap.get(DcMotor.class, "lift");
+        //relicLift = hwMap.get(DcMotor.class, "rl");
+        //clawRoll = hwMap.get(DcMotor.class, "rc");
 
         driveBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         driveBackRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
         driveFrontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         driveFrontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
-        lift.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        lift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
+        //relicLift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
+        //clawRoll.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
 
         // Set all motors to zero power
         setPowerAllDriveMotors(0);
         lift.setPower(0);
+        //relicLift.setPower(0);
+        //clawRoll.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         setDriveMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //relicLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //clawRoll.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -121,8 +130,8 @@ public class HardwareApollo {
         clawUpRight = hwMap.get(Servo.class, "cur");
         armRightLeft = hwMap.get(Servo.class, "arl");
         armUpDown = hwMap.get(Servo.class, "aud");
-        //relicArm = hwMap.get(Servo.class, "relic_arm");
-        //relicClaw = hwMap.get(Servo.class, "relic_claw");
+        //relicUpDown = hwMap.get(Servo.class, "rud");
+        //relicClaw = hwMap.get(Servo.class, "rc");
         wheelDownLeft = hwMap.get(Servo.class, "wdl");
         wheelDownRight = hwMap.get(Servo.class, "wdr");
         wheelUpLeft = hwMap.get(Servo.class, "wul");
@@ -131,7 +140,7 @@ public class HardwareApollo {
         setPositionClaw(START_POSITION_CLAW_UP, START_POSITION_CLAW_DOWN);
         //armUpDown.setPosition(START_POSITION_ARM_UP_DOWN);
         //armRightLeft.setPosition(START_POSITION_ARM_RIGHT_LEFT);
-        //relicArm.setPosition(START_POSITION_RELIC_ARM);
+        //relicUpDown.setPosition(START_POSITION_RELIC_ARM);
         //relicClaw.setPosition(START_POSITION_RELIC_CLAW);
         setPositionWheel(STOP_POSITION);
 
@@ -157,7 +166,6 @@ public class HardwareApollo {
         // and named "imu".
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        //sensorTouch = hwMap.get(TouchSensor.class, "sensor_touch");
     }
 
     //Function: set mode run using encoder

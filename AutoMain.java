@@ -419,7 +419,7 @@ public abstract class AutoMain extends LinearOpMode {
 
         newLeftTarget = robot.driveBackLeft.getCurrentPosition() + tick;
 
-        robot.setPowerLeftDriveMotors(Speed);
+        robot.lift.setPower(Speed);
 
         while (opModeIsActive()) {
             if (tick > 0) {

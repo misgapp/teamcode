@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 //import org.firstinspires.ftc.robotcontroller.external.samples.SensorColor;
 
@@ -81,8 +82,9 @@ public class ApolloTeleop extends LinearOpMode {
          */
         robot.init(hardwareMap);
 
-        //lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //robot.clawRoll.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Version", "1");
@@ -192,15 +194,28 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.setPositionWheel(robot.STOP_POSITION);
             }
 
+            /*
 
-            if (gamepad2.y) {
-                robot.clawDownLeft.setPosition(0.85);
-                robot.clawDownRight.setPosition(0.15);
+           // if (gamepad2.y) {
+           //   robot.clawDownLeft.setPosition(0.85);
+           //   robot.clawDownRight.setPosition(0.15);
+           //}
+
+
+            if (gamepad1.left_bumper){
+                encoderRoll(0.3, 300);
+            } else if (gamepad1.right_bumper){
+                encoderRoll(0.3, -300);
             }
 
-            /*
+            if (gamepad2.b){
+                encoderRoll(0.3, 50);
+            } else if (gamepad2.y){
+                encoderRoll(0.3, -50);
+            }
+
             if (gamepad2.a){
-                robot.relicArm.setPosition(0.2);
+                robot.relicUpDown.setPosition(0.2);
             }
 
             if (gamepad2.x){
@@ -212,10 +227,10 @@ public class ApolloTeleop extends LinearOpMode {
                 if (!gamepad2_x_previous_pressed) {
                     gamepad2_x_previous_pressed = true;
                     if (armRelic) {
-                        robot.relicArm.setPosition(0.2);
+                        robot.relicUpDown.setPosition(0.2);
                         armRelic = false;
                     } else {
-                        robot.relicArm.setPosition(0.5);
+                        robot.relicUpDown.setPosition(0.5);
                         armRelic = true;
                     }
                 }
@@ -234,10 +249,19 @@ public class ApolloTeleop extends LinearOpMode {
                         clawRelic = true;
                     }
                 }
-           } else {
+            } else {
                 gamepad2_a_previous_pressed = false;
-           }
-           */
+            }
+
+            if (gamepad2.dpad_left){
+                robot.relicLift.setPower(0.1);
+            } else if (gamepad2.dpad_right){
+                robot.relicLift.setPower(-0.1);
+            } else {
+                robot.relicLift.setPower(0);
+            }
+            */
+
 
             telemetry.addData("left", "%.2f", speed_Left);
             telemetry.addData("right", "%.2f", speed_Right);
@@ -259,4 +283,39 @@ public class ApolloTeleop extends LinearOpMode {
             sleep(50);
         }
     }
-}
+
+    public void encoderRoll(double speed, int tick) {
+        robot.clawRoll.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.clawRoll.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int newTarget = 0;
+
+        speed = Math.abs(speed);
+        double speedMotor = tick > 0 ? speed : -speed;
+
+        newTarget = robot.clawRoll.getCurrentPosition() + tick;
+
+        robot.clawRoll.setPower(speedMotor);
+
+
+        while (opModeIsActive()) {
+            if (tick > 0) {
+                if (robot.clawRoll.getCurrentPosition() >= newTarget) {
+                    telemetry.addData("break", "1");
+                    break;
+                }
+            } else {
+                if (robot.clawRoll.getCurrentPosition() <= newTarget) {
+                    telemetry.addData("break", "2");
+                    break;
+                }
+            }
+
+            telemetry.addData("tick lift", "%d", robot.clawRoll.getCurrentPosition());
+            telemetry.update();
+            idle();
+        }
+        robot.clawRoll.setPower(0);
+    }
+
+    }
