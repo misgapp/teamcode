@@ -78,7 +78,7 @@ public class HardwareApollo {
     public static final double START_POSITION_ARM_UP_DOWN = 1;
     public static final double START_POSITION_ARM_RIGHT_LEFT = 0.8;
     public static final double START_POSITION_RELIC_CLAW = 0.5;
-    public static final double START_POSITION_RELIC_ARM = 0.5;
+    public static final double START_POSITION_RELIC_ARM = 0.1;
     public static final double STOP_POSITION = 0.5;
     public static final double DROP_POSITION = 0.1;
     public static final double GRAB_POSITION = 0.9;
@@ -98,7 +98,7 @@ public class HardwareApollo {
         driveFrontLeft = hwMap.get(DcMotor.class, "dlf");
         driveFrontRight = hwMap.get(DcMotor.class, "drf");
         lift = hwMap.get(DcMotor.class, "lift");
-        //relicLift = hwMap.get(DcMotor.class, "rl");
+        relicLift = hwMap.get(DcMotor.class, "rl");
         //clawRoll = hwMap.get(DcMotor.class, "rc");
 
         driveBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
@@ -106,20 +106,20 @@ public class HardwareApollo {
         driveFrontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         driveFrontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         lift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
-        //relicLift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
+        relicLift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
         //clawRoll.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
 
         // Set all motors to zero power
         setPowerAllDriveMotors(0);
         lift.setPower(0);
-        //relicLift.setPower(0);
+        relicLift.setPower(0);
         //clawRoll.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         setDriveMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //relicLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        relicLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //clawRoll.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -128,10 +128,10 @@ public class HardwareApollo {
         clawDownRight = hwMap.get(Servo.class, "cdr");
         clawUpLeft = hwMap.get(Servo.class, "cul");
         clawUpRight = hwMap.get(Servo.class, "cur");
-        armRightLeft = hwMap.get(Servo.class, "arl");
-        armUpDown = hwMap.get(Servo.class, "aud");
-        //relicUpDown = hwMap.get(Servo.class, "rud");
-        //relicClaw = hwMap.get(Servo.class, "rc");
+        //armRightLeft = hwMap.get(Servo.class, "arl");
+       // armUpDown = hwMap.get(Servo.class, "aud");
+        relicUpDown = hwMap.get(Servo.class, "rud");
+        relicClaw = hwMap.get(Servo.class, "rc");
         wheelDownLeft = hwMap.get(Servo.class, "wdl");
         wheelDownRight = hwMap.get(Servo.class, "wdr");
         wheelUpLeft = hwMap.get(Servo.class, "wul");
@@ -140,8 +140,8 @@ public class HardwareApollo {
         setPositionClaw(START_POSITION_CLAW_UP, START_POSITION_CLAW_DOWN);
         //armUpDown.setPosition(START_POSITION_ARM_UP_DOWN);
         //armRightLeft.setPosition(START_POSITION_ARM_RIGHT_LEFT);
-        //relicUpDown.setPosition(START_POSITION_RELIC_ARM);
-        //relicClaw.setPosition(START_POSITION_RELIC_CLAW);
+        relicUpDown.setPosition(START_POSITION_RELIC_ARM);
+        relicClaw.setPosition(START_POSITION_RELIC_CLAW);
         setPositionWheel(STOP_POSITION);
 
         colorFront = hwMap.get(ColorSensor.class, "cf");

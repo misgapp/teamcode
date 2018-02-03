@@ -195,13 +195,6 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             /*
-
-           // if (gamepad2.y) {
-           //   robot.clawDownLeft.setPosition(0.85);
-           //   robot.clawDownRight.setPosition(0.15);
-           //}
-
-
             if (gamepad1.left_bumper){
                 encoderRoll(0.3, 300);
             } else if (gamepad1.right_bumper){
@@ -213,13 +206,14 @@ public class ApolloTeleop extends LinearOpMode {
             } else if (gamepad2.y){
                 encoderRoll(0.3, -50);
             }
+            */
 
-            if (gamepad2.a){
+            if (gamepad2.x){
                 robot.relicUpDown.setPosition(0.2);
             }
 
-            if (gamepad2.x){
-                robot.relicClaw.setPosition(0.5);
+            if (gamepad2.a){
+                robot.relicClaw.setPosition(0.4);
             }
 
 
@@ -227,10 +221,10 @@ public class ApolloTeleop extends LinearOpMode {
                 if (!gamepad2_x_previous_pressed) {
                     gamepad2_x_previous_pressed = true;
                     if (armRelic) {
-                        robot.relicUpDown.setPosition(0.2);
+                        robot.relicUpDown.setPosition(0.1);
                         armRelic = false;
                     } else {
-                        robot.relicUpDown.setPosition(0.5);
+                        robot.relicUpDown.setPosition(0.9);
                         armRelic = true;
                     }
                 }
@@ -238,11 +232,13 @@ public class ApolloTeleop extends LinearOpMode {
                 gamepad2_x_previous_pressed = false;
             }
 
+
+
             if (gamepad2.a) {
                 if (!gamepad2_a_previous_pressed) {
                     gamepad2_a_previous_pressed = true;
                     if (clawRelic){
-                        robot.relicClaw.setPosition(0.2);
+                        robot.relicClaw.setPosition(0.05);
                         clawRelic = false;
                     } else {
                         robot.relicClaw.setPosition(0.5);
@@ -253,15 +249,16 @@ public class ApolloTeleop extends LinearOpMode {
                 gamepad2_a_previous_pressed = false;
             }
 
-            if (gamepad2.dpad_left){
-                robot.relicLift.setPower(0.1);
-            } else if (gamepad2.dpad_right){
-                robot.relicLift.setPower(-0.1);
+
+            if (gamepad2.dpad_down){
+                robot.relicLift.setPower(1);
+            } else if (gamepad2.dpad_up){
+                robot.relicLift.setPower(-1);
             } else {
                 robot.relicLift.setPower(0);
             }
-            */
 
+/*
 
             telemetry.addData("left", "%.2f", speed_Left);
             telemetry.addData("right", "%.2f", speed_Right);
@@ -278,7 +275,7 @@ public class ApolloTeleop extends LinearOpMode {
             telemetry.addData("tick right", "%d", robot.driveBackRight.getCurrentPosition());
             //telemetry.addData("drive direction forward", "%.2f", driveDirectionForward);
             telemetry.update();
-
+*/
             // Pace this loop so jaw action is reasonable speed.
             sleep(50);
         }
