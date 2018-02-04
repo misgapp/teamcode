@@ -206,11 +206,8 @@ public class ApolloTeleop extends LinearOpMode {
             } else if (gamepad2.y){
                 encoderRoll(0.3, -50);
             }
-            */
 
-            if (gamepad2.y){
-                robot.relicUpDown.setPosition(0.45);
-            }
+
 
             if (gamepad2.x){
                 robot.relicUpDown.setPosition(0.2);
@@ -219,7 +216,11 @@ public class ApolloTeleop extends LinearOpMode {
             if (gamepad2.a){
                 robot.relicClaw.setPosition(0.4);
             }
+*/
 
+            if (gamepad2.b){
+                robot.relicUpDown.setPosition(0.5);
+            }
 
             if (gamepad2.x){
                 if (!gamepad2_x_previous_pressed) {
