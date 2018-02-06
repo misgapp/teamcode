@@ -290,6 +290,8 @@ public abstract class AutoMain extends LinearOpMode {
 
     public void moreCubs(boolean isCorner){
         if (isCorner){
+            /*
+            gyroDrive(speed, -2000, -90);
             gyroTurn(speed, 90);
             gyroHold(speed, 90, 2);
             gyroDrive(speed, 6000, 90);
@@ -303,7 +305,25 @@ public abstract class AutoMain extends LinearOpMode {
             gyroTurn(speed, -90);
             gyroHold(speed, -90, 2);
             gyroDrive(speed, 5000, -90);
+            */
+            gyroDrive(speed, -1000, 0);
+            gyroTurn(speed, 180);
+            gyroHold(speed, 180, 1);
+            gyroDrive(speed, 1500, 180);
+            //robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
+            robot.setPositionWheel(robot.GRAB_POSITION);
+            sleep(700);
+            gyroDrive(speed, 1400, 180);
+            robot.setPositionClaw(0.6, 0.2);
+            //sleep(900);
 
+            gyroDrive(speed, 1000, 180);
+            robot.setPositionWheel(robot.STOP_POSITION);
+            robot.setPositionClaw(0.7, 0.3);
+            gyroTurn(speed, 0);
+            gyroHold(speed, 0, 2);
+            gyroDrive(speed, 4000, 0);
+            robot.setPositionWheel(robot.DROP_POSITION);
         }
 
     }

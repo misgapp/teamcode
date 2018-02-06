@@ -243,10 +243,10 @@ public class ApolloTeleop extends LinearOpMode {
                 if (!gamepad2_a_previous_pressed) {
                     gamepad2_a_previous_pressed = true;
                     if (clawRelic){
-                        robot.relicClaw.setPosition(0.05);
+                        robot.relicClaw.setPosition(0.0);
                         clawRelic = false;
                     } else {
-                        robot.relicClaw.setPosition(0.4);
+                        robot.relicClaw.setPosition(0.5);
                         clawRelic = true;
                     }
                 }
