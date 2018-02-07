@@ -75,7 +75,7 @@ public class ApolloTeleop extends LinearOpMode {
         boolean armRelic = true;
         boolean clawRelic = true;
         boolean gamepad2_x_previous_pressed = false;
-        boolean gamepad2_a_previous_pressed = false;
+        boolean gamepad2_bumper_previous_pressed = false;
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
@@ -217,15 +217,19 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.relicClaw.setPosition(0.4);
             }
 */
-            if (gamepad2.x){
+            if (gamepad2.a){
                 robot.relicUpDown.setPosition(0.1);
             }
 
-            if (gamepad2.b){
-                robot.relicUpDown.setPosition(0.9);
+            if (gamepad2.y){
+                robot.relicUpDown.setPosition(0.8);
             }
 
-            if (gamepad2.y){
+            if (gamepad2.b){
+                robot.relicUpDown.setPosition(0.6);
+            }
+
+            if (gamepad2.x){
                 robot.relicUpDown.setPosition(0.6);
             }
 
@@ -247,9 +251,9 @@ public class ApolloTeleop extends LinearOpMode {
 */
 
 
-            if (gamepad2.a) {
-                if (!gamepad2_a_previous_pressed) {
-                    gamepad2_a_previous_pressed = true;
+            if (gamepad2.left_bumper || gamepad2.right_bumper) {
+                if (!gamepad2_bumper_previous_pressed) {
+                    gamepad2_bumper_previous_pressed = true;
                     if (clawRelic){
                         robot.relicClaw.setPosition(0.15);
                         clawRelic = false;
@@ -259,7 +263,7 @@ public class ApolloTeleop extends LinearOpMode {
                     }
                 }
             } else {
-                gamepad2_a_previous_pressed = false;
+                gamepad2_bumper_previous_pressed = false;
             }
 
 
