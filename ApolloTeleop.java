@@ -153,9 +153,9 @@ public class ApolloTeleop extends LinearOpMode {
             robot.driveFrontRight.setPower(speed_Right/ driveSpeedFactor);
 
             //Set power to the lift according to the buttons
-            if (gamepad2.right_trigger > 0 /*&& 10000 > robot.lift.getCurrentPosition() && robot.lift.getCurrentPosition() > 500*/) {
+            if (gamepad2.right_trigger > 0 ) {
                 robot.lift.setPower(LIFT_SPEED);
-            } else if (gamepad2.left_trigger > 0/*&& 10000 > robot.lift.getCurrentPosition() && robot.lift.getCurrentPosition() > 500*/) {
+            } else if (gamepad2.left_trigger > 0) {
                 robot.lift.setPower(-LIFT_SPEED);
             } else {
                 robot.lift.setPower(0);
@@ -275,29 +275,11 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.relicLift.setPower(0);
             }
 
-/*
-
-            telemetry.addData("left", "%.2f", speed_Left);
-            telemetry.addData("right", "%.2f", speed_Right);
-            telemetry.addData("speed", "%.2f", driveSpeedFactor);
-            telemetry.addData("claw down position", "%.2f", robot.clawDownLeft.getPosition());
-            //telemetry.addData("claw up position", "%.2f", robot.clawUpLeft.getPosition());
-            //telemetry.addData("arm Right Left", "%.2f", robot.armRightLeft.getPosition());
-            //telemetry.addData("relic Claw", "%.2f", robot.relicClaw.getPosition());
-            //telemetry.addData("relic Arm", "%.2f", robot.relicArm.getPosition());
-            //telemetry.addData("arm up Down", "%.2f", robot.armUpDown.getPosition());
-            telemetry.addData("deltaClawUp", "%.2f", deltaClawUp);
-            telemetry.addData("drive speed factor", "%.2f", driveSpeedFactor);
-            telemetry.addData("tick left", "%d", robot.driveBackLeft.getCurrentPosition());
-            telemetry.addData("tick right", "%d", robot.driveBackRight.getCurrentPosition());
-            //telemetry.addData("drive direction forward", "%.2f", driveDirectionForward);
-            telemetry.update();
-*/
             // Pace this loop so jaw action is reasonable speed.
             sleep(50);
         }
     }
-
+    
     public void encoderRoll(double speed, int tick) {
         robot.clawRoll.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.clawRoll.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

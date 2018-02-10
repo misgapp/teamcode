@@ -15,8 +15,6 @@ public class AutoBlueWall extends AutoMain {
 
         waitForStart();
 
-        //apolloRun(false, false);
-
         apolloRun(false, false);
     }
 }
