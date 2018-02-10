@@ -53,7 +53,7 @@ public abstract class AutoMain extends LinearOpMode {
     void apolloRun(boolean isRed, boolean isCorner) {
         robot.prepareForStart();
         setClaw();
-        ballsTask(isRed);
+        ballsTaskAndReadPhoto(isRed);
         RelicRecoveryVuMark column = vuMark;
         reportImage(column);
         moveToCryptoBox(isRed, isCorner, column);
@@ -65,22 +65,22 @@ public abstract class AutoMain extends LinearOpMode {
     public void setClaw() {
         robot.setPositionClaw(0.3, 0.3);
         robot.setPositionWheel(robot.GRAB_POSITION);
-        sleep(500);
+        readPhotoWhileWait(500);
         robot.setPositionWheel(robot.STOP_POSITION);
         //encoderDriveLift(0.9, 500);
         robot.lift.setPower(speed);
-        sleep(2000);
+        readPhotoWhileWait(2000);
         robot.lift.setPower(0);
     }
 
     // Balls task: Move the ball with the other color aside.
-    public void ballsTask(boolean isRed) {
+    public void ballsTaskAndReadPhoto(boolean isRed) {
         robot.armRightLeft.setPosition(DROP_POSITION_ARM_RIGHT_LEFT);
 
         robot.armUpDown.setPosition(0.5);
-        sleep(400);
+        readPhotoWhileWait(400);
         robot.armUpDown.setPosition(0.9);
-        sleep(600);
+        readPhotoWhileWait(600);
         robot.armUpDown.setPosition(0.95);
 
 
@@ -128,10 +128,10 @@ public abstract class AutoMain extends LinearOpMode {
                 telemetry.addData("Blue front", robot.colorFront.blue());
                 telemetry.addData("Red front", robot.colorFront.red());
                 telemetry.update();
-                sleep(400);
+                readPhotoWhileWait(400);
                 robot.armUpDown.setPosition(0.6);
                 robot.armRightLeft.setPosition(0.3);
-                sleep(700);
+                readPhotoWhileWait(700);
                 robot.armRightLeft.setPosition(0.4);
 
             } else {
@@ -144,37 +144,26 @@ public abstract class AutoMain extends LinearOpMode {
                 telemetry.addData("Blue front", robot.colorFront.blue());
                 telemetry.addData("Red front", robot.colorFront.red());
                 telemetry.update();
-                sleep(400);
+                readPhotoWhileWait(400);
                 robot.armUpDown.setPosition(0.6);
                 robot.armRightLeft.setPosition(0.5);
-                sleep(700);
+                readPhotoWhileWait(700);
                 robot.armRightLeft.setPosition(0.4);
             }
         }
         robot.armUpDown.setPosition(0);
 
-        sleep(450);
-    }
-
-    // Read photo and the column to put the cube in.
-    public void readPhoto() {
-        relicTrackables.activate();
-        ElapsedTime runtime = new ElapsedTime();
-        runtime.reset();
-        while (opModeIsActive()) {
-            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
-                vuMark = RelicRecoveryVuMark.from(relicTemplate);
-            }
-        }
-        vuMark = RelicRecoveryVuMark.UNKNOWN;
+        readPhotoWhileWait(450);
     }
 
     // Read photo while wait instead sleep
     public void readPhotoWhileWait(int time) {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
-        while (runtime.seconds() < time) {
-            readPhoto();
+        while (opModeIsActive() && runtime.seconds() < time) {
+            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+                vuMark = RelicRecoveryVuMark.from(relicTemplate);
+            }
         }
     }
 

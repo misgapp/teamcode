@@ -15,7 +15,7 @@ public class BallsTaskCheck extends AutoMain {
 
         waitForStart();
 
-        ballsTask(true);
+        ballsTaskAndReadPhoto(true);
 
     }
 }

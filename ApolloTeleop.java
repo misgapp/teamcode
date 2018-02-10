@@ -279,7 +279,7 @@ public class ApolloTeleop extends LinearOpMode {
             sleep(50);
         }
     }
-    
+
     public void encoderRoll(double speed, int tick) {
         robot.clawRoll.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.clawRoll.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
