@@ -73,8 +73,8 @@ public class HardwareApollo {
 
     public TouchSensor sensor_button = null;
 
-    public static final double START_POSITION_CLAW_UP = 0.22;
-    public static final double START_POSITION_CLAW_DOWN = 0.64;
+    public static final double START_POSITION_CLAW_UP = 0.78;
+    public static final double START_POSITION_CLAW_DOWN = 0.36;
     public static final double START_POSITION_ARM_UP_DOWN = 1;
     public static final double START_POSITION_ARM_RIGHT_LEFT = 0.8;
     public static final double START_POSITION_RELIC_CLAW = 0.5;
@@ -198,10 +198,10 @@ public class HardwareApollo {
 
     //Function: set position to all the claws
     public void setPositionClaw(double setPositionUp, double setPositionDown) {
-        clawUpRight.setPosition(setPositionUp);
-        clawUpLeft.setPosition(1-setPositionUp);
-        clawDownLeft.setPosition(1 - setPositionDown);
-        clawDownRight.setPosition(setPositionDown);
+        clawUpLeft.setPosition(setPositionUp);
+        clawUpRight.setPosition(1-setPositionUp);
+        clawDownRight.setPosition(1 - setPositionDown);
+        clawDownLeft.setPosition(setPositionDown);
     }
 
     //Function: set position to all the wheel

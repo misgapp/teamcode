@@ -176,6 +176,20 @@ public abstract class AutoMain extends LinearOpMode {
         }
         return RelicRecoveryVuMark.UNKNOWN;
     }
+/*
+    public RelicRecoveryVuMark readPhotoWhileWait(int time){
+        ElapsedTime runtime = new ElapsedTime();
+        runtime.reset();
+        relicTrackables.activate();
+        while (runtime.seconds() < time){
+            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+                return vuMark;
+            }
+        }
+        return RelicRecoveryVuMark.UNKNOWN;
+    }
+*/
 
     // Move to crypto box
     public void moveToCryptoBox(boolean isRed, boolean isCorner, RelicRecoveryVuMark column) {
@@ -309,20 +323,21 @@ public abstract class AutoMain extends LinearOpMode {
             gyroDrive(speed, -1000, 0);
             gyroTurn(speed, 180);
             gyroHold(speed, 180, 1);
-            gyroDrive(speed, 1500, 180);
+            robot.setPositionClaw(0.5, 0.5);
+            gyroDrive(speed, 1600, 180);
             //robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
             robot.setPositionWheel(robot.GRAB_POSITION);
             sleep(700);
             gyroDrive(speed, 1400, 180);
-            robot.setPositionClaw(0.6, 0.2);
+
             //sleep(900);
 
-            gyroDrive(speed, 1000, 180);
+            gyroDrive(speed, 1200, 180);
             robot.setPositionWheel(robot.STOP_POSITION);
             robot.setPositionClaw(0.7, 0.3);
             gyroTurn(speed, 0);
             gyroHold(speed, 0, 2);
-            gyroDrive(speed, 4000, 0);
+            gyroDrive(speed, 6500, 0);
             robot.setPositionWheel(robot.DROP_POSITION);
         }
 
