@@ -19,19 +19,33 @@ public class AutoTest extends AutoMain {
         waitForStart();
 
         moreCubs(true);
+
         /*
-        for (int g = 0; g<4; g++){
-            for (int i = 0; i<4; i++){
-                driveStrait(0.2, 4000);
-                turn(0.2, false);
+        for (int g = 0; g<2; g++){
+            for (int i = 1; i<5; i++){
+                gyroDrive(0.2, 4000, 0+90*(i-1));
+                gyroTurn(0.2, 90*i);
             }
         }
-        turn(0.2, true);
-        for (int g = 0; g<4; g++){
-            for (int i = 0; i<4; i++){
-                driveStrait(0.2, -4000);
-                turn(0.2, true);
+
+        for (int g = 0; g<2; g++){
+            for (int i = 1; i<5; i++){
+                gyroDrive(0.9, 4000, 0+90*(i-1));
+                gyroTurn(0.9, 90*i);
             }
+        }
+
+        gyroTurn(0.2, -90);
+
+        for (int g = 0; g<2; g++){
+            for (int i = 1; i<5; i++){
+                gyroDrive(0.2, -4000, 0+90*(i-1));
+                gyroTurn(0.2, -90*i);
+            }
+        }
+
+        for (int i = 3; i<7; i++){
+            robot.setPositionClaw(0.1*i, 0.1*i);
         }
 
 */

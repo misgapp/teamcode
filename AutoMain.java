@@ -31,6 +31,7 @@ public abstract class AutoMain extends LinearOpMode {
     VuforiaLocalizer vuforia;
     VuforiaTrackable relicTemplate;
     VuforiaTrackables relicTrackables;
+    RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.UNKNOWN;
     public static final double DROP_POSITION_ARM_RIGHT_LEFT = 0.4;
     public static final double DROP_POSITION_ARM_UP_DOWN = 0.9;
     public static final double START_POSITION_ARM_UP_DOWN = 0.2;
@@ -42,41 +43,31 @@ public abstract class AutoMain extends LinearOpMode {
 
     double speed = 0.6;
 
+    //Init function, hardwareMap & vuforia
     public void apolloInit() {
         robot.init(hardwareMap);
         initVuforia();
     }
 
+    //The main function of the autonomous
     void apolloRun(boolean isRed, boolean isCorner) {
         robot.prepareForStart();
         setClaw();
         ballsTask(isRed);
-        RelicRecoveryVuMark column = readPhoto();
+        RelicRecoveryVuMark column = vuMark;
         reportImage(column);
         moveToCryptoBox(isRed, isCorner, column);
         putCube();
+        moreCubs(isCorner);
     }
 
-
-//    void readColor() {
-//        final int LED_ON = 0;
-//
-//        robot.colorReader.write8(3, LED_ON);
-//
-//        while (opModeIsActive()) {
-//            int color = robot.colorReader.read8(4);
-//
-//            telemetry.addData("ball color: ", color);
-//            telemetry.update();
-//            idle();
-//        }
-//    }
-
+    //Set the claws & lift to right position, grab cube
     public void setClaw() {
         robot.setPositionClaw(0.3, 0.3);
         robot.setPositionWheel(robot.GRAB_POSITION);
         sleep(500);
         robot.setPositionWheel(robot.STOP_POSITION);
+        //encoderDriveLift(0.9, 500);
         robot.lift.setPower(speed);
         sleep(2000);
         robot.lift.setPower(0);
@@ -165,33 +156,28 @@ public abstract class AutoMain extends LinearOpMode {
         sleep(450);
     }
 
-    // Read photo and return the column to put the cube in.
-    public RelicRecoveryVuMark readPhoto() {
+    // Read photo and the column to put the cube in.
+    public void readPhoto() {
         relicTrackables.activate();
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 2.0)) {
-            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        while (opModeIsActive()) {
             if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
-                return vuMark;
+                vuMark = RelicRecoveryVuMark.from(relicTemplate);
             }
         }
-        return RelicRecoveryVuMark.UNKNOWN;
+        vuMark = RelicRecoveryVuMark.UNKNOWN;
     }
-/*
-    public RelicRecoveryVuMark readPhotoWhileWait(int time){
+
+    // Read photo while wait instead sleep
+    public void readPhotoWhileWait(int time) {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
-        relicTrackables.activate();
-        while (runtime.seconds() < time){
-            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
-                return vuMark;
-            }
+        while (runtime.seconds() < time) {
+            readPhoto();
         }
-        return RelicRecoveryVuMark.UNKNOWN;
     }
-*/
+
 
     // Move to crypto box
     public void moveToCryptoBox(boolean isRed, boolean isCorner, RelicRecoveryVuMark column) {
@@ -248,7 +234,7 @@ public abstract class AutoMain extends LinearOpMode {
         }
     }
 
-    // Put the cube
+    // Put the cube in crypto box
     public void putCube() {
         robot.setPositionWheel(robot.DROP_POSITION);
         sleep(800);
@@ -256,6 +242,54 @@ public abstract class AutoMain extends LinearOpMode {
         robot.setPositionClaw(1, 1);
         driveStrait(speed, 600);
         driveStrait(speed, -600);
+    }
+
+    public void moreCubs(boolean isCorner){
+        if (isCorner){
+            /*
+            gyroDrive(speed, -1500, -90);
+            gyroTurn(speed, 90);
+            gyroHold(speed, 90, 2);
+            gyroDrive(speed, 1600, 90);
+            robot.setPositionClaw(0.55, 0.6);
+            //robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
+            robot.setPositionWheel(robot.GRAB_POSITION);
+            gyroDrive(speed, 1200, 90);
+            gyroDrive(speed, 1100, 90);
+            robot.setPositionClaw(0.5, 0.75);
+            robot.setPositionWheel(robot.STOP_POSITION);
+            gyroDrive(speed, -2000, 90);
+            //robot.setPositionClaw(0.7, 0.3);
+            gyroTurn(speed, -90);
+            gyroHold(speed, -90, 2);
+            gyroDrive(speed, 2900, -90);
+            robot.setPositionWheel(robot.DROP_POSITION);
+            sleep(200);
+            robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
+            //encoderDriveLift(0.9, 1000);
+            */
+
+            gyroDrive(speed, -1500, 0);
+            gyroTurn(speed, 180);
+            gyroHold(speed, 180, 1);
+            gyroDrive(speed, 1600, 180);
+            robot.setPositionClaw(0.55, 0.6);
+            //robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
+            robot.setPositionWheel(robot.GRAB_POSITION);
+            gyroDrive(speed, 1200, 180);
+            gyroDrive(speed, 1100, 180);
+            robot.setPositionClaw(0.5, 0.75);
+            robot.setPositionWheel(robot.STOP_POSITION);
+            gyroDrive(speed, -2000, 180);
+            //robot.setPositionClaw(0.7, 0.3);
+            gyroTurn(speed, 0);
+            gyroHold(speed, 0, 2);
+            gyroDrive(speed, 2900, 0);
+            robot.setPositionWheel(robot.DROP_POSITION);
+            sleep(200);
+            robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
+            //encoderDriveLift(0.9, 1000);
+        }
     }
 
     //init vuforia
@@ -304,51 +338,12 @@ public abstract class AutoMain extends LinearOpMode {
 
     }
 
-    public void moreCubs(boolean isCorner){
-        if (isCorner){
-            /*
-            gyroDrive(speed, -2000, -90);
-            gyroTurn(speed, 90);
-            gyroHold(speed, 90, 2);
-            gyroDrive(speed, 6000, 90);
-            robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
-            robot.setPositionWheel(robot.GRAB_POSITION);
-            sleep(700);
-            robot.setPositionClaw(0.6, 0.4);
-            sleep(900);
-            robot.setPositionWheel(robot.STOP_POSITION);
-            robot.setPositionClaw(0.7, 0.3);
-            gyroTurn(speed, -90);
-            gyroHold(speed, -90, 2);
-            gyroDrive(speed, 5000, -90);
-            */
-            gyroDrive(speed, -1500, 0);
-            gyroTurn(speed, 180);
-            gyroHold(speed, 180, 1);
-            gyroDrive(speed, 1600, 180);
-            robot.setPositionClaw(0.55, 0.6);
-            //robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
-            robot.setPositionWheel(robot.GRAB_POSITION);
-            gyroDrive(speed, 1200, 180);
-            gyroDrive(speed, 1100, 180);
-            robot.setPositionClaw(0.5, 0.75);
-            robot.setPositionWheel(robot.STOP_POSITION);
-            gyroDrive(speed, -2000, 180);
-            //robot.setPositionClaw(0.7, 0.3);
-            gyroTurn(speed, 0);
-            gyroHold(speed, 0, 2);
-            gyroDrive(speed, 2900, 0);
-            robot.setPositionWheel(robot.DROP_POSITION);
-            sleep(200);
-            robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
-        }
-
-    }
-
+    //function drive encoder for drives strait
     public void driveStrait(double speed, int tick) {
         encoderDrive(speed, tick, tick);
     }
 
+    //function drive encoder for turns
     public void turn(double speed, boolean turn_left) {
         int ticks = 2100;
         encoderDrive(speed, turn_left ? ticks : -ticks, turn_left ? -ticks : ticks);
@@ -410,23 +405,9 @@ public abstract class AutoMain extends LinearOpMode {
             idle();
         }
         robot.setPowerAllDriveMotors(0);
-
-
-        /*
-        telemetry.addData("newLeftTarget", "%d", newLeftTarget);
-        telemetry.addData("newRightTarget", "%d", newRightTarget);
-        telemetry.addData("tickLeft", "%d", tickLeft);
-        telemetry.addData("tickRight", "%d", tickRight);
-
-        telemetry.addData("tick left", "%d", robot.driveBackLeft.getCurrentPosition());
-        telemetry.addData("tick right", "%d", robot.driveBackRight.getCurrentPosition());
-        telemetry.addData("tick left", "%d", robot.driveFrontLeft.getCurrentPosition());
-        telemetry.addData("tick right", "%d", robot.driveFrontRight.getCurrentPosition());
-        telemetry.update();
-       */
-
     }
 
+    //Telemetry to the column
     void reportImage(RelicRecoveryVuMark column) {
         if (column == RelicRecoveryVuMark.CENTER) {
             telemetry.addData("Image", "Center");
@@ -440,10 +421,7 @@ public abstract class AutoMain extends LinearOpMode {
         telemetry.update();
     }
 
-    // function drive encoder
-    // speed - power level between 0 and 1. Is always positive.
-    // tickRight - ticks of right side to drive. If positive driving towards cube claw.
-    //   If negative drives to the other direction.
+    // function drive encoder to lift
     public void encoderDriveLift(double speed, int tick) {
         robot.setDriveMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);

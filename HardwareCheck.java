@@ -20,22 +20,31 @@ public class HardwareCheck extends AutoMain{
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        for (int g = 0; g<4; g++){
-            for (int i = 0; i<4; i++){
-                driveStrait(0.5, 4000);
-                robot.setPowerAllDriveMotors(0);
-                turn(0.5, false);
-                robot.setPowerAllDriveMotors(0);
+        for (int g = 0; g<2; g++){
+            for (int i = 1; i<5; i++){
+                gyroDrive(0.2, 1500, 0+90*(i-1));
+                gyroTurn(0.2, 90*i);
             }
         }
-        turn(0.5, true);
-        for (int g = 0; g<4; g++){
-            for (int i = 0; i<4; i++){
-                driveStrait(0.5, -4000);
-                robot.setPowerAllDriveMotors(0);
-                turn(0.5, true);
-                robot.setPowerAllDriveMotors(0);
+
+        for (int g = 0; g<2; g++){
+            for (int i = 1; i<5; i++){
+                gyroDrive(0.9, 1500, 0+90*(i-1));
+                gyroTurn(0.9, 90*i);
             }
+        }
+
+        gyroTurn(0.2, -90);
+
+        for (int g = 0; g<2; g++){
+            for (int i = 1; i<5; i++){
+                gyroDrive(0.2, -1500, 0+90*(i-1));
+                gyroTurn(0.2, -90*i);
+            }
+        }
+
+        for (int i = 3; i<7; i++){
+            robot.setPositionClaw(0.1*i, 0.1*i);
         }
     }
 
