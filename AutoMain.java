@@ -31,8 +31,8 @@ public abstract class AutoMain extends LinearOpMode {
     VuforiaLocalizer vuforia;
     VuforiaTrackable relicTemplate;
     VuforiaTrackables relicTrackables;
-    public static final double DROP_POSITION_ARM_RIGHT_LEFT = 0.54;
-    public static final double DROP_POSITION_ARM_UP_DOWN = 1;
+    public static final double DROP_POSITION_ARM_RIGHT_LEFT = 0.4;
+    public static final double DROP_POSITION_ARM_UP_DOWN = 0.9;
     public static final double START_POSITION_ARM_UP_DOWN = 0.2;
     static final double HEADING_THRESHOLD = 1 ;
     static final double P_TURN_COEFF = 0.1;
@@ -88,10 +88,10 @@ public abstract class AutoMain extends LinearOpMode {
 
         robot.armUpDown.setPosition(0.5);
         sleep(400);
-        robot.armUpDown.setPosition(0.8);
-        sleep(500);
-        robot.armUpDown.setPosition(0.85);
+        robot.armUpDown.setPosition(0.9);
         sleep(600);
+        robot.armUpDown.setPosition(0.95);
+
 
         boolean colorDetected = false;
         boolean frontIsRed = false;
@@ -128,7 +128,7 @@ public abstract class AutoMain extends LinearOpMode {
 
         if (colorDetected) {
             if (isRed == frontIsRed) {
-                robot.armRightLeft.setPosition(0.90);
+                robot.armRightLeft.setPosition(0.00);
                 telemetry.addData("front is red ", frontIsRed);
                 telemetry.addData("color detected ", colorDetected);
                 telemetry.addData("going back ", colorDetected);
@@ -138,12 +138,13 @@ public abstract class AutoMain extends LinearOpMode {
                 telemetry.addData("Red front", robot.colorFront.red());
                 telemetry.update();
                 sleep(400);
-                robot.armRightLeft.setPosition(0.6);
+                robot.armUpDown.setPosition(0.6);
+                robot.armRightLeft.setPosition(0.3);
                 sleep(700);
-                robot.armRightLeft.setPosition(0.55);
+                robot.armRightLeft.setPosition(0.4);
 
             } else {
-                robot.armRightLeft.setPosition(0.10);
+                robot.armRightLeft.setPosition(0.8);
                 telemetry.addData("front is red ", frontIsRed);
                 telemetry.addData("color detected ", colorDetected);
                 telemetry.addData("going front ", colorDetected);
@@ -153,14 +154,15 @@ public abstract class AutoMain extends LinearOpMode {
                 telemetry.addData("Red front", robot.colorFront.red());
                 telemetry.update();
                 sleep(400);
-                robot.armRightLeft.setPosition(0.4);
+                robot.armUpDown.setPosition(0.6);
+                robot.armRightLeft.setPosition(0.5);
                 sleep(700);
-                robot.armRightLeft.setPosition(0.45);
+                robot.armRightLeft.setPosition(0.4);
             }
         }
-        robot.armUpDown.setPosition(START_POSITION_ARM_UP_DOWN);
+        robot.armUpDown.setPosition(0);
 
-        sleep(200);
+        sleep(450);
     }
 
     // Read photo and return the column to put the cube in.
@@ -320,25 +322,25 @@ public abstract class AutoMain extends LinearOpMode {
             gyroHold(speed, -90, 2);
             gyroDrive(speed, 5000, -90);
             */
-            gyroDrive(speed, -1000, 0);
+            gyroDrive(speed, -1500, 0);
             gyroTurn(speed, 180);
             gyroHold(speed, 180, 1);
-            robot.setPositionClaw(0.5, 0.5);
             gyroDrive(speed, 1600, 180);
+            robot.setPositionClaw(0.55, 0.6);
             //robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
             robot.setPositionWheel(robot.GRAB_POSITION);
-            sleep(700);
-            gyroDrive(speed, 1400, 180);
-
-            //sleep(900);
-
             gyroDrive(speed, 1200, 180);
+            gyroDrive(speed, 1100, 180);
+            robot.setPositionClaw(0.5, 0.75);
             robot.setPositionWheel(robot.STOP_POSITION);
-            robot.setPositionClaw(0.7, 0.3);
+            gyroDrive(speed, -2000, 180);
+            //robot.setPositionClaw(0.7, 0.3);
             gyroTurn(speed, 0);
             gyroHold(speed, 0, 2);
-            gyroDrive(speed, 6500, 0);
+            gyroDrive(speed, 2900, 0);
             robot.setPositionWheel(robot.DROP_POSITION);
+            sleep(200);
+            robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
         }
 
     }

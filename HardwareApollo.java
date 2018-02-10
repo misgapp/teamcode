@@ -73,12 +73,12 @@ public class HardwareApollo {
 
     public TouchSensor sensor_button = null;
 
-    public static final double START_POSITION_CLAW_UP = 0.78;
-    public static final double START_POSITION_CLAW_DOWN = 0.36;
-    public static final double START_POSITION_ARM_UP_DOWN = 1;
-    public static final double START_POSITION_ARM_RIGHT_LEFT = 0.8;
-    public static final double START_POSITION_RELIC_CLAW = 0.5;
-    public static final double START_POSITION_RELIC_ARM = 0.1;
+    public static final double START_POSITION_CLAW_UP = 0.22;
+    public static final double START_POSITION_CLAW_DOWN = 0.64;
+    public static final double START_POSITION_ARM_UP_DOWN = 0.0;
+    public static final double START_POSITION_ARM_RIGHT_LEFT = 0.4;
+    public static final double START_POSITION_RELIC_CLAW = 0.1;
+    public static final double START_POSITION_RELIC_ARM = 0.75;
     public static final double STOP_POSITION = 0.5;
     public static final double DROP_POSITION = 0.1;
     public static final double GRAB_POSITION = 0.9;
@@ -128,8 +128,8 @@ public class HardwareApollo {
         clawDownRight = hwMap.get(Servo.class, "cdr");
         clawUpLeft = hwMap.get(Servo.class, "cul");
         clawUpRight = hwMap.get(Servo.class, "cur");
-        //armRightLeft = hwMap.get(Servo.class, "arl");
-       // armUpDown = hwMap.get(Servo.class, "aud");
+        armRightLeft = hwMap.get(Servo.class, "arl");
+        armUpDown = hwMap.get(Servo.class, "aud");
         relicUpDown = hwMap.get(Servo.class, "rud");
         relicClaw = hwMap.get(Servo.class, "rc");
         wheelDownLeft = hwMap.get(Servo.class, "wdl");
@@ -138,8 +138,8 @@ public class HardwareApollo {
         wheelUpRight = hwMap.get(Servo.class, "wur");
 
         setPositionClaw(START_POSITION_CLAW_UP, START_POSITION_CLAW_DOWN);
-        //armUpDown.setPosition(START_POSITION_ARM_UP_DOWN);
-        //armRightLeft.setPosition(START_POSITION_ARM_RIGHT_LEFT);
+        armUpDown.setPosition(START_POSITION_ARM_UP_DOWN);
+        armRightLeft.setPosition(START_POSITION_ARM_RIGHT_LEFT);
         relicUpDown.setPosition(START_POSITION_RELIC_ARM);
         relicClaw.setPosition(START_POSITION_RELIC_CLAW);
         setPositionWheel(STOP_POSITION);
@@ -198,10 +198,10 @@ public class HardwareApollo {
 
     //Function: set position to all the claws
     public void setPositionClaw(double setPositionUp, double setPositionDown) {
-        clawUpLeft.setPosition(setPositionUp);
-        clawUpRight.setPosition(1-setPositionUp);
-        clawDownRight.setPosition(1 - setPositionDown);
-        clawDownLeft.setPosition(setPositionDown);
+        clawUpLeft.setPosition(1-setPositionUp);
+        clawUpRight.setPosition(setPositionUp);
+        clawDownRight.setPosition(setPositionDown);
+        clawDownLeft.setPosition(1-setPositionDown);
     }
 
     //Function: set position to all the wheel

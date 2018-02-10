@@ -11,7 +11,7 @@ public class BallsTaskCheck extends AutoMain {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        apolloInit();
+        robot.init(hardwareMap);
 
         waitForStart();
 
