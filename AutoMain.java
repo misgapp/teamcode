@@ -233,6 +233,7 @@ public abstract class AutoMain extends LinearOpMode {
         driveStrait(speed, -600);
     }
 
+    // Put more cube in crypto box
     public void moreCubs(boolean isCorner){
         if (isCorner){
             /*
@@ -281,7 +282,7 @@ public abstract class AutoMain extends LinearOpMode {
         }
     }
 
-    //init vuforia
+    //Init vuforia
     public void initVuforia() {
         /*
          * To start up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
@@ -327,12 +328,12 @@ public abstract class AutoMain extends LinearOpMode {
 
     }
 
-    //function drive encoder for drives strait
+    //Function drive encoder for drives strait
     public void driveStrait(double speed, int tick) {
         encoderDrive(speed, tick, tick);
     }
 
-    //function drive encoder for turns
+    //Function drive encoder for turns
     public void turn(double speed, boolean turn_left) {
         int ticks = 2100;
         encoderDrive(speed, turn_left ? ticks : -ticks, turn_left ? -ticks : ticks);
@@ -410,7 +411,7 @@ public abstract class AutoMain extends LinearOpMode {
         telemetry.update();
     }
 
-    // function drive encoder to lift
+    // Function drive encoder to lift
     public void encoderDriveLift(double speed, int tick) {
         robot.setDriveMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -445,7 +446,7 @@ public abstract class AutoMain extends LinearOpMode {
         robot.lift.setPower(0);
     }
 
-    /**
+    /*
      *  Method to drive on a fixed compass bearing (angle), based on encoder counts.
      *  Move will stop if either of these conditions occur:
      *  1) Move gets to the desired position
@@ -457,6 +458,7 @@ public abstract class AutoMain extends LinearOpMode {
      *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
      *                   If a relative angle is required, add/subtract from current heading.
      */
+
     public void gyroDrive ( double speed,
                             double distanceTick,
                             double angle) {
@@ -540,7 +542,7 @@ public abstract class AutoMain extends LinearOpMode {
         }
     }
 
-    /**
+    /*
      *  Method to spin on central axis to point in a new direction.
      *  Move will stop if either of these conditions occur:
      *  1) Move gets to the heading (angle)
@@ -561,7 +563,7 @@ public abstract class AutoMain extends LinearOpMode {
         }
     }
 
-    /**
+    /*
      *  Method to obtain & hold a heading for a finite amount of time
      *  Move will stop once the requested time has elapsed
      *
@@ -589,7 +591,7 @@ public abstract class AutoMain extends LinearOpMode {
     }
 
 
-    /**
+    /*
      * Perform one cycle of closed loop heading control.
      *
      * @param speed     Desired speed of turn.
@@ -633,7 +635,7 @@ public abstract class AutoMain extends LinearOpMode {
         return onTarget;
     }
 
-    /**
+    /*
      * getError determines the error between the target angle and the robot's current heading
      * @param   targetAngle  Desired angle (relative to global reference established at last Gyro Reset).
      * @return  error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
@@ -650,7 +652,7 @@ public abstract class AutoMain extends LinearOpMode {
         return robotError;
     }
 
-    /**
+    /*
      * returns desired steering force.  +/- 1 range.  +ve = steer left
      * @param error   Error angle in robot relative degrees
      * @param PCoeff  Proportional Gain Coefficient

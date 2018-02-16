@@ -31,15 +31,19 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+
+import static java.lang.Thread.sleep;
 
 // the lift is in Remarks because we dont have another  motor
 
@@ -51,7 +55,7 @@ public class HardwareApollo {
     public DcMotor driveBackRight = null;
     public DcMotor lift = null;
     public DcMotor relicLift = null;
-    public DcMotor clawRoll = null;
+    public DcMotor spiner = null;
     public Servo clawDownLeft = null;
     public Servo clawDownRight = null;
     public Servo clawUpLeft = null;
@@ -70,22 +74,23 @@ public class HardwareApollo {
     //public I2cDevice color = null;
     //public I2cDeviceSynch colorReader = null;
     BNO055IMU imu;
+    ModernRoboticsI2cGyro gyroSpiner;
+    IntegratingGyroscope gyro;
 
     public TouchSensor sensor_button = null;
 
     public static final double START_POSITION_CLAW_UP = 0.22;
-    public static final double START_POSITION_CLAW_DOWN = 0.64;
-    public static final double START_POSITION_ARM_UP_DOWN = 0.0;
+    public static final double START_POSITION_CLAW_DOWN = 0.4;
+    public static final double START_POSITION_RELIC_UP_DOWN = 0.9;
     public static final double START_POSITION_ARM_RIGHT_LEFT = 0.4;
     public static final double START_POSITION_RELIC_CLAW = 0.1;
-    public static final double START_POSITION_RELIC_ARM = 0.75;
+    public static final double START_POSITION_RELIC_ARM = 0.9;
     public static final double STOP_POSITION = 0.5;
     public static final double DROP_POSITION = 0.1;
     public static final double GRAB_POSITION = 0.9;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
-    private ElapsedTime period = new ElapsedTime();
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
@@ -99,7 +104,10 @@ public class HardwareApollo {
         driveFrontRight = hwMap.get(DcMotor.class, "drf");
         lift = hwMap.get(DcMotor.class, "lift");
         relicLift = hwMap.get(DcMotor.class, "rl");
-        //clawRoll = hwMap.get(DcMotor.class, "rc");
+        //spiner = hwMap.get(DcMotor.class, "sp");
+        gyroSpiner = hwMap.get(ModernRoboticsI2cGyro.class, "gs");
+
+
 
         driveBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         driveBackRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
@@ -107,20 +115,20 @@ public class HardwareApollo {
         driveFrontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         lift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
         relicLift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
-        //clawRoll.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
+        //spiner.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
 
         // Set all motors to zero power
         setPowerAllDriveMotors(0);
         lift.setPower(0);
         relicLift.setPower(0);
-        //clawRoll.setPower(0);
+        //spiner.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         setDriveMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         relicLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //clawRoll.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //spiner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -138,7 +146,7 @@ public class HardwareApollo {
         wheelUpRight = hwMap.get(Servo.class, "wur");
 
         setPositionClaw(START_POSITION_CLAW_UP, START_POSITION_CLAW_DOWN);
-        armUpDown.setPosition(START_POSITION_ARM_UP_DOWN);
+        armUpDown.setPosition(START_POSITION_RELIC_UP_DOWN);
         armRightLeft.setPosition(START_POSITION_ARM_RIGHT_LEFT);
         relicUpDown.setPosition(START_POSITION_RELIC_ARM);
         relicClaw.setPosition(START_POSITION_RELIC_CLAW);
@@ -166,6 +174,9 @@ public class HardwareApollo {
         // and named "imu".
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+        gyroSpiner.calibrate();
+
+        ElapsedTime timer = new ElapsedTime();
     }
 
     //Function: set mode run using encoder
@@ -217,6 +228,5 @@ public class HardwareApollo {
         // Start the logging of measured acceleration
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
     }
-
 }
 

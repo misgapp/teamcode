@@ -32,6 +32,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
+
+import static java.lang.Thread.sleep;
+import static org.firstinspires.ftc.teamcode.AutoMain.HEADING_THRESHOLD;
 
 //import org.firstinspires.ftc.robotcontroller.external.samples.SensorColor;
 
@@ -81,6 +85,14 @@ public class ApolloTeleop extends LinearOpMode {
          * The init() method of the hardware class does all the work here
          */
         robot.init(hardwareMap);
+/*
+        // make sure the gyro is calibrated before continuing
+        while (!isStopRequested() && gyroSpiner.isCalibrating())  {
+            sleep(50);
+            idle();
+        }
+        .resetZAxisIntegrator();
+        */
 
         //robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -97,13 +109,12 @@ public class ApolloTeleop extends LinearOpMode {
         while (opModeIsActive()) {
 
             //Change speed of the motors
-            if (gamepad1.x) {
+            if (gamepad1.dpad_left) {
                 driveDirectionForward = true;
                 idle();
             }
 
-            if (gamepad1.b) {
-
+            if (gamepad1.dpad_right) {
                 driveDirectionForward = false;
                 idle();
             }
@@ -161,6 +172,7 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.lift.setPower(0);
             }
 
+            //Set position to claws according to the sticks
             double deltaClawDown = -gamepad2.left_stick_y / 2;
 
             if (deltaClawDown < 0.3 && deltaClawDown > -0.3) {
@@ -175,17 +187,18 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             clawDownPosition += deltaClawDown;
-            clawDownPosition = Math.min(clawDownPosition, 0.7);
-            clawDownPosition = Math.max(clawDownPosition, 0.5);
+            clawDownPosition = Math.min(clawDownPosition, 1);
+            clawDownPosition = Math.max(clawDownPosition, 0);
             robot.clawDownLeft.setPosition(clawDownPosition);
             robot.clawDownRight.setPosition(1 - clawDownPosition);
 
             clawUpPosition += deltaClawUp;
-            clawUpPosition = Math.min(clawUpPosition, 0.7);
-            clawUpPosition = Math.max(clawUpPosition, 0.5);
+            clawUpPosition = Math.min(clawUpPosition, 1);
+            clawUpPosition = Math.max(clawUpPosition, 0);
             robot.clawUpLeft.setPosition(clawUpPosition);
             robot.clawUpRight.setPosition(1 - clawUpPosition);
 
+            // Set position to the wheels DROP, GRAB or STOP
             if (gamepad1.left_trigger > 0) {
                 robot.setPositionWheel(robot.DROP_POSITION);
             } else if (gamepad1.right_trigger > 0) {
@@ -194,29 +207,7 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.setPositionWheel(robot.STOP_POSITION);
             }
 
-            /*
-            if (gamepad1.left_bumper){
-                encoderRoll(0.3, 300);
-            } else if (gamepad1.right_bumper){
-                encoderRoll(0.3, -300);
-            }
-
-            if (gamepad2.b){
-                encoderRoll(0.3, 50);
-            } else if (gamepad2.y){
-                encoderRoll(0.3, -50);
-            }
-
-
-
-            if (gamepad2.x){
-                robot.relicUpDown.setPosition(0.2);
-            }
-
-            if (gamepad2.a){
-                robot.relicClaw.setPosition(0.4);
-            }
-*/
+            //Set position to relic servo
             if (gamepad2.y){
                 robot.relicUpDown.setPosition(0.1);
             }
@@ -266,7 +257,7 @@ public class ApolloTeleop extends LinearOpMode {
                 gamepad2_bumper_previous_pressed = false;
             }
 
-
+            // Set power to relic lift
             if (gamepad2.dpad_down){
                 robot.relicLift.setPower(1);
             } else if (gamepad2.dpad_up){
@@ -275,43 +266,93 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.relicLift.setPower(0);
             }
 
+            //Spiner
+            if (gamepad1.y){
+
+            }
+
+            telemetry.addData("claw Down Left", "%.2f", robot.clawDownLeft.getPosition());
+            telemetry.addData("claw Down Right", "%.2f", robot.clawDownRight.getPosition());
+            telemetry.addData("claw up Left", "%.2f", robot.clawUpLeft.getPosition());
+            telemetry.addData("claw up Right", "%.2f", robot.clawUpRight.getPosition());
+            telemetry.update();
+
             // Pace this loop so jaw action is reasonable speed.
             sleep(50);
         }
     }
+/*
+    public void angleSpiner(int angle) {
 
-    public void encoderRoll(double speed, int tick) {
-        robot.clawRoll.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.clawRoll.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
 
-        int newTarget = 0;
+    boolean onHeading(double speed, double angle, double PCoeff) {
+        double   error ;
+        double   steer ;
+        boolean  onTarget = false ;
+        double spinerSpeed;
 
-        speed = Math.abs(speed);
-        double speedMotor = tick > 0 ? speed : -speed;
+        // determine turn power based on +/- error
+        error = getError(angle);
 
-        newTarget = robot.clawRoll.getCurrentPosition() + tick;
-
-        robot.clawRoll.setPower(speedMotor);
-
-
-        while (opModeIsActive()) {
-            if (tick > 0) {
-                if (robot.clawRoll.getCurrentPosition() >= newTarget) {
-                    telemetry.addData("break", "1");
-                    break;
-                }
-            } else {
-                if (robot.clawRoll.getCurrentPosition() <= newTarget) {
-                    telemetry.addData("break", "2");
-                    break;
-                }
-            }
-
-            telemetry.addData("tick lift", "%d", robot.clawRoll.getCurrentPosition());
-            telemetry.update();
-            idle();
+        if (Math.abs(error) <= HEADING_THRESHOLD) {
+            steer = 0.0;
+            spinerSpeed  = 0.0;
+            onTarget = true;
         }
-        robot.clawRoll.setPower(0);
+        else {
+            steer = getSteer(error, PCoeff);
+            rightSpeed  = speed * steer;
+
+        }
+
+        // Send desired speeds to motors.
+        robot.spiner.setPower(spinerSpeed);
+
+
+        // Display it for the driver.
+        telemetry.addData("Target", "%5.2f", angle);
+        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+        telemetry.addData("Speed.", "%5.2f:%5.2f",spinerSpeed);
+
+        return onTarget;
     }
 
+    /**
+     * getError determines the error between the target angle and the robot's current heading
+     * @param   targetAngle  Desired angle (relative to global reference established at last Gyro Reset).
+     * @return  error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
+     *          +ve error means the robot should turn LEFT (CCW) to reduce error.
+
+    public double getError(double targetAngle) {
+
+        double robotError;
+
+        // calculate error in -179 to +180 range  (
+        robotError = targetAngle - gy.getIntegratedZValue();
+        while (robotError > 180)  robotError -= 360;
+        while (robotError <= -180) robotError += 360;
+        return robotError;
     }
+
+    /**
+     * returns desired steering force.  +/- 1 range.  +ve = steer left
+     * @param error   Error angle in robot relative degrees
+     * @param PCoeff  Proportional Gain Coefficient
+     * @return
+
+    public double getSteer(double error, double PCoeff) {
+        return Range.clip(error * PCoeff, -1, 1);
+    }
+    public void gyroTurn (  double speed, double angle) {
+
+        // keep looping while we are still active, and not on heading.
+        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
+            // Update telemetry & Allow time for other processes to run.
+            telemetry.update();
+        }
+
+    }
+    */
+}
+
