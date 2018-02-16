@@ -74,13 +74,13 @@ public class HardwareApollo {
     //public I2cDevice color = null;
     //public I2cDeviceSynch colorReader = null;
     BNO055IMU imu;
-    ModernRoboticsI2cGyro gyroSpiner;
-    IntegratingGyroscope gyro;
+    //ModernRoboticsI2cGyro gyroSpiner;
+    //IntegratingGyroscope gyro;
 
     public TouchSensor sensor_button = null;
 
-    public static final double START_POSITION_CLAW_UP = 0.22;
-    public static final double START_POSITION_CLAW_DOWN = 0.4;
+    public static final double START_POSITION_CLAW_UP = 0.4;
+    public static final double START_POSITION_CLAW_DOWN = 0.6;
     public static final double START_POSITION_RELIC_UP_DOWN = 0.9;
     public static final double START_POSITION_ARM_RIGHT_LEFT = 0.4;
     public static final double START_POSITION_RELIC_CLAW = 0.1;
@@ -104,8 +104,8 @@ public class HardwareApollo {
         driveFrontRight = hwMap.get(DcMotor.class, "drf");
         lift = hwMap.get(DcMotor.class, "lift");
         relicLift = hwMap.get(DcMotor.class, "rl");
-        //spiner = hwMap.get(DcMotor.class, "sp");
-        gyroSpiner = hwMap.get(ModernRoboticsI2cGyro.class, "gs");
+        spiner = hwMap.get(DcMotor.class, "sp");
+        //gyroSpiner = hwMap.get(ModernRoboticsI2cGyro.class, "gs");
 
 
 
@@ -115,20 +115,20 @@ public class HardwareApollo {
         driveFrontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         lift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
         relicLift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
-        //spiner.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
+        spiner.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
 
         // Set all motors to zero power
         setPowerAllDriveMotors(0);
         lift.setPower(0);
         relicLift.setPower(0);
-        //spiner.setPower(0);
+        spiner.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         setDriveMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         relicLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //spiner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        spiner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -174,7 +174,7 @@ public class HardwareApollo {
         // and named "imu".
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        gyroSpiner.calibrate();
+        //gyroSpiner.calibrate();
 
         ElapsedTime timer = new ElapsedTime();
     }

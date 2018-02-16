@@ -187,14 +187,14 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             clawDownPosition += deltaClawDown;
-            clawDownPosition = Math.min(clawDownPosition, 1);
-            clawDownPosition = Math.max(clawDownPosition, 0);
+            clawDownPosition = Math.min(clawDownPosition, 0);
+            clawDownPosition = Math.max(clawDownPosition, 1);
             robot.clawDownLeft.setPosition(clawDownPosition);
             robot.clawDownRight.setPosition(1 - clawDownPosition);
 
             clawUpPosition += deltaClawUp;
-            clawUpPosition = Math.min(clawUpPosition, 1);
-            clawUpPosition = Math.max(clawUpPosition, 0);
+            clawUpPosition = Math.min(clawUpPosition, 0);
+            clawUpPosition = Math.max(clawUpPosition, 1);
             robot.clawUpLeft.setPosition(clawUpPosition);
             robot.clawUpRight.setPosition(1 - clawUpPosition);
 
@@ -267,8 +267,9 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             //Spiner
-            if (gamepad1.y){
 
+            if (gamepad1.y){
+                robot.spiner.setPower(0.1);
             }
 
             telemetry.addData("claw Down Left", "%.2f", robot.clawDownLeft.getPosition());
