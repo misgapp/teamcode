@@ -74,11 +74,9 @@ public class HardwareApollo {
     //public I2cDevice color = null;
     //public I2cDeviceSynch colorReader = null;
     BNO055IMU imu;
-    ModernRoboticsI2cGyro gyroSpiner;
-    IntegratingGyroscope gyro;
+    ModernRoboticsI2cGyro gyroSpiner = null;
 
     public TouchSensor sensor_button = null;
-
     public static final double START_POSITION_CLAW_UP = 0.22;
     public static final double START_POSITION_CLAW_DOWN = 0.4;
     public static final double START_POSITION_RELIC_UP_DOWN = 0.9;
@@ -175,8 +173,6 @@ public class HardwareApollo {
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         gyroSpiner.calibrate();
-
-        ElapsedTime timer = new ElapsedTime();
     }
 
     //Function: set mode run using encoder
