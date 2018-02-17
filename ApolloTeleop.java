@@ -81,7 +81,9 @@ public class ApolloTeleop extends LinearOpMode {
         boolean clawRelic = true;
         boolean gamepad2_x_previous_pressed = false;
         boolean gamepad2_bumper_previous_pressed = false;
-        double angleClaws = 0;
+        boolean isSpinered = true;
+        int angleClaws = 0;
+        //double angleClaws = 0;
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
@@ -268,7 +270,28 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.relicLift.setPower(0);
             }
 
-            //Set power to spiner acocrding to gyro
+            //Set power to spiner according to gyro
+            if (gamepad1.a) {
+                if (!isSpinered){
+                    robot.setPositionClaw(0.7, 0.3);
+                    encoderDriveSpiner(0.3, 640);
+                    isSpinered = true;
+                } else {
+                    robot.setPositionClaw(0.7, 0.3);
+                    encoderDriveSpiner(0.3, -640);
+                    isSpinered = false;
+                }
+            }
+
+            if (gamepad2.dpad_right){
+                robot.spiner.setPower(0.1);
+            } else if (gamepad2.dpad_left){
+                robot.spiner.setPower(-0.1);
+            } else {
+                robot.spiner.setPower(0);
+            }
+/*
+            //Set power to spiner according to gyro
             if (gamepad1.y) {
                 angleClaws += 180;
                 angleSpiner(0.3, angleClaws);
@@ -289,13 +312,13 @@ public class ApolloTeleop extends LinearOpMode {
                 angleSpiner(0.3, angleClaws);
             }
 
-            /*
+            */
             telemetry.addData("claw Down Left", "%.2f", robot.clawDownLeft.getPosition());
             telemetry.addData("claw Down Right", "%.2f", robot.clawDownRight.getPosition());
             telemetry.addData("claw up Left", "%.2f", robot.clawUpLeft.getPosition());
             telemetry.addData("claw up Right", "%.2f", robot.clawUpRight.getPosition());
             telemetry.update();
-            */
+
 
             // Pace this loop so jaw action is reasonable speed.
             sleep(50);
@@ -379,6 +402,41 @@ public class ApolloTeleop extends LinearOpMode {
 
     public double getSteer(double error, double PCoeff) {
         return Range.clip(error * PCoeff, -1, 1);
+    }
+
+    // Function drive encoder to spiner
+    public void encoderDriveSpiner(double speed, int tick) {
+        robot.spiner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.spiner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int newLeftTarget = 0;
+        int newRightTarget = 0;
+
+        speed = Math.abs(speed);
+        double Speed = tick > 0 ? speed : -speed;
+
+        newLeftTarget = robot.spiner.getCurrentPosition() + tick;
+
+        robot.spiner.setPower(Speed);
+
+        while (opModeIsActive()) {
+            if (tick > 0) {
+                if (robot.spiner.getCurrentPosition() >= newLeftTarget) {
+                    telemetry.addData("break", "1");
+                    break;
+                }
+            } else {
+                if (robot.spiner.getCurrentPosition() <= newLeftTarget) {
+                    telemetry.addData("break", "2");
+                    break;
+                }
+            }
+
+            telemetry.addData("tick lift", "%d", robot.spiner.getCurrentPosition());
+            telemetry.update();
+            idle();
+        }
+        robot.spiner.setPower(0);
     }
 }
 

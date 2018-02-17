@@ -413,8 +413,8 @@ public abstract class AutoMain extends LinearOpMode {
 
     // Function drive encoder to lift
     public void encoderDriveLift(double speed, int tick) {
-        robot.setDriveMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         int newLeftTarget = 0;
         int newRightTarget = 0;
@@ -422,7 +422,7 @@ public abstract class AutoMain extends LinearOpMode {
         speed = Math.abs(speed);
         double Speed = tick > 0 ? speed : -speed;
 
-        newLeftTarget = robot.driveBackLeft.getCurrentPosition() + tick;
+        newLeftTarget = robot.lift.getCurrentPosition() + tick;
 
         robot.lift.setPower(Speed);
 
