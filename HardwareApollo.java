@@ -35,10 +35,7 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
@@ -78,10 +75,10 @@ public class HardwareApollo {
 
     public static final double START_POSITION_CLAW_UP = 0.22;
     public static final double START_POSITION_CLAW_DOWN = 0.4;
-    public static final double START_POSITION_RELIC_UP_DOWN = 0.9;
+    public static final double START_POSITION_ARM_UP_DOWN = 0.0;
     public static final double START_POSITION_ARM_RIGHT_LEFT = 0.4;
-    public static final double START_POSITION_RELIC_CLAW = 0.1;
-    public static final double START_POSITION_RELIC_ARM = 0.9;
+    public static final double START_POSITION_CLAW = 0.1;
+    public static final double START_POSITION_ARM = 1;
     public static final double STOP_POSITION = 0.5;
     public static final double DROP_POSITION = 0.1;
     public static final double GRAB_POSITION = 0.9;
@@ -102,7 +99,6 @@ public class HardwareApollo {
         lift = hwMap.get(DcMotor.class, "lift");
         relicLift = hwMap.get(DcMotor.class, "rl");
         spiner = hwMap.get(DcMotor.class, "sp");
-        //gyroSpiner = hwMap.get(ModernRoboticsI2cGyro.class, "gs");
 
         driveBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         driveBackRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
@@ -141,10 +137,10 @@ public class HardwareApollo {
         wheelUpRight = hwMap.get(Servo.class, "wur");
 
         setPositionClaw(START_POSITION_CLAW_UP, START_POSITION_CLAW_DOWN);
-        armUpDown.setPosition(START_POSITION_RELIC_UP_DOWN);
-        armRightLeft.setPosition(START_POSITION_ARM_RIGHT_LEFT);
-        relicUpDown.setPosition(START_POSITION_RELIC_ARM);
-        relicClaw.setPosition(START_POSITION_RELIC_CLAW);
+        armUpDown.setPosition(0.05);
+        armRightLeft.setPosition(0.25);
+        //relicUpDown.setPosition(START_POSITION_ARM);
+        relicClaw.setPosition(START_POSITION_CLAW);
         setPositionWheel(STOP_POSITION);
 
         colorFront = hwMap.get(ColorSensor.class, "cf");
@@ -170,6 +166,7 @@ public class HardwareApollo {
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         //gyroSpiner.calibrate();
+        gyroSpiner = hwMap.get(ModernRoboticsI2cGyro.class, "gs");
         gyroSpiner.calibrate();
     }
 
@@ -215,7 +212,6 @@ public class HardwareApollo {
         wheelUpLeft.setPosition(setPosition);
         wheelDownRight.setPosition(1-setPosition);
         wheelDownLeft.setPosition(setPosition);
-
     }
 
     public void prepareForStart() {

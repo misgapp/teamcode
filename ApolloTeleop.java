@@ -189,14 +189,14 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             clawDownPosition += deltaClawDown;
-            clawDownPosition = Math.min(clawDownPosition, 0);
-            clawDownPosition = Math.max(clawDownPosition, 1);
+            clawDownPosition = Math.min(clawDownPosition, 0.7);
+            clawDownPosition = Math.max(clawDownPosition, 0.3);
             robot.clawDownLeft.setPosition(clawDownPosition);
             robot.clawDownRight.setPosition(1 - clawDownPosition);
 
             clawUpPosition += deltaClawUp;
-            clawUpPosition = Math.min(clawUpPosition, 0);
-            clawUpPosition = Math.max(clawUpPosition, 1);
+            clawUpPosition = Math.min(clawUpPosition, 0.7);
+            clawUpPosition = Math.max(clawUpPosition, 0.3);
             robot.clawUpLeft.setPosition(clawUpPosition);
             robot.clawUpRight.setPosition(1 - clawUpPosition);
 
@@ -211,19 +211,19 @@ public class ApolloTeleop extends LinearOpMode {
 
             //Set position to relic servo
             if (gamepad2.y) {
-                robot.relicUpDown.setPosition(0.2);
+                robot.relicUpDown.setPosition(0.0);
             }
 
             if (gamepad2.a) {
-                robot.relicUpDown.setPosition(0.8);
-            }
-
-            if (gamepad2.b) {
                 robot.relicUpDown.setPosition(0.6);
             }
 
+            if (gamepad2.b) {
+                robot.relicUpDown.setPosition(0.45);
+            }
+
             if (gamepad2.x) {
-                robot.relicUpDown.setPosition(0.5);
+                robot.relicUpDown.setPosition(0.3);
             }
 
             /*
@@ -268,54 +268,42 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.relicLift.setPower(0);
             }
 
-            //Spiner
+            //Set power to spiner acocrding to gyro
             if (gamepad1.y) {
-                robot.spiner.setPower(0.1);
-                //Set power to spiner acocrding to gyro
-                if (gamepad1.y) {
-                    angleClaws += 180;
-                    angleSpiner(0.3, angleClaws);
-                }
-
-                if (gamepad1.a) {
-                    angleClaws += -180;
-                    angleSpiner(0.3, angleClaws);
-                }
-
-                if (gamepad1.x) {
-                    angleClaws += 4;
-                    angleSpiner(0.3, angleClaws);
-                }
-
-                if (gamepad1.x) {
-                    angleClaws += -4;
-                    angleSpiner(0.3, angleClaws);
-                }
-
-                telemetry.addData("claw Down Left", "%.2f", robot.clawDownLeft.getPosition());
-                telemetry.addData("claw Down Right", "%.2f", robot.clawDownRight.getPosition());
-                telemetry.addData("claw up Left", "%.2f", robot.clawUpLeft.getPosition());
-                telemetry.addData("claw up Right", "%.2f", robot.clawUpRight.getPosition());
-                telemetry.update();
-
-                // Pace this loop so jaw action is reasonable speed.
-                sleep(50);
+                angleClaws += 180;
+                angleSpiner(0.3, angleClaws);
             }
+
+            if (gamepad1.a) {
+                angleClaws += -180;
+                angleSpiner(0.3, angleClaws);
+            }
+
+            if (gamepad1.x) {
+                angleClaws += 4;
+                angleSpiner(0.3, angleClaws);
+            }
+
+            if (gamepad1.x) {
+                angleClaws += -4;
+                angleSpiner(0.3, angleClaws);
+            }
+
+            /*
+            telemetry.addData("claw Down Left", "%.2f", robot.clawDownLeft.getPosition());
+            telemetry.addData("claw Down Right", "%.2f", robot.clawDownRight.getPosition());
+            telemetry.addData("claw up Left", "%.2f", robot.clawUpLeft.getPosition());
+            telemetry.addData("claw up Right", "%.2f", robot.clawUpRight.getPosition());
+            telemetry.update();
+            */
+
+            // Pace this loop so jaw action is reasonable speed.
+            sleep(50);
+
         }
     }
 
-    /*
-     *  Method to spin on central axis to point in a new direction.
-     *  Move will stop if either of these conditions occur:
-     *  1) Move gets to the heading (angle)
-     *  2) Driver stops the opmode running.
-     *
-     * @param speed Desired speed of turn.
-     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
-     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                   If a relative angle is required, add/subtract from current heading.
-     */
-    public void angleSpiner (double speed, double angle) {
+    public void angleSpiner(double speed, double angle) {
 
         // keep looping while we are still active, and not on heading.
         while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
@@ -393,4 +381,5 @@ public class ApolloTeleop extends LinearOpMode {
         return Range.clip(error * PCoeff, -1, 1);
     }
 }
+
 

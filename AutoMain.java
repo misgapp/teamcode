@@ -32,7 +32,7 @@ public abstract class AutoMain extends LinearOpMode {
     VuforiaTrackable relicTemplate;
     VuforiaTrackables relicTrackables;
     RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.UNKNOWN;
-    public static final double DROP_POSITION_ARM_RIGHT_LEFT = 0.4;
+    public static final double DROP_POSITION_ARM_RIGHT_LEFT = 0.38;
     public static final double DROP_POSITION_ARM_UP_DOWN = 0.9;
     public static final double START_POSITION_ARM_UP_DOWN = 0.2;
     static final double HEADING_THRESHOLD = 1 ;
