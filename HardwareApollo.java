@@ -74,13 +74,10 @@ public class HardwareApollo {
     //public I2cDevice color = null;
     //public I2cDeviceSynch colorReader = null;
     BNO055IMU imu;
-    //ModernRoboticsI2cGyro gyroSpiner;
-    //IntegratingGyroscope gyro;
+    ModernRoboticsI2cGyro gyroSpiner = null;
 
-    public TouchSensor sensor_button = null;
-
-    public static final double START_POSITION_CLAW_UP = 0.4;
-    public static final double START_POSITION_CLAW_DOWN = 0.6;
+    public static final double START_POSITION_CLAW_UP = 0.22;
+    public static final double START_POSITION_CLAW_DOWN = 0.4;
     public static final double START_POSITION_RELIC_UP_DOWN = 0.9;
     public static final double START_POSITION_ARM_RIGHT_LEFT = 0.4;
     public static final double START_POSITION_RELIC_CLAW = 0.1;
@@ -106,8 +103,6 @@ public class HardwareApollo {
         relicLift = hwMap.get(DcMotor.class, "rl");
         spiner = hwMap.get(DcMotor.class, "sp");
         //gyroSpiner = hwMap.get(ModernRoboticsI2cGyro.class, "gs");
-
-
 
         driveBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         driveBackRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
@@ -175,8 +170,7 @@ public class HardwareApollo {
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         //gyroSpiner.calibrate();
-
-        ElapsedTime timer = new ElapsedTime();
+        gyroSpiner.calibrate();
     }
 
     //Function: set mode run using encoder

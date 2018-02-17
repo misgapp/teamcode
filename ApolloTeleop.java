@@ -64,6 +64,7 @@ public class ApolloTeleop extends LinearOpMode {
     static final double SPEED_FACTOR_2 = 1.4;
     static final double SPEED_FACTOR_3 = 2.0;
     static final double SPEED_FACTOR_4 = 2.5;
+    private static final double P_TURN_COEFF = 0.1;
 
     @Override
     public void runOpMode() {
@@ -80,6 +81,7 @@ public class ApolloTeleop extends LinearOpMode {
         boolean clawRelic = true;
         boolean gamepad2_x_previous_pressed = false;
         boolean gamepad2_bumper_previous_pressed = false;
+        double angleClaws = 0;
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
@@ -161,10 +163,10 @@ public class ApolloTeleop extends LinearOpMode {
             robot.driveBackLeft.setPower(speed_Left / driveSpeedFactor);
             robot.driveBackRight.setPower(speed_Right / driveSpeedFactor);
             robot.driveFrontLeft.setPower(speed_Left / driveSpeedFactor);
-            robot.driveFrontRight.setPower(speed_Right/ driveSpeedFactor);
+            robot.driveFrontRight.setPower(speed_Right / driveSpeedFactor);
 
             //Set power to the lift according to the buttons
-            if (gamepad2.right_trigger > 0 ) {
+            if (gamepad2.right_trigger > 0) {
                 robot.lift.setPower(LIFT_SPEED);
             } else if (gamepad2.left_trigger > 0) {
                 robot.lift.setPower(-LIFT_SPEED);
@@ -208,19 +210,19 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             //Set position to relic servo
-            if (gamepad2.y){
-                robot.relicUpDown.setPosition(0.1);
+            if (gamepad2.y) {
+                robot.relicUpDown.setPosition(0.2);
             }
 
-            if (gamepad2.a){
+            if (gamepad2.a) {
                 robot.relicUpDown.setPosition(0.8);
             }
 
-            if (gamepad2.b){
+            if (gamepad2.b) {
                 robot.relicUpDown.setPosition(0.6);
             }
 
-            if (gamepad2.x){
+            if (gamepad2.x) {
                 robot.relicUpDown.setPosition(0.5);
             }
 
@@ -245,7 +247,7 @@ public class ApolloTeleop extends LinearOpMode {
             if (gamepad2.left_bumper || gamepad2.right_bumper) {
                 if (!gamepad2_bumper_previous_pressed) {
                     gamepad2_bumper_previous_pressed = true;
-                    if (clawRelic){
+                    if (clawRelic) {
                         robot.relicClaw.setPosition(0.15);
                         clawRelic = false;
                     } else {
@@ -258,35 +260,80 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             // Set power to relic lift
-            if (gamepad2.dpad_down){
+            if (gamepad2.dpad_down) {
                 robot.relicLift.setPower(1);
-            } else if (gamepad2.dpad_up){
+            } else if (gamepad2.dpad_up) {
                 robot.relicLift.setPower(-1);
             } else {
                 robot.relicLift.setPower(0);
             }
 
             //Spiner
-
-            if (gamepad1.y){
+            if (gamepad1.y) {
                 robot.spiner.setPower(0.1);
+                //Set power to spiner acocrding to gyro
+                if (gamepad1.y) {
+                    angleClaws += 180;
+                    angleSpiner(0.3, angleClaws);
+                }
+
+                if (gamepad1.a) {
+                    angleClaws += -180;
+                    angleSpiner(0.3, angleClaws);
+                }
+
+                if (gamepad1.x) {
+                    angleClaws += 4;
+                    angleSpiner(0.3, angleClaws);
+                }
+
+                if (gamepad1.x) {
+                    angleClaws += -4;
+                    angleSpiner(0.3, angleClaws);
+                }
+
+                telemetry.addData("claw Down Left", "%.2f", robot.clawDownLeft.getPosition());
+                telemetry.addData("claw Down Right", "%.2f", robot.clawDownRight.getPosition());
+                telemetry.addData("claw up Left", "%.2f", robot.clawUpLeft.getPosition());
+                telemetry.addData("claw up Right", "%.2f", robot.clawUpRight.getPosition());
+                telemetry.update();
+
+                // Pace this loop so jaw action is reasonable speed.
+                sleep(50);
             }
-
-            telemetry.addData("claw Down Left", "%.2f", robot.clawDownLeft.getPosition());
-            telemetry.addData("claw Down Right", "%.2f", robot.clawDownRight.getPosition());
-            telemetry.addData("claw up Left", "%.2f", robot.clawUpLeft.getPosition());
-            telemetry.addData("claw up Right", "%.2f", robot.clawUpRight.getPosition());
-            telemetry.update();
-
-            // Pace this loop so jaw action is reasonable speed.
-            sleep(50);
         }
     }
-/*
-    public void angleSpiner(int angle) {
 
+    /*
+     *  Method to spin on central axis to point in a new direction.
+     *  Move will stop if either of these conditions occur:
+     *  1) Move gets to the heading (angle)
+     *  2) Driver stops the opmode running.
+     *
+     * @param speed Desired speed of turn.
+     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
+     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                   If a relative angle is required, add/subtract from current heading.
+     */
+    public void angleSpiner (double speed, double angle) {
+
+        // keep looping while we are still active, and not on heading.
+        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
+            // Update telemetry & Allow time for other processes to run.
+            telemetry.update();
+        }
     }
 
+    /*
+     * Perform one cycle of closed loop heading control.
+     *
+     * @param speed     Desired speed of turn.
+     * @param angle     Absolute Angle (in Degrees) relative to last gyro reset.
+     *                  0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                  If a relative angle is required, add/subtract from current heading.
+     * @param PCoeff    Proportional Gain coefficient
+     * @return
+     */
     boolean onHeading(double speed, double angle, double PCoeff) {
         double   error ;
         double   steer ;
@@ -303,7 +350,7 @@ public class ApolloTeleop extends LinearOpMode {
         }
         else {
             steer = getSteer(error, PCoeff);
-            rightSpeed  = speed * steer;
+            spinerSpeed  = speed * steer;
 
         }
 
@@ -319,41 +366,31 @@ public class ApolloTeleop extends LinearOpMode {
         return onTarget;
     }
 
-    /**
+    /*
      * getError determines the error between the target angle and the robot's current heading
      * @param   targetAngle  Desired angle (relative to global reference established at last Gyro Reset).
      * @return  error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
      *          +ve error means the robot should turn LEFT (CCW) to reduce error.
+     */
 
     public double getError(double targetAngle) {
-
         double robotError;
-
         // calculate error in -179 to +180 range  (
-        robotError = targetAngle - gy.getIntegratedZValue();
+        robotError = targetAngle - robot.gyroSpiner.getIntegratedZValue();
         while (robotError > 180)  robotError -= 360;
         while (robotError <= -180) robotError += 360;
         return robotError;
     }
 
-    /**
+    /*
      * returns desired steering force.  +/- 1 range.  +ve = steer left
      * @param error   Error angle in robot relative degrees
      * @param PCoeff  Proportional Gain Coefficient
      * @return
+     * */
 
     public double getSteer(double error, double PCoeff) {
         return Range.clip(error * PCoeff, -1, 1);
     }
-    public void gyroTurn (  double speed, double angle) {
-
-        // keep looping while we are still active, and not on heading.
-        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
-            // Update telemetry & Allow time for other processes to run.
-            telemetry.update();
-        }
-
-    }
-    */
 }
 
