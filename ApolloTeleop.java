@@ -111,6 +111,9 @@ public class ApolloTeleop extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            robot.armRightLeft.setPosition(0.38);
+            robot.armUpDown.setPosition(0.32);
+
 
             //Change speed of the motors
             if (gamepad1.dpad_left) {
