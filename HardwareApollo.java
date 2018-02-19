@@ -35,6 +35,7 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
@@ -73,8 +74,8 @@ public class HardwareApollo {
     BNO055IMU imu;
     ModernRoboticsI2cGyro gyroSpiner = null;
 
-    public static final double START_POSITION_CLAW_UP = 0.22;
-    public static final double START_POSITION_CLAW_DOWN = 0.4;
+    public static final double START_POSITION_CLAW_UP = 0.46;
+    public static final double START_POSITION_CLAW_DOWN = 0.6;
     public static final double START_POSITION_ARM_UP_DOWN = 0.0;
     public static final double START_POSITION_ARM_RIGHT_LEFT = 0.4;
     public static final double START_POSITION_CLAW = 0.1;

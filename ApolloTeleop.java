@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import static java.lang.Thread.sleep;
@@ -83,11 +84,27 @@ public class ApolloTeleop extends LinearOpMode {
         boolean gamepad2_bumper_previous_pressed = false;
         boolean isSpinered = true;
         int angleClaws = 0;
+        ElapsedTime timer = new ElapsedTime();
         //double angleClaws = 0;
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
+
+        telemetry.log().add("Gyro Calibrating. Do Not Move!");
+        robot.gyroSpiner.calibrate();
+
+        // Wait until the gyro calibration is complete
+        timer.reset();
+        while (!isStopRequested() && robot.gyroSpiner.isCalibrating())  {
+            telemetry.addData("calibrating", "%s", Math.round(timer.seconds())%2==0 ? "|.." : "..|");
+            telemetry.update();
+            sleep(50);
+        }
+
+        telemetry.log().clear(); telemetry.log().add("Gyro Calibrated. Press Start.");
+        telemetry.clear(); telemetry.update();
+
         robot.init(hardwareMap);
 /*
         // make sure the gyro is calibrated before continuing
@@ -206,9 +223,9 @@ public class ApolloTeleop extends LinearOpMode {
             robot.clawUpRight.setPosition(1 - clawUpPosition);
 
             // Set position to the wheels DROP, GRAB or STOP
-            if (gamepad1.left_trigger > 0) {
+            if (gamepad1.right_trigger > 0) {
                 robot.setPositionWheel(robot.DROP_POSITION);
-            } else if (gamepad1.right_trigger > 0) {
+            } else if (gamepad1.left_trigger > 0) {
                 robot.setPositionWheel(robot.GRAB_POSITION);
             } else {
                 robot.setPositionWheel(robot.STOP_POSITION);
@@ -274,7 +291,7 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             //Set power to spiner according to gyro
-            if (gamepad1.a) {
+            if (gamepad1.y) {
                 if (!isSpinered){
                     robot.setPositionClaw(0.7, 0.3);
                     encoderDriveSpiner(0.3, 640);
@@ -285,24 +302,25 @@ public class ApolloTeleop extends LinearOpMode {
                     isSpinered = false;
                 }
             }
+            
 
-            if (gamepad2.dpad_right){
+            if (gamepad2.dpad_left){
                 robot.spiner.setPower(0.1);
-            } else if (gamepad2.dpad_left){
+            } else if (gamepad2.dpad_right){
                 robot.spiner.setPower(-0.1);
             } else {
                 robot.spiner.setPower(0);
             }
-/*
+
             //Set power to spiner according to gyro
             if (gamepad1.y) {
                 angleClaws += 180;
-                angleSpiner(0.3, angleClaws);
+                angleSpiner(0.3, 180);
             }
 
             if (gamepad1.a) {
                 angleClaws += -180;
-                angleSpiner(0.3, angleClaws);
+                angleSpiner(0.3, 0);
             }
 
             if (gamepad1.x) {
@@ -310,12 +328,12 @@ public class ApolloTeleop extends LinearOpMode {
                 angleSpiner(0.3, angleClaws);
             }
 
-            if (gamepad1.x) {
+            if (gamepad1.b) {
                 angleClaws += -4;
                 angleSpiner(0.3, angleClaws);
             }
 
-            */
+
             telemetry.addData("claw Down Left", "%.2f", robot.clawDownLeft.getPosition());
             telemetry.addData("claw Down Right", "%.2f", robot.clawDownRight.getPosition());
             telemetry.addData("claw up Left", "%.2f", robot.clawUpLeft.getPosition());
@@ -373,9 +391,9 @@ public class ApolloTeleop extends LinearOpMode {
 
 
         // Display it for the driver.
-        telemetry.addData("Target", "%5.2f", angle);
-        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
-        telemetry.addData("Speed.", "%5.2f:%5.2f",spinerSpeed);
+        //telemetry.addData("Target", "%5.2f", angle);
+        //telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+        //telemetry.addData("Speed.", "%5.2f:%5.2f",spinerSpeed);
 
         return onTarget;
     }
