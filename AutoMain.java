@@ -160,7 +160,7 @@ public abstract class AutoMain extends LinearOpMode {
     public void readPhotoWhileWait(int time) {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
-        while (opModeIsActive() && runtime.seconds() < time) {
+        while (opModeIsActive() && runtime.milliseconds() < time) {
             if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
                 vuMark = RelicRecoveryVuMark.from(relicTemplate);
             }
