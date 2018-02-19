@@ -73,6 +73,7 @@ public class HardwareApollo {
     //public I2cDeviceSynch colorReader = null;
     BNO055IMU imu;
     ModernRoboticsI2cGyro gyroSpiner = null;
+    IntegratingGyroscope gyro;
 
     public static final double START_POSITION_CLAW_UP = 0.46;
     public static final double START_POSITION_CLAW_DOWN = 0.6;
@@ -107,7 +108,7 @@ public class HardwareApollo {
         driveFrontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         lift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
         relicLift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
-        spiner.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
+        spiner.setDirection(DcMotor.Direction.REVERSE); // Set to FORWARD if using AndyMark motors
 
         // Set all motors to zero power
         setPowerAllDriveMotors(0);

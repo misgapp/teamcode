@@ -35,6 +35,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
 import static java.lang.Thread.sleep;
 import static org.firstinspires.ftc.teamcode.AutoMain.HEADING_THRESHOLD;
 
@@ -66,6 +70,7 @@ public class ApolloTeleop extends LinearOpMode {
     static final double SPEED_FACTOR_3 = 2.0;
     static final double SPEED_FACTOR_4 = 2.5;
     private static final double P_TURN_COEFF = 0.1;
+    private boolean spinDirection = false;
 
     @Override
     public void runOpMode() {
@@ -87,33 +92,22 @@ public class ApolloTeleop extends LinearOpMode {
         ElapsedTime timer = new ElapsedTime();
         //double angleClaws = 0;
 
-        /* Initialize the hardware variables.
-         * The init() method of the hardware class does all the work here
-         */
-
-        telemetry.log().add("Gyro Calibrating. Do Not Move!");
-        robot.gyroSpiner.calibrate();
-
-        // Wait until the gyro calibration is complete
-        timer.reset();
-        while (!isStopRequested() && robot.gyroSpiner.isCalibrating())  {
-            telemetry.addData("calibrating", "%s", Math.round(timer.seconds())%2==0 ? "|.." : "..|");
-            telemetry.update();
-            sleep(50);
-        }
-
-        telemetry.log().clear(); telemetry.log().add("Gyro Calibrated. Press Start.");
-        telemetry.clear(); telemetry.update();
 
         robot.init(hardwareMap);
-/*
+
+        telemetry.addData(">", "Calibrating Gyro");    //
+        telemetry.update();
+
+        robot.gyroSpiner.calibrate();
+
         // make sure the gyro is calibrated before continuing
-        while (!isStopRequested() && gyroSpiner.isCalibrating())  {
+        while (!isStopRequested() && robot.gyroSpiner.isCalibrating())  {
             sleep(50);
             idle();
         }
-        .resetZAxisIntegrator();
-        */
+
+        telemetry.addData(">", "Robot Ready.");    //
+        telemetry.update();
 
         //robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -125,6 +119,8 @@ public class ApolloTeleop extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+
+        robot.gyroSpiner.resetZAxisIntegrator();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -289,7 +285,7 @@ public class ApolloTeleop extends LinearOpMode {
             } else {
                 robot.relicLift.setPower(0);
             }
-
+/*
             //Set power to spiner according to gyro
             if (gamepad1.y) {
                 if (!isSpinered){
@@ -302,7 +298,7 @@ public class ApolloTeleop extends LinearOpMode {
                     isSpinered = false;
                 }
             }
-            
+            */
 
             if (gamepad2.dpad_left){
                 robot.spiner.setPower(0.1);
@@ -314,23 +310,23 @@ public class ApolloTeleop extends LinearOpMode {
 
             //Set power to spiner according to gyro
             if (gamepad1.y) {
-                angleClaws += 180;
-                angleSpiner(0.3, 180);
+                //angleSpiner(0.4, 0);
+                spin();
             }
 
             if (gamepad1.a) {
-                angleClaws += -180;
-                angleSpiner(0.3, 0);
+                spin();
+                //angleSpiner(0.4, 180);
             }
 
             if (gamepad1.x) {
-                angleClaws += 4;
-                angleSpiner(0.3, angleClaws);
+                angleClaws += 360;
+                //angleSpiner(0.6, angleClaws);
             }
 
             if (gamepad1.b) {
-                angleClaws += -4;
-                angleSpiner(0.3, angleClaws);
+                angleClaws += -180;
+                //angleSpiner(0.6, angleClaws);
             }
 
 
@@ -347,8 +343,45 @@ public class ApolloTeleop extends LinearOpMode {
         }
     }
 
-    public void angleSpiner(double speed, double angle) {
 
+    public void spin() {
+        spinDirection = !spinDirection;
+        //float startAngle = robot.gyroSpiner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        boolean cross90 = false;
+
+        // keep looping while we are still active, and not on heading.
+        robot.spiner.setPower(0.4 * (spinDirection ? 1 : -1));
+        while (opModeIsActive()) {
+            float angle = robot.gyroSpiner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            float diff = Math.abs((spinDirection ? 0 : 180) - angle)%180;
+
+            if (diff >= 160) {
+                robot.spiner.setPower(0.3 * (spinDirection ? 1 : -1));
+            }
+
+            if (diff >= 180 || (cross90 && diff < 40)) {
+                robot.spiner.setPower(0);
+               // telemetry.addData("startAngle", "%5.2f", startAngle);
+                telemetry.addData("angle", "%5.2f", angle);
+                telemetry.addData("diff", "%5.2f", diff);
+                telemetry.addData("cross90: ", cross90);
+                telemetry.update();
+                sleep(5000);
+                return;
+            }
+
+            if (diff > 90) {
+                cross90 = true;
+            }
+
+            // Update telemetry & Allow time for other processes to run.
+           // telemetry.addData("startAngle", "%5.2f", startAngle);
+            telemetry.addData("angle", "%5.2f", angle);
+            telemetry.update();
+        }
+    }
+
+    public void angleSpiner2(double speed, double angle) {
         // keep looping while we are still active, and not on heading.
         while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
             // Update telemetry & Allow time for other processes to run.
@@ -372,6 +405,8 @@ public class ApolloTeleop extends LinearOpMode {
         boolean  onTarget = false ;
         double spinerSpeed;
 
+
+
         // determine turn power based on +/- error
         error = getError(angle);
 
@@ -383,17 +418,19 @@ public class ApolloTeleop extends LinearOpMode {
         else {
             steer = getSteer(error, PCoeff);
             spinerSpeed  = speed * steer;
+        }
 
+        if (angle == 0) {
+            spinerSpeed = -spinerSpeed;
         }
 
         // Send desired speeds to motors.
         robot.spiner.setPower(spinerSpeed);
 
-
         // Display it for the driver.
-        //telemetry.addData("Target", "%5.2f", angle);
-        //telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
-        //telemetry.addData("Speed.", "%5.2f:%5.2f",spinerSpeed);
+        telemetry.addData("Target", "%5.2f", angle);
+        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+        telemetry.addData("Speed.", "%5.2f",spinerSpeed);
 
         return onTarget;
     }
@@ -408,7 +445,13 @@ public class ApolloTeleop extends LinearOpMode {
     public double getError(double targetAngle) {
         double robotError;
         // calculate error in -179 to +180 range  (
-        robotError = targetAngle - robot.gyroSpiner.getIntegratedZValue();
+        float angle = robot.gyroSpiner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+
+
+        robotError = targetAngle - angle;
+        if (targetAngle == 0) {
+            robotError *= -1;
+        }
         while (robotError > 180)  robotError -= 360;
         while (robotError <= -180) robotError += 360;
         return robotError;
