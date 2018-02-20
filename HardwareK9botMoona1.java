@@ -63,12 +63,9 @@ public class HardwareK9botMoona1
     public Servo    clawLeft        = null;
     public Servo    clawRight        = null;
 
-    public final static double ARM_HOME = 0.2;
-    public final static double CLAW_HOME = 0.2;
-    public final static double ARM_MIN_RANGE  = 0.20;
-    public final static double ARM_MAX_RANGE  = 0.90;
-    public final static double CLAW_MIN_RANGE  = 0.20;
-    public final static double CLAW_MAX_RANGE  = 0.7;
+    public final static double claw_Max = 0.5;
+    public final static double Claw_Min = 0.2;
+
     public double speed = 0.3;
 
 
@@ -116,5 +113,5 @@ public class HardwareK9botMoona1
         //wheelLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    }
+}
 

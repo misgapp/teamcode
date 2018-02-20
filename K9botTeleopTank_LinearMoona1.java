@@ -51,13 +51,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  */
 
 @TeleOp(name = "Moona-11284", group = "Moona")
-
+@Disabled
 public class K9botTeleopTank_LinearMoona1 extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareK9botMoona1 robot = new HardwareK9botMoona1();              // Use a K9'shardware
-    double armPosition = robot.ARM_HOME;                   // Servo safe position
-    double clawPosition = robot.CLAW_HOME;                  // Servo safe position
+
     final double CLAW_SPEED = 0.01;                            // sets rate to move servo
     final double ARM_SPEED = 0.01;                            // sets rate to move servo
 
@@ -82,27 +81,27 @@ public class K9botTeleopTank_LinearMoona1 extends LinearOpMode {
         while (opModeIsActive()) {
 
             // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
+
             Myleft = -gamepad1.left_stick_y;
-            Myright = -gamepad1.right_stick_y;
+            Myright = gamepad1.right_stick_y;
             robot.leftDrive.setPower(Myleft);
             robot.rightDrive.setPower(Myright);
 
            if (gamepad1.dpad_up) {
                robot.Elevator.setPower(0.4);
-           }else if (gamepad1.dpad_down) {
+           } else if (gamepad1.dpad_down) {
                robot.Elevator.setPower(-0.4);
-           }else {
+           } else {
                robot.Elevator.setPower(0);
            }
 
-           if (gamepad1.left_bumper == true){
+           if (gamepad1.right_trigger > 0){
                 robot.clawLeft.setPosition(0.0);
                robot.clawRight.setPosition(0.5);
-           } else if(gamepad1.right_bumper == true){
+           } else if(gamepad1.right_bumper){
                robot.clawLeft.setPosition(0.5);
                robot.clawRight.setPosition(0.0);
            }
-
             sleep(40);
         }
     }
