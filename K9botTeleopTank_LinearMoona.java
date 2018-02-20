@@ -105,12 +105,6 @@ public class K9botTeleopTank_LinearMoona extends LinearOpMode {
             else
                 robot.stopWheels();
 
-
-
-
-
-
-
             sleep(40);
         }
     }

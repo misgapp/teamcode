@@ -50,12 +50,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name = "K9bot: Telop Tank", group = "K9bot")
-@Disabled
+@TeleOp(name = "Moona-11284", group = "Moona")
+
 public class K9botTeleopTank_LinearMoona1 extends LinearOpMode {
 
     /* Declare OpMode members. */
-    HardwareK9botMoona robot = new HardwareK9botMoona();              // Use a K9'shardware
+    HardwareK9botMoona1 robot = new HardwareK9botMoona1();              // Use a K9'shardware
     double armPosition = robot.ARM_HOME;                   // Servo safe position
     double clawPosition = robot.CLAW_HOME;                  // Servo safe position
     final double CLAW_SPEED = 0.01;                            // sets rate to move servo
@@ -63,8 +63,8 @@ public class K9botTeleopTank_LinearMoona1 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        double left;
-        double right;
+        double Myleft;
+        double Myright;
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
@@ -82,31 +82,26 @@ public class K9botTeleopTank_LinearMoona1 extends LinearOpMode {
         while (opModeIsActive()) {
 
             // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
-            left = -gamepad1.left_stick_y;
-            right = -gamepad1.right_stick_y;
-            robot.leftDrive.setPower(left);
-            robot.rightDrive.setPower(right);
+            Myleft = -gamepad1.left_stick_y;
+            Myright = -gamepad1.right_stick_y;
+            robot.leftDrive.setPower(Myleft);
+            robot.rightDrive.setPower(Myright);
 
-            if (gamepad2.right_trigger > 0)
-                robot.Elevator.setPower(0.2);
-           else if (gamepad2.left_trigger > 0)
-                robot.Elevator.setPower(-0.2);
-            else
-                robot.Elevator.setPower(0);
+           if (gamepad1.dpad_up) {
+               robot.Elevator.setPower(0.4);
+           }else if (gamepad1.dpad_down) {
+               robot.Elevator.setPower(-0.4);
+           }else {
+               robot.Elevator.setPower(0);
+           }
 
-
-            if (gamepad1.left_trigger>0)
-                robot.pushCube();
-            else if (gamepad1.right_trigger>0)
-                robot.pullCube();
-            else
-                robot.stopWheels();
-
-
-
-
-
-
+           if (gamepad1.left_bumper == true){
+                robot.clawLeft.setPosition(0.0);
+               robot.clawRight.setPosition(0.5);
+           } else if(gamepad1.right_bumper == true){
+               robot.clawLeft.setPosition(0.5);
+               robot.clawRight.setPosition(0.0);
+           }
 
             sleep(40);
         }
