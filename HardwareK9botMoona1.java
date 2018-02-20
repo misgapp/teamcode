@@ -91,51 +91,30 @@ public class HardwareK9botMoona1
         leftDrive = hwMap.get(DcMotor.class, "ld");
         rightDrive = hwMap.get(DcMotor.class, "rd");
         Elevator = hwMap.get(DcMotor.class, "elv");
-        wheelLeft = hwMap.get(DcMotor.class, "wl");
-        wheelRight = hwMap.get(DcMotor.class, "wr");
+        //wheelLeft = hwMap.get(DcMotor.class, "wl");
+        //wheelRight = hwMap.get(DcMotor.class, "wr");
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
         Elevator.setDirection(DcMotor.Direction.FORWARD);
-        wheelRight.setDirection(DcMotor.Direction.FORWARD);
-        wheelLeft.setDirection(DcMotor.Direction.FORWARD);
+        //wheelRight.setDirection(DcMotor.Direction.FORWARD);
+        //wheelLeft.setDirection(DcMotor.Direction.FORWARD);
 
 
         // Set all motors to zero power
         leftDrive.setPower(0);
         rightDrive.setPower(0);
         Elevator.setPower(0);
-        wheelRight.setPower(0);
-        wheelRight.setPower(0);
+        //wheelRight.setPower(0);
+        //wheelRight.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        wheelRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        wheelLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //wheelRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //wheelLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-
-
-    public void pullCube() {
-        wheelLeft.setPower(speed);
-        wheelRight.setPower(-speed);
-    }
-    public void pushCube() {
-        wheelLeft.setPower(-speed);
-        wheelRight.setPower(speed);
-    }
-    public void stopWheels() {
-        wheelLeft.setPower(0);
-        wheelRight.setPower(0);
-    }
-
-
-
-
-
-
-        // Define and initialize ALL installed servos.
 
     }
 

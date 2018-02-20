@@ -70,7 +70,10 @@ public class ApolloTeleop extends LinearOpMode {
     static final double SPEED_FACTOR_3 = 2.0;
     static final double SPEED_FACTOR_4 = 2.5;
     private static final double P_TURN_COEFF = 0.1;
-    private boolean spinDirection = false;
+    private boolean spinDirectionUp = true; // Up is gear wheels are up
+    static final double SPIN_SPEED_FAST = -0.6;
+    static final double SPIN_SPEED_SLOW = -0.35;
+    private float spinAngle = 0;
 
     @Override
     public void runOpMode() {
@@ -87,7 +90,7 @@ public class ApolloTeleop extends LinearOpMode {
         boolean clawRelic = true;
         boolean gamepad2_x_previous_pressed = false;
         boolean gamepad2_bumper_previous_pressed = false;
-        boolean isSpinered = true;
+        boolean isSpinerPressed = false;
         int angleClaws = 0;
         ElapsedTime timer = new ElapsedTime();
         //double angleClaws = 0;
@@ -301,21 +304,31 @@ public class ApolloTeleop extends LinearOpMode {
             */
 
             if (gamepad2.dpad_left){
-                robot.spiner.setPower(0.1);
+                robot.spiner.setPower(0.35);
             } else if (gamepad2.dpad_right){
-                robot.spiner.setPower(-0.1);
+                robot.spiner.setPower(-0.35);
             } else {
                 robot.spiner.setPower(0);
             }
 
+
             //Set power to spiner according to gyro
             if (gamepad1.y) {
-                //angleSpiner(0.4, 0);
-                spin();
+                if (!isSpinerPressed){
+                    robot.setPositionClaw(0.7, 0.3);
+                    spinDirectionUp = !spinDirectionUp;
+                    isSpinerPressed = true;
+                }
+            } else {
+                isSpinerPressed = false;
             }
 
+            //if (gamepad1.y) {
+               // //angleSpiner(0.4, 0);
+
+            //}
+
             if (gamepad1.a) {
-                spin();
                 //angleSpiner(0.4, 180);
             }
 
@@ -329,11 +342,14 @@ public class ApolloTeleop extends LinearOpMode {
                 //angleSpiner(0.6, angleClaws);
             }
 
+            spin();
 
             telemetry.addData("claw Down Left", "%.2f", robot.clawDownLeft.getPosition());
             telemetry.addData("claw Down Right", "%.2f", robot.clawDownRight.getPosition());
             telemetry.addData("claw up Left", "%.2f", robot.clawUpLeft.getPosition());
             telemetry.addData("claw up Right", "%.2f", robot.clawUpRight.getPosition());
+            telemetry.addData("Spin angle", "%.2f", spinAngle);
+            telemetry.addData("spinDirectionUp", spinDirectionUp);
             telemetry.update();
 
 
@@ -343,20 +359,48 @@ public class ApolloTeleop extends LinearOpMode {
         }
     }
 
+    public void spin(){
+        spinAngle = robot.gyroSpiner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        if (spinDirectionUp){
+            if (spinAngle <= 90 && spinAngle >= 25){
+                robot.spiner.setPower(SPIN_SPEED_FAST);
+            } else if (spinAngle < 25 && spinAngle >= 6){
+                robot.spiner.setPower(SPIN_SPEED_SLOW);
+            } else if ((spinAngle < 6 && spinAngle >= 0) || (spinAngle >= -6 && spinAngle < 0)){
+                robot.spiner.setPower(0);
+            } else if (spinAngle < -6 && spinAngle >= -45){
+                robot.spiner.setPower(-SPIN_SPEED_SLOW);
+            } else {
+                robot.spiner.setPower(-SPIN_SPEED_FAST);
+            }
+        } else {
+            if (spinAngle >= 90 && spinAngle <= 155){
+                robot.spiner.setPower(-SPIN_SPEED_FAST);
+            } else if (spinAngle <= 174 && spinAngle > 155){
+                robot.spiner.setPower(-SPIN_SPEED_SLOW);
+            } else if (spinAngle <= -174 || spinAngle > 174){
+                robot.spiner.setPower(0);
+            } else if (spinAngle <= -140 && spinAngle > -174){
+                robot.spiner.setPower(SPIN_SPEED_SLOW);
+            } else {
+                robot.spiner.setPower(SPIN_SPEED_FAST);
+            }
+        }
+    }
 
-    public void spin() {
-        spinDirection = !spinDirection;
+    public void spin1() {
+        spinDirectionUp = !spinDirectionUp;
         //float startAngle = robot.gyroSpiner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         boolean cross90 = false;
 
         // keep looping while we are still active, and not on heading.
-        robot.spiner.setPower(0.4 * (spinDirection ? 1 : -1));
+        robot.spiner.setPower(0.4 * (spinDirectionUp ? 1 : -1));
         while (opModeIsActive()) {
             float angle = robot.gyroSpiner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-            float diff = Math.abs((spinDirection ? 0 : 180) - angle)%180;
+            float diff = Math.abs((spinDirectionUp ? 0 : 180) - angle)%180;
 
             if (diff >= 160) {
-                robot.spiner.setPower(0.3 * (spinDirection ? 1 : -1));
+                robot.spiner.setPower(0.3 * (spinDirectionUp ? 1 : -1));
             }
 
             if (diff >= 180 || (cross90 && diff < 40)) {
