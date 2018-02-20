@@ -64,7 +64,7 @@ public class ApolloTeleop extends LinearOpMode {
     // the lift is in Remarks because we dont have another  motor
     HardwareApollo robot = new HardwareApollo();
 
-    static final double LIFT_SPEED = 0.9;
+    static final double LIFT_SPEED = 1;
     static final double SPEED_FACTOR_1 = 1.0;
     static final double SPEED_FACTOR_2 = 1.4;
     static final double SPEED_FACTOR_3 = 2.0;
@@ -269,7 +269,7 @@ public class ApolloTeleop extends LinearOpMode {
                         robot.relicClaw.setPosition(0.15);
                         clawRelic = false;
                     } else {
-                        robot.relicClaw.setPosition(0.45);
+                        robot.relicClaw.setPosition(0.5);
                         clawRelic = true;
                     }
                 }
