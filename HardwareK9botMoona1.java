@@ -63,12 +63,9 @@ public class HardwareK9botMoona1
     public Servo    clawLeft        = null;
     public Servo    clawRight        = null;
 
-    public final static double ARM_HOME = 0.2;
-    public final static double CLAW_HOME = 0.2;
-    public final static double ARM_MIN_RANGE  = 0.20;
-    public final static double ARM_MAX_RANGE  = 0.90;
-    public final static double CLAW_MIN_RANGE  = 0.20;
-    public final static double CLAW_MAX_RANGE  = 0.7;
+    public final static double claw_Max = 0.5;
+    public final static double Claw_Min = 0.2;
+
     public double speed = 0.3;
 
 
@@ -128,6 +125,15 @@ public class HardwareK9botMoona1
     public void stopWheels() {
         wheelLeft.setPower(0);
         wheelRight.setPower(0);
+    }
+
+    public void holdCube(){
+    clawRight.setPosition(claw_Max);
+    clawLeft.setPosition(claw_Max);
+}
+    public void releaseCube(){
+        clawRight.setPosition(Claw_Min);
+        clawLeft.setPosition(Claw_Min);
     }
 
 

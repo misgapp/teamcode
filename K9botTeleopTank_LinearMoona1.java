@@ -55,9 +55,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class K9botTeleopTank_LinearMoona1 extends LinearOpMode {
 
     /* Declare OpMode members. */
-    HardwareK9botMoona robot = new HardwareK9botMoona();              // Use a K9'shardware
-    double armPosition = robot.ARM_HOME;                   // Servo safe position
-    double clawPosition = robot.CLAW_HOME;                  // Servo safe position
+    HardwareK9botMoona1 robot = new HardwareK9botMoona1();              // Use a K9'shardware
+                    // Servo safe position
     final double CLAW_SPEED = 0.01;                            // sets rate to move servo
     final double ARM_SPEED = 0.01;                            // sets rate to move servo
 
@@ -103,10 +102,10 @@ public class K9botTeleopTank_LinearMoona1 extends LinearOpMode {
                 robot.stopWheels();
 
 
-
-
-
-
+            if (gamepad2.x)
+                robot.holdCube();
+            else if (gamepad2.b)
+                robot.releaseCube();
 
             sleep(40);
         }
