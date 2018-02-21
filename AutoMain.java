@@ -23,8 +23,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  */
 public abstract class AutoMain extends LinearOpMode {
 
-    private static final int RED_THRESHOLD = 40;
-    private static final int BLUE_THRESHOLD = 40;
+    private static final int RED_THRESHOLD = 45;
+    private static final int BLUE_THRESHOLD = 45;
 
 
     HardwareApollo robot = new HardwareApollo();
@@ -41,7 +41,7 @@ public abstract class AutoMain extends LinearOpMode {
 
     static final double START_POSITION = 0.05;
 
-    double speed = 0.6;
+    double speed = 0.4;
 
     //Init function, hardwareMap & vuforia
     public void apolloInit() {
@@ -68,8 +68,8 @@ public abstract class AutoMain extends LinearOpMode {
         readPhotoWhileWait(500);
         robot.setPositionWheel(robot.STOP_POSITION);
         //encoderDriveLift(0.9, 500);
-        robot.lift.setPower(speed);
-        readPhotoWhileWait(2000);
+        robot.lift.setPower(0.9);
+        readPhotoWhileWait(400);
         robot.lift.setPower(0);
     }
 
@@ -79,9 +79,10 @@ public abstract class AutoMain extends LinearOpMode {
 
         robot.armUpDown.setPosition(0.5);
         readPhotoWhileWait(400);
-        robot.armUpDown.setPosition(0.9);
+        robot.armUpDown.setPosition(0.87);
         readPhotoWhileWait(600);
-        robot.armUpDown.setPosition(0.95);
+        robot.armUpDown.setPosition(0.90);
+        readPhotoWhileWait(400);
 
 
         boolean colorDetected = false;
@@ -89,7 +90,7 @@ public abstract class AutoMain extends LinearOpMode {
 
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 2.0)) {
+        while (opModeIsActive() && (runtime.seconds() < 2.5)) {
             if (robot.colorFront.red() > RED_THRESHOLD) {
                 frontIsRed = true;
                 colorDetected = true;
@@ -101,11 +102,13 @@ public abstract class AutoMain extends LinearOpMode {
                 colorDetected = true;
                 break;
             }
+
             if (robot.colorBack.red() > RED_THRESHOLD) {
                 frontIsRed = false;
                 colorDetected = true;
                 break;
             }
+
             if (robot.colorBack.blue() > BLUE_THRESHOLD) {
                 frontIsRed = true;
                 colorDetected = true;
@@ -151,7 +154,7 @@ public abstract class AutoMain extends LinearOpMode {
                 robot.armRightLeft.setPosition(0.4);
             }
         }
-        robot.armUpDown.setPosition(0);
+        robot.armUpDown.setPosition(0.25);
 
         readPhotoWhileWait(450);
     }
@@ -173,12 +176,12 @@ public abstract class AutoMain extends LinearOpMode {
         robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         int direction = isRed ? 1 : -1;
-        int columnTicks = isRed ? -1500 : 0;
+        int columnTicks = isRed ? -0 : 0;
         int gyroDegrees = isRed ? 0 : 180;
         int blue = isRed ? 0 : 1200;
 
-        final int TICK_TO_CRYPTO_BOX_CORNER = 5700;
-        final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 1000;
+        final int TICK_TO_CRYPTO_BOX_CORNER = 2200;
+        final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 375;
 
         if (isRed) {
             if (column == RelicRecoveryVuMark.LEFT) {
@@ -192,28 +195,28 @@ public abstract class AutoMain extends LinearOpMode {
         //robot.setPositionClaw(up,down);
 
         if (isCorner) {
-            if (column == RelicRecoveryVuMark.LEFT) {
+            if (column == RelicRecoveryVuMark.LEFT || column == RelicRecoveryVuMark.UNKNOWN) {
                 gyroDrive(speed, columnTicks + TICK_TO_CRYPTO_BOX_CORNER * direction, 0);
-            } else if (column == RelicRecoveryVuMark.CENTER || column == RelicRecoveryVuMark.UNKNOWN) {
-                gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER + 1200) * direction, 0);
+            } else if (column == RelicRecoveryVuMark.CENTER ) {
+                gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER + 700) * direction, 0);
             } else {
-                gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER + 2500) * direction, 0);
+                gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER + 1400) * direction, 0);
             }
 
             gyroTurn(speed, -90);
             gyroHold(speed, -90, 1);
-            gyroDrive(speed, 1400, -90);
+            gyroDrive(speed, 1000, -90);
         } else {
-            gyroDrive(speed, 4900 * direction, 0);
+            gyroDrive(speed, 2000 * direction, 0);
 
             gyroTurn(speed, 90);
             gyroHold(speed, 90, 1);
-            if (column == RelicRecoveryVuMark.LEFT|| column == RelicRecoveryVuMark.UNKNOWN) {
-                gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL - 350, 90);
-            } else if (column == RelicRecoveryVuMark.CENTER ) {
-                gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1050, 90);
+            if (column == RelicRecoveryVuMark.LEFT ) {
+                gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL, 90);
+            } else if (column == RelicRecoveryVuMark.CENTER || column == RelicRecoveryVuMark.UNKNOWN) {
+                gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 700, 90);
             } else {
-                gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 2300, 90);
+                gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1400, 90);
             }
 
             //turn(speed, TURN_2_CRYPTO_BOX_WALL * direction, -1 * TURN_2_CRYPTO_BOX_WALL * direction);
@@ -229,7 +232,7 @@ public abstract class AutoMain extends LinearOpMode {
         sleep(800);
         robot.setPositionWheel(robot.STOP_POSITION);
         robot.setPositionClaw(1, 1);
-        driveStrait(speed, 600);
+        driveStrait(speed, 700);
         driveStrait(speed, -600);
     }
 
@@ -258,26 +261,31 @@ public abstract class AutoMain extends LinearOpMode {
             robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
             //encoderDriveLift(0.9, 1000);
             */
-
+            robot.setPositionClaw(0.6, 0.4);
             gyroDrive(speed, -1500, 0);
             gyroTurn(speed, 180);
             gyroHold(speed, 180, 1);
-            gyroDrive(speed, 1600, 180);
-            robot.setPositionClaw(0.55, 0.6);
-            //robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
+            robot.setPositionClaw(0.7, 0.3);
             robot.setPositionWheel(robot.GRAB_POSITION);
-            gyroDrive(speed, 1200, 180);
-            gyroDrive(speed, 1100, 180);
-            robot.setPositionClaw(0.5, 0.75);
+            gyroDrive(speed, 1600, 180);
+            //robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
+            //robot.setPositionClaw(0.5, 0.5);
+            gyroDrive(speed, 1000, 180);
+            //gyroDrive(speed, 1100, 180);
+            // robot.setPositionClaw(0.5, 0.75);
             robot.setPositionWheel(robot.STOP_POSITION);
+            robot.lift.setPower(1);
             gyroDrive(speed, -2000, 180);
+            robot.lift.setPower(0.0);
             //robot.setPositionClaw(0.7, 0.3);
             gyroTurn(speed, 0);
             gyroHold(speed, 0, 2);
-            gyroDrive(speed, 2900, 0);
+            gyroDrive(speed, 2100, 0);
             robot.setPositionWheel(robot.DROP_POSITION);
-            sleep(200);
-            robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
+            gyroDrive(speed, 200, 0);
+            robot.setPositionClaw(0.6, 0.4);
+            gyroDrive(speed, -200, 0);
+            //robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
             //encoderDriveLift(0.9, 1000);
         }
     }

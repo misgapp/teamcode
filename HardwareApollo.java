@@ -34,6 +34,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -82,8 +83,8 @@ public class HardwareApollo {
     public static final double START_POSITION_CLAW = 0.1;
     public static final double START_POSITION_ARM = 1;
     public static final double STOP_POSITION = 0.5;
-    public static final double DROP_POSITION = 0.1;
-    public static final double GRAB_POSITION = 0.9;
+    public static final double DROP_POSITION = 0.9;
+    public static final double GRAB_POSITION = 0.1;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -139,7 +140,7 @@ public class HardwareApollo {
         wheelUpRight = hwMap.get(Servo.class, "wur");
 
         setPositionClaw(START_POSITION_CLAW_UP, START_POSITION_CLAW_DOWN);
-        armUpDown.setPosition(0.05);
+        armUpDown.setPosition(0.1);
         armRightLeft.setPosition(0.25);
         //relicUpDown.setPosition(START_POSITION_ARM);
         relicClaw.setPosition(START_POSITION_CLAW);

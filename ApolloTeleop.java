@@ -66,9 +66,9 @@ public class ApolloTeleop extends LinearOpMode {
 
     static final double LIFT_SPEED = 1;
     static final double SPEED_FACTOR_1 = 1.0;
-    static final double SPEED_FACTOR_2 = 1.4;
-    static final double SPEED_FACTOR_3 = 2.0;
-    static final double SPEED_FACTOR_4 = 2.5;
+    static final double SPEED_FACTOR_2 = 1.3;
+    static final double SPEED_FACTOR_3 = 1.6;
+    static final double SPEED_FACTOR_4 = 2.0;
     private static final double P_TURN_COEFF = 0.1;
     private boolean spinDirectionUp = true; // Up is gear wheels are up
     static final double SPIN_SPEED_FAST = -0.6;
@@ -222,9 +222,9 @@ public class ApolloTeleop extends LinearOpMode {
             robot.clawUpRight.setPosition(1 - clawUpPosition);
 
             // Set position to the wheels DROP, GRAB or STOP
-            if (gamepad1.right_trigger > 0) {
+            if (gamepad1.left_trigger > 0) {
                 robot.setPositionWheel(robot.DROP_POSITION);
-            } else if (gamepad1.left_trigger > 0) {
+            } else if (gamepad1.right_trigger > 0) {
                 robot.setPositionWheel(robot.GRAB_POSITION);
             } else {
                 robot.setPositionWheel(robot.STOP_POSITION);
@@ -312,7 +312,7 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
 
-            //Set power to spiner according to gyro
+            //Change the direction of the spin
             if (gamepad1.y) {
                 if (!isSpinerPressed){
                     robot.setPositionClaw(0.7, 0.3);
@@ -323,25 +323,7 @@ public class ApolloTeleop extends LinearOpMode {
                 isSpinerPressed = false;
             }
 
-            //if (gamepad1.y) {
-               // //angleSpiner(0.4, 0);
-
-            //}
-
-            if (gamepad1.a) {
-                //angleSpiner(0.4, 180);
-            }
-
-            if (gamepad1.x) {
-                angleClaws += 360;
-                //angleSpiner(0.6, angleClaws);
-            }
-
-            if (gamepad1.b) {
-                angleClaws += -180;
-                //angleSpiner(0.6, angleClaws);
-            }
-
+            //Set and change power to spinner according to gyro angle
             spin();
 
             telemetry.addData("claw Down Left", "%.2f", robot.clawDownLeft.getPosition());
@@ -359,6 +341,7 @@ public class ApolloTeleop extends LinearOpMode {
         }
     }
 
+    //Set and change power to spinner according to gyro angle
     public void spin(){
         spinAngle = robot.gyroSpiner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         if (spinDirectionUp){
@@ -386,130 +369,6 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.spiner.setPower(SPIN_SPEED_FAST);
             }
         }
-    }
-
-    public void spin1() {
-        spinDirectionUp = !spinDirectionUp;
-        //float startAngle = robot.gyroSpiner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        boolean cross90 = false;
-
-        // keep looping while we are still active, and not on heading.
-        robot.spiner.setPower(0.4 * (spinDirectionUp ? 1 : -1));
-        while (opModeIsActive()) {
-            float angle = robot.gyroSpiner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-            float diff = Math.abs((spinDirectionUp ? 0 : 180) - angle)%180;
-
-            if (diff >= 160) {
-                robot.spiner.setPower(0.3 * (spinDirectionUp ? 1 : -1));
-            }
-
-            if (diff >= 180 || (cross90 && diff < 40)) {
-                robot.spiner.setPower(0);
-               // telemetry.addData("startAngle", "%5.2f", startAngle);
-                telemetry.addData("angle", "%5.2f", angle);
-                telemetry.addData("diff", "%5.2f", diff);
-                telemetry.addData("cross90: ", cross90);
-                telemetry.update();
-                sleep(5000);
-                return;
-            }
-
-            if (diff > 90) {
-                cross90 = true;
-            }
-
-            // Update telemetry & Allow time for other processes to run.
-           // telemetry.addData("startAngle", "%5.2f", startAngle);
-            telemetry.addData("angle", "%5.2f", angle);
-            telemetry.update();
-        }
-    }
-
-    public void angleSpiner2(double speed, double angle) {
-        // keep looping while we are still active, and not on heading.
-        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
-            // Update telemetry & Allow time for other processes to run.
-            telemetry.update();
-        }
-    }
-
-    /*
-     * Perform one cycle of closed loop heading control.
-     *
-     * @param speed     Desired speed of turn.
-     * @param angle     Absolute Angle (in Degrees) relative to last gyro reset.
-     *                  0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                  If a relative angle is required, add/subtract from current heading.
-     * @param PCoeff    Proportional Gain coefficient
-     * @return
-     */
-    boolean onHeading(double speed, double angle, double PCoeff) {
-        double   error ;
-        double   steer ;
-        boolean  onTarget = false ;
-        double spinerSpeed;
-
-
-
-        // determine turn power based on +/- error
-        error = getError(angle);
-
-        if (Math.abs(error) <= HEADING_THRESHOLD) {
-            steer = 0.0;
-            spinerSpeed  = 0.0;
-            onTarget = true;
-        }
-        else {
-            steer = getSteer(error, PCoeff);
-            spinerSpeed  = speed * steer;
-        }
-
-        if (angle == 0) {
-            spinerSpeed = -spinerSpeed;
-        }
-
-        // Send desired speeds to motors.
-        robot.spiner.setPower(spinerSpeed);
-
-        // Display it for the driver.
-        telemetry.addData("Target", "%5.2f", angle);
-        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
-        telemetry.addData("Speed.", "%5.2f",spinerSpeed);
-
-        return onTarget;
-    }
-
-    /*
-     * getError determines the error between the target angle and the robot's current heading
-     * @param   targetAngle  Desired angle (relative to global reference established at last Gyro Reset).
-     * @return  error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
-     *          +ve error means the robot should turn LEFT (CCW) to reduce error.
-     */
-
-    public double getError(double targetAngle) {
-        double robotError;
-        // calculate error in -179 to +180 range  (
-        float angle = robot.gyroSpiner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-
-        robotError = targetAngle - angle;
-        if (targetAngle == 0) {
-            robotError *= -1;
-        }
-        while (robotError > 180)  robotError -= 360;
-        while (robotError <= -180) robotError += 360;
-        return robotError;
-    }
-
-    /*
-     * returns desired steering force.  +/- 1 range.  +ve = steer left
-     * @param error   Error angle in robot relative degrees
-     * @param PCoeff  Proportional Gain Coefficient
-     * @return
-     * */
-
-    public double getSteer(double error, double PCoeff) {
-        return Range.clip(error * PCoeff, -1, 1);
     }
 
     // Function drive encoder to spiner
