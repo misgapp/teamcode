@@ -29,88 +29,93 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwareK9bot;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
- * This OpMode uses the common HardwareK9bot class to define the devices on the robot.
- * All device access is managed through the HardwareK9bot class. (See this class for device names)
+ * This file illustrates the concept of driving a path based on time.
+ * It uses the common Pushbot hardware class to define the drive on the robot.
  * The code is structured as a LinearOpMode
- * <p>
- * This particular OpMode executes a basic Tank Drive Teleop for the K9 bot
- * It raises and lowers the arm using the Gampad Y and A buttons respectively.
- * It also opens and closes the claw slowly using the X and B buttons.
- * <p>
- * Note: the configuration of the servos is such that
- * as the arm servo approaches 0, the arm position moves up (away from the floor).
- * Also, as the claw servo approaches 0, the claw opens up (drops the game element).
- * <p>
+ *
+ * The code assumes that you do NOT have encoders on the wheels,
+ *   otherwise you would use: PushbotAutoDriveByEncoder;
+ *
+ *   The desired path in this example is:
+ *   - Drive forward for 3 seconds
+ *   - Spin right for 1.3 seconds
+ *   - Drive Backwards for 1 Second
+ *   - Stop and close the claw.
+ *
+ *  The code is written in a simple form with no optimizations.
+ *  However, there are several ways that this type of sequence could be streamlined,
+ *
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name = "K9bot: Telop Tank", group = "K9bot")
-@Disabled
-public class K9botTeleopTank_LinearMoona extends LinearOpMode {
+@Autonomous(name="Moona: Auto", group="Moona")
+
+public class MoonaAuto1Wall extends LinearOpMode {
 
     /* Declare OpMode members. */
-    HardwareK9botMoona robot = new HardwareK9botMoona();              // Use a K9'shardware
-    double armPosition = robot.ARM_HOME;                   // Servo safe position
-    double clawPosition = robot.CLAW_HOME;                  // Servo safe position
-    final double CLAW_SPEED = 0.01;                            // sets rate to move servo
-    final double ARM_SPEED = 0.01;                            // sets rate to move servo
+    HardwareK9botMoona1     robot   = new HardwareK9botMoona1();   // Use a Pushbot's hardware
+    private ElapsedTime     runtime = new ElapsedTime();
+
+
+    static final double     FORWARD_SPEED = 0.6;
+    static final double     TURN_SPEED    = 0.5;
 
     @Override
     public void runOpMode() {
-        double left;
-        double right;
 
-        /* Initialize the hardware variables.
+        /*
+         * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Say", "Hello Driver");    //
+        telemetry.addData("Status", "Ready to run");    //
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
 
-            // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
-            left = -gamepad1.left_stick_y;
-            right = -gamepad1.right_stick_y;
-            robot.leftDrive.setPower(left);
-            robot.rightDrive.setPower(right);
+        robot.clawLeft.setPosition(0.0);
+        robot.clawRight.setPosition(0.5);
 
-           if (gamepad2.right_trigger > 0) {
-               robot.Elevator.setPower(0.2);
-           }else if (gamepad2.left_trigger > 0) {
-               robot.Elevator.setPower(-0.2);
-           }else {
-               robot.Elevator.setPower(0);
-           }
-
-
-            if (gamepad1.left_trigger>0) {
-                robot.pushCube();
-            }else if (gamepad1.right_trigger>0) {
-                robot.pullCube();
-            }else {
-                robot.stopWheels();
-            }
-
-
-
-
-            sleep(40);
+        // Step 1:  Drive forward for 3 seconds
+        robot.leftDrive.setPower(FORWARD_SPEED);
+        robot.rightDrive.setPower(FORWARD_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 3.0)) {
+            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
         }
+
+
+        robot.clawLeft.setPosition(0.5);
+        robot.clawRight.setPosition(0.0);
+
+        robot.leftDrive.setPower(FORWARD_SPEED);
+        robot.rightDrive.setPower(FORWARD_SPEED);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
+            telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
+
+
+        // Step 4:  Stop and close the claw.
+        robot.leftDrive.setPower(0);
+        robot.rightDrive.setPower(0);
+
+        telemetry.addData("Path", "Complete");
+        telemetry.update();
+        sleep(1000);
     }
 }

@@ -96,7 +96,7 @@ public class K9botTeleopTank_LinearMoona1 extends LinearOpMode {
            }
 
            if (gamepad1.right_trigger > 0){
-                robot.clawLeft.setPosition(0.0);
+               robot.clawLeft.setPosition(0.0);
                robot.clawRight.setPosition(0.5);
            } else if(gamepad1.right_bumper){
                robot.clawLeft.setPosition(0.5);
