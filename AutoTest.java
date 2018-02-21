@@ -18,7 +18,7 @@ public class AutoTest extends AutoMain {
 
         waitForStart();
 
-        moreCubs(true);
+        moveToCryptoBox(false, false, RelicRecoveryVuMark.UNKNOWN);
 
         /*
         for (int g = 0; g<2; g++){

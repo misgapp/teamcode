@@ -83,8 +83,8 @@ public class HardwareApollo {
     public static final double START_POSITION_CLAW = 0.1;
     public static final double START_POSITION_ARM = 1;
     public static final double STOP_POSITION = 0.5;
-    public static final double DROP_POSITION = 0.9;
-    public static final double GRAB_POSITION = 0.1;
+    public static final double DROP_POSITION = 0.1;
+    public static final double GRAB_POSITION = 0.9;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -213,8 +213,8 @@ public class HardwareApollo {
     public void setPositionWheel(double setPosition) {
         wheelUpRight.setPosition(1-setPosition);
         wheelUpLeft.setPosition(setPosition);
-        wheelDownRight.setPosition(1-setPosition);
-        wheelDownLeft.setPosition(setPosition);
+        wheelDownRight.setPosition(setPosition);
+        wheelDownLeft.setPosition(1-setPosition);
     }
 
     public void prepareForStart() {

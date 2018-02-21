@@ -91,6 +91,7 @@ public class ApolloTeleop extends LinearOpMode {
         boolean gamepad2_x_previous_pressed = false;
         boolean gamepad2_bumper_previous_pressed = false;
         boolean isSpinerPressed = false;
+        boolean isSpinerEnabled = true;
         int angleClaws = 0;
         ElapsedTime timer = new ElapsedTime();
         //double angleClaws = 0;
@@ -109,7 +110,7 @@ public class ApolloTeleop extends LinearOpMode {
             idle();
         }
 
-        telemetry.addData(">", "Robot Ready.");    //
+        telemetry.addData(">", "Robot Ready.");
         telemetry.update();
 
         //robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -150,6 +151,7 @@ public class ApolloTeleop extends LinearOpMode {
                 speed_Left = -gamepad1.left_stick_y;
             }
 
+            //Change variables to change velocity
             if (gamepad1.dpad_up) {
                 if (!speedFactorUpPressHandled) {
                     speedFactorUpPressHandled = true;
@@ -247,24 +249,7 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.relicUpDown.setPosition(0.3);
             }
 
-            /*
-            if (gamepad2.x){
-                if (!gamepad2_x_previous_pressed) {
-                    gamepad2_x_previous_pressed = true;
-                    if (armRelic) {
-                        robot.relicUpDown.setPosition(0.1);
-                        armRelic = false;
-                    } else {
-                        robot.relicUpDown.setPosition(0.9);
-                        armRelic = true;
-                    }
-                }
-            } else {
-                gamepad2_x_previous_pressed = false;
-            }
-*/
-
-
+            //Set position to relic claw
             if (gamepad2.left_bumper || gamepad2.right_bumper) {
                 if (!gamepad2_bumper_previous_pressed) {
                     gamepad2_bumper_previous_pressed = true;
@@ -305,12 +290,13 @@ public class ApolloTeleop extends LinearOpMode {
 
             if (gamepad2.dpad_left){
                 robot.spiner.setPower(0.35);
+                isSpinerEnabled = false;
             } else if (gamepad2.dpad_right){
                 robot.spiner.setPower(-0.35);
+                isSpinerEnabled = false;
             } else {
                 robot.spiner.setPower(0);
             }
-
 
             //Change the direction of the spin
             if (gamepad1.y) {
@@ -319,12 +305,15 @@ public class ApolloTeleop extends LinearOpMode {
                     spinDirectionUp = !spinDirectionUp;
                     isSpinerPressed = true;
                 }
+                isSpinerEnabled = true;
             } else {
                 isSpinerPressed = false;
             }
 
             //Set and change power to spinner according to gyro angle
-            spin();
+            if (isSpinerEnabled) {
+                spin();
+            }
 
             telemetry.addData("claw Down Left", "%.2f", robot.clawDownLeft.getPosition());
             telemetry.addData("claw Down Right", "%.2f", robot.clawDownRight.getPosition());
