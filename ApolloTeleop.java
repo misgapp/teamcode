@@ -129,7 +129,7 @@ public class ApolloTeleop extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             robot.armRightLeft.setPosition(0.38);
-            robot.armUpDown.setPosition(0.32);
+            robot.armUpDown.setPosition(0.15);
 
 
             //Change speed of the motors
@@ -289,10 +289,10 @@ public class ApolloTeleop extends LinearOpMode {
             */
 
             if (gamepad2.dpad_left){
-                robot.spiner.setPower(0.35);
+                robot.spiner.setPower(-0.25);
                 isSpinerEnabled = false;
             } else if (gamepad2.dpad_right){
-                robot.spiner.setPower(-0.35);
+                robot.spiner.setPower(0.25);
                 isSpinerEnabled = false;
             } else {
                 robot.spiner.setPower(0);

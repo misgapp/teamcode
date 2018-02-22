@@ -63,7 +63,7 @@ public abstract class AutoMain extends LinearOpMode {
 
     //Set the claws & lift to right position, grab cube
     public void setClaw() {
-        robot.setPositionClaw(0.7, 0.3);
+        robot.setPositionClaw(0.75, 0.25);
         robot.setPositionWheel(robot.GRAB_POSITION);
         readPhotoWhileWait(100);
         robot.setPositionWheel(robot.STOP_POSITION);
@@ -128,13 +128,13 @@ public abstract class AutoMain extends LinearOpMode {
                 telemetry.addData("Blue front", robot.colorFront.blue());
                 telemetry.addData("Red front", robot.colorFront.red());
                 telemetry.update();
-                robot.lift.setPower(0.9);
+                robot.lift.setPower(0.95);
                 readPhotoWhileWait(400);
                 robot.armUpDown.setPosition(0.6);
                 robot.armRightLeft.setPosition(0.3);
-                robot.lift.setPower(0);
                 readPhotoWhileWait(700);
                 robot.armRightLeft.setPosition(0.4);
+                robot.lift.setPower(0);
 
             } else {
                 robot.armRightLeft.setPosition(0.8);
@@ -146,14 +146,19 @@ public abstract class AutoMain extends LinearOpMode {
                 telemetry.addData("Blue front", robot.colorFront.blue());
                 telemetry.addData("Red front", robot.colorFront.red());
                 telemetry.update();
-                robot.lift.setPower(0.9);
+                robot.lift.setPower(0.95);
                 readPhotoWhileWait(400);
                 robot.armUpDown.setPosition(0.6);
                 robot.armRightLeft.setPosition(0.5);
-                robot.lift.setPower(0);
                 readPhotoWhileWait(700);
                 robot.armRightLeft.setPosition(0.4);
+                robot.lift.setPower(0);
+
             }
+        } else {
+            robot.lift.setPower(1);
+            sleep(500);
+            robot.lift.setPower(0);
         }
         robot.armUpDown.setPosition(0.25);
         telemetry.addData("column ", vuMark);
@@ -173,7 +178,6 @@ public abstract class AutoMain extends LinearOpMode {
         }
     }
 
-
     // Move to crypto box
     public void moveToCryptoBox(boolean isRed, boolean isCorner, RelicRecoveryVuMark column) {
         robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -183,7 +187,7 @@ public abstract class AutoMain extends LinearOpMode {
         int gyroDegrees = isRed ? 0 : 180;
         int blue = isRed ? 0 : 1200;
 
-        final int TICK_TO_CRYPTO_BOX_CORNER = 2200;
+        final int TICK_TO_CRYPTO_BOX_CORNER = 2350;
         final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 400;
 
         if (isRed) {
@@ -208,7 +212,7 @@ public abstract class AutoMain extends LinearOpMode {
 
             gyroTurn(speed, -90);
             gyroHold(speed, -90, 1);
-            gyroDrive(speed, 1000, -90);
+            gyroDrive(speed, 900, -90);
         } else {
             gyroDrive(speed, 2100 * direction, 0);
 
@@ -235,8 +239,8 @@ public abstract class AutoMain extends LinearOpMode {
         sleep(800);
         robot.setPositionWheel(robot.STOP_POSITION);
         robot.setPositionClaw(1, 1);
-        driveStrait(speed, 700);
-        driveStrait(speed, -600);
+        driveStrait(speed, 300);
+        driveStrait(speed, -700);
     }
 
     // Put more cube in crypto box
@@ -265,32 +269,34 @@ public abstract class AutoMain extends LinearOpMode {
             //encoderDriveLift(0.9, 1000);
             */
             robot.setPositionClaw(0.6, 0.4);
-            robot.lift.setPower(-0.7);
-            gyroDrive(speed, -1500, 0);
-            gyroTurn(speed, 180);
-            gyroHold(speed, 180, 0.7);
+            gyroDrive(speed, -950, -90);
+            robot.lift.setPower(-0.15);
+            gyroTurn(speed, 90);
             robot.lift.setPower(0.0);
+            gyroHold(speed, 90, 0.7);
+            robot.setPositionClaw(0.7, 0.3);
             robot.setPositionWheel(robot.GRAB_POSITION);
-            gyroDrive(speed, 1600, 180);
+            gyroDrive(speed, 1700, 90);
             //robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
             //robot.setPositionClaw(0.5, 0.5);
-            robot.setPositionClaw(0.7, 0.3);
-            gyroDrive(speed, 1000, 180);
+            gyroDrive(speed, 700, 90);
             //gyroDrive(speed, 1100, 180);
             // robot.setPositionClaw(0.5, 0.75);
-            gyroDrive(speed, -2000, 180);
+            gyroDrive(speed, -1700, 90);
             //robot.setPositionClaw(0.7, 0.3);
-            robot.lift.setPower(0.8);
-            gyroTurn(speed, 0);
-            gyroHold(speed, 0, 1);
+            robot.lift.setPower(0.9);
+            gyroTurn(speed, -90);
+            gyroHold(speed, -90, 1);
             robot.lift.setPower(0.0);
-            gyroDrive(speed, 2100, 0);
+            gyroDrive(speed, 2200, -90);
             robot.setPositionWheel(robot.DROP_POSITION);
             //gyroDrive(speed, 200, 0);
-            gyroDrive(speed, -400, 0);
-            robot.setPositionClaw(0.6, 0.4);
-            gyroDrive(speed, 300, 0);
-            gyroDrive(speed, -300, 0);
+            sleep(650);
+            robot.setPositionClaw(0.3, 0.7);
+            gyroDrive(speed, -400, -90);
+            robot.setPositionClaw(0.5, 0.5);
+            gyroDrive(speed, 300, -90);
+            gyroDrive(speed, -300, -90);
             //robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
             //encoderDriveLift(0.9, 1000);
         }

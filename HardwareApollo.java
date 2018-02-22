@@ -140,8 +140,8 @@ public class HardwareApollo {
         wheelUpRight = hwMap.get(Servo.class, "wur");
 
         setPositionClaw(START_POSITION_CLAW_UP, START_POSITION_CLAW_DOWN);
-        armUpDown.setPosition(0.1);
-        armRightLeft.setPosition(0.25);
+        armUpDown.setPosition(0.0);
+        armRightLeft.setPosition(0.15);
         //relicUpDown.setPosition(START_POSITION_ARM);
         relicClaw.setPosition(START_POSITION_CLAW);
         setPositionWheel(STOP_POSITION);
