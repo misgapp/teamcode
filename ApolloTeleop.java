@@ -74,6 +74,7 @@ public class ApolloTeleop extends LinearOpMode {
     static final double SPIN_SPEED_FAST = -0.6;
     static final double SPIN_SPEED_SLOW = -0.35;
     private float spinAngle = 0;
+    private float spinAngelShift = 0;
 
     @Override
     public void runOpMode() {
@@ -302,6 +303,15 @@ public class ApolloTeleop extends LinearOpMode {
             if (gamepad1.y) {
                 if (!isSpinerPressed){
                     robot.setPositionClaw(0.7, 0.3);
+                    // If spinner was modified manually then reset the gyro by the current position
+                    if (!isSpinerEnabled){
+                        readAngel();
+                        if (spinDirectionUp) {
+                            spinAngelShift = spinAngle - 90;
+                        } else {
+                            spinAngelShift = spinAngle - 270;
+                        }
+                    }
                     spinDirectionUp = !spinDirectionUp;
                     isSpinerPressed = true;
                 }
@@ -330,32 +340,43 @@ public class ApolloTeleop extends LinearOpMode {
         }
     }
 
+    public void readAngel(){
+        spinAngle = robot.gyroSpiner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+
+        if (spinAngle <= 90){
+            spinAngle = 90 - spinAngle;
+        } else {
+            spinAngle = 450 - spinAngle;
+        }
+
+        spinAngle -= spinAngelShift;
+    }
+
     //Set and change power to spinner according to gyro angle
     public void spin(){
-        spinAngle = robot.gyroSpiner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         if (spinDirectionUp){
-            if (spinAngle <= 90 && spinAngle >= 25){
+            if (spinAngle < 75){
                 robot.spiner.setPower(SPIN_SPEED_FAST);
-            } else if (spinAngle < 25 && spinAngle >= 6){
+            } else if (spinAngle < 84){
                 robot.spiner.setPower(SPIN_SPEED_SLOW);
-            } else if ((spinAngle < 6 && spinAngle >= 0) || (spinAngle >= -6 && spinAngle < 0)){
+            } else if (spinAngle <= 96){
                 robot.spiner.setPower(0);
-            } else if (spinAngle < -6 && spinAngle >= -45){
+            } else if (spinAngle <= 115){
                 robot.spiner.setPower(-SPIN_SPEED_SLOW);
             } else {
                 robot.spiner.setPower(-SPIN_SPEED_FAST);
             }
         } else {
-            if (spinAngle >= 90 && spinAngle <= 155){
-                robot.spiner.setPower(-SPIN_SPEED_FAST);
-            } else if (spinAngle <= 174 && spinAngle > 155){
-                robot.spiner.setPower(-SPIN_SPEED_SLOW);
-            } else if (spinAngle <= -174 || spinAngle > 174){
-                robot.spiner.setPower(0);
-            } else if (spinAngle <= -140 && spinAngle > -174){
-                robot.spiner.setPower(SPIN_SPEED_SLOW);
-            } else {
+            if (spinAngle < 245){
                 robot.spiner.setPower(SPIN_SPEED_FAST);
+            } else if (spinAngle < 264){
+                robot.spiner.setPower(SPIN_SPEED_SLOW);
+            } else if (spinAngle <= 274){
+                robot.spiner.setPower(0);
+            } else if (spinAngle <= 295){
+                robot.spiner.setPower(-SPIN_SPEED_SLOW);
+            } else {
+                robot.spiner.setPower(-SPIN_SPEED_FAST);
             }
         }
     }
