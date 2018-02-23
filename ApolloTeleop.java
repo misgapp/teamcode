@@ -72,7 +72,7 @@ public class ApolloTeleop extends LinearOpMode {
     private static final double P_TURN_COEFF = 0.1;
     private boolean spinDirectionUp = true; // Up is gear wheels are up
     static final double SPIN_SPEED_FAST = -0.6;
-    static final double SPIN_SPEED_SLOW = -0.35;
+    static final double SPIN_SPEED_SLOW = -0.2;
     private float spinAngle = 0;
 
     @Override
@@ -96,13 +96,10 @@ public class ApolloTeleop extends LinearOpMode {
         ElapsedTime timer = new ElapsedTime();
         //double angleClaws = 0;
 
-
         robot.init(hardwareMap);
 
         telemetry.addData(">", "Calibrating Gyro");    //
         telemetry.update();
-
-        robot.gyroSpiner.calibrate();
 
         // make sure the gyro is calibrated before continuing
         while (!isStopRequested() && robot.gyroSpiner.isCalibrating())  {
@@ -336,11 +333,11 @@ public class ApolloTeleop extends LinearOpMode {
         if (spinDirectionUp){
             if (spinAngle <= 90 && spinAngle >= 25){
                 robot.spiner.setPower(SPIN_SPEED_FAST);
-            } else if (spinAngle < 25 && spinAngle >= 6){
+            } else if (spinAngle < 25 && spinAngle >= 4){
                 robot.spiner.setPower(SPIN_SPEED_SLOW);
-            } else if ((spinAngle < 6 && spinAngle >= 0) || (spinAngle >= -6 && spinAngle < 0)){
+            } else if ((spinAngle < 4 && spinAngle >= 0) || (spinAngle >= -4 && spinAngle < 0)){
                 robot.spiner.setPower(0);
-            } else if (spinAngle < -6 && spinAngle >= -45){
+            } else if (spinAngle < -4 && spinAngle >= -45){
                 robot.spiner.setPower(-SPIN_SPEED_SLOW);
             } else {
                 robot.spiner.setPower(-SPIN_SPEED_FAST);
@@ -348,11 +345,11 @@ public class ApolloTeleop extends LinearOpMode {
         } else {
             if (spinAngle >= 90 && spinAngle <= 155){
                 robot.spiner.setPower(-SPIN_SPEED_FAST);
-            } else if (spinAngle <= 174 && spinAngle > 155){
+            } else if (spinAngle <= 176 && spinAngle > 155){
                 robot.spiner.setPower(-SPIN_SPEED_SLOW);
-            } else if (spinAngle <= -174 || spinAngle > 174){
+            } else if (spinAngle <= -176 || spinAngle > 176){
                 robot.spiner.setPower(0);
-            } else if (spinAngle <= -140 && spinAngle > -174){
+            } else if (spinAngle <= -140 && spinAngle > -176){
                 robot.spiner.setPower(SPIN_SPEED_SLOW);
             } else {
                 robot.spiner.setPower(SPIN_SPEED_FAST);

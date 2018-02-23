@@ -23,8 +23,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  */
 public abstract class AutoMain extends LinearOpMode {
 
-    private static final int RED_THRESHOLD = 45;
-    private static final int BLUE_THRESHOLD = 45;
+    private static final int RED_THRESHOLD = 50;
+    private static final int BLUE_THRESHOLD = 50;
 
 
     HardwareApollo robot = new HardwareApollo();
@@ -35,10 +35,12 @@ public abstract class AutoMain extends LinearOpMode {
     public static final double DROP_POSITION_ARM_RIGHT_LEFT = 0.38;
     public static final double DROP_POSITION_ARM_UP_DOWN = 0.9;
     public static final double START_POSITION_ARM_UP_DOWN = 0.2;
-    static final double HEADING_THRESHOLD = 1 ;
+    static final double HEADING_THRESHOLD = 2 ;
     static final double P_TURN_COEFF = 0.1;
-    static final double P_DRIVE_COEFF = 0.15;
-
+    static final double P_DRIVE_COEFF = 0.08;
+    static final double SPIN_SPEED_FAST = -0.6;
+    static final double SPIN_SPEED_SLOW = -0.2;
+    public float spinAngle = 0;
     static final double START_POSITION = 0.05;
 
     double speed = 0.7;
@@ -47,6 +49,19 @@ public abstract class AutoMain extends LinearOpMode {
     public void apolloInit() {
         robot.init(hardwareMap);
         initVuforia();
+
+        // Wait for gyro calibration
+        telemetry.addData(">", "Calibrating Gyro");    //
+        telemetry.update();
+
+        // make sure the gyro is calibrated before continuing
+        while (!isStopRequested() && robot.gyroSpiner.isCalibrating())  {
+            sleep(50);
+            idle();
+        }
+
+        telemetry.addData(">", "Robot Ready.");
+        telemetry.update();
     }
 
     //The main function of the autonomous
@@ -187,7 +202,7 @@ public abstract class AutoMain extends LinearOpMode {
         int gyroDegrees = isRed ? 0 : 180;
         int blue = isRed ? 0 : 1200;
 
-        final int TICK_TO_CRYPTO_BOX_CORNER = 2350;
+        final int TICK_TO_CRYPTO_BOX_CORNER = 2270;
         final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 400;
 
         if (isRed) {
@@ -246,28 +261,6 @@ public abstract class AutoMain extends LinearOpMode {
     // Put more cube in crypto box
     public void moreCubs(boolean isCorner){
         if (isCorner){
-            /*
-            gyroDrive(speed, -1500, -90);
-            gyroTurn(speed, 90);
-            gyroHold(speed, 90, 2);
-            gyroDrive(speed, 1600, 90);
-            robot.setPositionClaw(0.55, 0.6);
-            //robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
-            robot.setPositionWheel(robot.GRAB_POSITION);
-            gyroDrive(speed, 1200, 90);
-            gyroDrive(speed, 1100, 90);
-            robot.setPositionClaw(0.5, 0.75);
-            robot.setPositionWheel(robot.STOP_POSITION);
-            gyroDrive(speed, -2000, 90);
-            //robot.setPositionClaw(0.7, 0.3);
-            gyroTurn(speed, -90);
-            gyroHold(speed, -90, 2);
-            gyroDrive(speed, 2900, -90);
-            robot.setPositionWheel(robot.DROP_POSITION);
-            sleep(200);
-            robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
-            //encoderDriveLift(0.9, 1000);
-            */
             robot.setPositionClaw(0.6, 0.4);
             gyroDrive(speed, -950, -90);
             robot.lift.setPower(-0.15);
@@ -277,11 +270,7 @@ public abstract class AutoMain extends LinearOpMode {
             robot.setPositionClaw(0.7, 0.3);
             robot.setPositionWheel(robot.GRAB_POSITION);
             gyroDrive(speed, 1700, 90);
-            //robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
-            //robot.setPositionClaw(0.5, 0.5);
             gyroDrive(speed, 700, 90);
-            //gyroDrive(speed, 1100, 180);
-            // robot.setPositionClaw(0.5, 0.75);
             gyroDrive(speed, -1700, 90);
             //robot.setPositionClaw(0.7, 0.3);
             robot.lift.setPower(0.9);
@@ -345,7 +334,6 @@ public abstract class AutoMain extends LinearOpMode {
         relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
         relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
-
     }
 
     //Function drive encoder for drives strait
@@ -544,12 +532,15 @@ public abstract class AutoMain extends LinearOpMode {
                 robot.setPowerLeftDriveMotors(leftSpeed);
                 robot.setPowerRightDriveMotors(rightSpeed);
 
+                spin();
+
                 // Display drive status for the driver.
                 telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
                 telemetry.addData("Target",  "%7d:%7d",      newBackLeftTarget,  newBackRightTarget);
                 telemetry.addData("Actual",  "%7d:%7d",      robot.driveBackLeft.getCurrentPosition(),
                         robot.driveBackRight.getCurrentPosition());
                 telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
+                telemetry.addData("Spin Angle",  "%5.1f", spinAngle);
                 telemetry.update();
             }
 
@@ -682,4 +673,19 @@ public abstract class AutoMain extends LinearOpMode {
         return Range.clip(error * PCoeff, -1, 1);
     }
 
+    //Set and change power to spinner according to gyro angle
+    public void spin(){
+        spinAngle = robot.gyroSpiner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        if (spinAngle <= 90 && spinAngle >= 25){
+            robot.spiner.setPower(SPIN_SPEED_FAST);
+        } else if (spinAngle < 25 && spinAngle >= 4){
+            robot.spiner.setPower(SPIN_SPEED_SLOW);
+        } else if ((spinAngle < 4 && spinAngle >= 0) || (spinAngle >= -4 && spinAngle < 0)){
+            robot.spiner.setPower(0);
+        } else if (spinAngle < -4 && spinAngle >= -45){
+            robot.spiner.setPower(-SPIN_SPEED_SLOW);
+        } else {
+            robot.spiner.setPower(-SPIN_SPEED_FAST);
+        }
+    }
 }
