@@ -111,7 +111,7 @@ public class HardwareApollo {
         // Set all motors to zero power
         setPowerAllDriveMotors(0);
         lift.setPower(0);
-        relicLift.setPower(0);
+        relicLift.setPower(0.4);
         spinner.setPower(0);
 
         // Set all motors to run without encoders.
@@ -137,8 +137,8 @@ public class HardwareApollo {
         wheelUpRight = hwMap.get(Servo.class, "wur");
 
         setPositionClaw(START_POSITION_CLAW_UP, START_POSITION_CLAW_DOWN);
-        armUpDown.setPosition(0.0);
-        armRightLeft.setPosition(0.15);
+        armUpDown.setPosition(0.25);
+        armRightLeft.setPosition(0.8);
         relicClaw.setPosition(START_POSITION_CLAW);
         setPositionWheel(STOP_POSITION);
 

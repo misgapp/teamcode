@@ -86,6 +86,7 @@ public class ApolloTeleop extends LinearOpMode {
         boolean gamepad2_bumper_previous_pressed = false;
         boolean isSpinerPressed = false;
         boolean isSpinerEnabled = true;
+        boolean balltaskisup = false;
 
         robot.init(hardwareMap);
 
@@ -108,8 +109,12 @@ public class ApolloTeleop extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            robot.armRightLeft.setPosition(0.38);
-            robot.armUpDown.setPosition(0.15);
+            if (balltaskisup == false) {
+                robot.armRightLeft.setPosition(0.38);
+                sleep(500);
+                robot.armUpDown.setPosition(0.15);
+                balltaskisup = true;
+            }
 
             //Change speed of the motors
             if (gamepad1.dpad_left) {

@@ -30,7 +30,7 @@ public abstract class AutoMain extends LinearOpMode {
     public static final double DROP_POSITION_ARM_RIGHT_LEFT = 0.38;
     static final double HEADING_THRESHOLD = 2 ;
     static final double P_TURN_COEFF = 0.1;
-    static final double P_DRIVE_COEFF = 0.08;
+    private double P_DRIVE_COEFF = 0.08; //For option to change in grab more cubes
     static final double SPIN_SPEED_FAST = -0.6;
     static final double SPIN_SPEED_SLOW = -0.2;
     public float spinAngle = 0;
@@ -189,11 +189,11 @@ public abstract class AutoMain extends LinearOpMode {
         robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         int direction = isRed ? 1 : -1;
-        int columnTicks = isRed ? 0 : 450;
+        int columnTicks = isRed ? 0 : 525;
         int gyroDegrees = isRed ? 0 : 180;
         int blue = isRed ? 0 : 1200;
 
-        final int TICK_TO_CRYPTO_BOX_CORNER = 2270;
+        final int TICK_TO_CRYPTO_BOX_CORNER = 2280;
         final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 400;
 
         if (isRed) {
@@ -210,7 +210,7 @@ public abstract class AutoMain extends LinearOpMode {
             } else if (column == RelicRecoveryVuMark.CENTER || column == RelicRecoveryVuMark.UNKNOWN) {
                 gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER + 700) * direction, 0);
             } else {
-                gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER + 1400) * direction, 0);
+                gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER + 1300) * direction, 0);
             }
 
             gyroTurn(speed, -90);
@@ -256,6 +256,7 @@ public abstract class AutoMain extends LinearOpMode {
             robot.lift.setPower(0.0);
             gyroHold(speed, 90, 0.7);
             robot.setPositionClaw(0.7, 0.3);
+            P_DRIVE_COEFF = 0.12;
             robot.setPositionWheel(robot.GRAB_POSITION);
             gyroDrive(speed, 2400, 90);
             gyroDrive(speed, -1700, 90);
@@ -263,14 +264,13 @@ public abstract class AutoMain extends LinearOpMode {
             gyroTurn(speed, -90);
             gyroHold(speed, -90, 1);
             robot.lift.setPower(0.0);
-            gyroDrive(speed, 2200, -90);
+            gyroDrive(speed, 2000, -90);
             robot.setPositionWheel(robot.DROP_POSITION);
             sleep(650);
             robot.setPositionClaw(0.3, 0.7);
             gyroDrive(speed, -400, -90);
             robot.setPositionClaw(0.5, 0.5);
-            gyroDrive(speed, 300, -90);
-            gyroDrive(speed, -300, -90);
+
         }
     }
 

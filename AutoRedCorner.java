@@ -12,7 +12,7 @@ public class AutoRedCorner extends AutoMain {
 
     @Override
     public void runOpMode() throws InterruptedException {
-       apolloInit();
+        apolloInit();
 
         waitForStart();
 
