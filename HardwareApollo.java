@@ -95,13 +95,16 @@ public class HardwareApollo {
         hwMap = ahwMap;
 
         // Define and Initialize Motors
+        gyroSpiner = hwMap.get(ModernRoboticsI2cGyro.class, "gs");
+        gyroSpiner.calibrate(); // Start calibration because it takes time.
+        spiner = hwMap.get(DcMotor.class, "sp");
         driveBackLeft = hwMap.get(DcMotor.class, "dlb");
         driveBackRight = hwMap.get(DcMotor.class, "drb");
         driveFrontLeft = hwMap.get(DcMotor.class, "dlf");
         driveFrontRight = hwMap.get(DcMotor.class, "drf");
         lift = hwMap.get(DcMotor.class, "lift");
         relicLift = hwMap.get(DcMotor.class, "rl");
-        spiner = hwMap.get(DcMotor.class, "sp");
+
 
         driveBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         driveBackRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
@@ -168,9 +171,9 @@ public class HardwareApollo {
         // and named "imu".
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        //gyroSpiner.calibrate();
-        gyroSpiner = hwMap.get(ModernRoboticsI2cGyro.class, "gs");
-        gyroSpiner.calibrate();
+
+
+
     }
 
     //Function: set mode run using encoder
