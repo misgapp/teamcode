@@ -34,9 +34,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
@@ -54,7 +52,7 @@ public class HardwareApollo {
     public DcMotor driveBackRight = null;
     public DcMotor lift = null;
     public DcMotor relicLift = null;
-    public DcMotor spiner = null;
+    public DcMotor spinner = null;
     public Servo clawDownLeft = null;
     public Servo clawDownRight = null;
     public Servo clawUpLeft = null;
@@ -69,12 +67,8 @@ public class HardwareApollo {
     public Servo wheelUpRight = null;
     public ColorSensor colorFront = null;
     public ColorSensor colorBack = null;
-    //public I2cAddr colorAddr = I2cAddr.create8bit(0x3c);
-    //public I2cDevice color = null;
-    //public I2cDeviceSynch colorReader = null;
     BNO055IMU imu;
-    ModernRoboticsI2cGyro gyroSpiner = null;
-    IntegratingGyroscope gyro;
+    ModernRoboticsI2cGyro gyroSpinner = null;
 
     public static final double START_POSITION_CLAW_UP = 0.46;
     public static final double START_POSITION_CLAW_DOWN = 0.6;
@@ -86,18 +80,18 @@ public class HardwareApollo {
     public static final double DROP_POSITION = 0.1;
     public static final double GRAB_POSITION = 0.9;
 
-    /* local OpMode members. */
+    // local OpMode members.
     HardwareMap hwMap = null;
 
-    /* Initialize standard Hardware interfaces */
+    // Initialize standard Hardware interfaces
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        gyroSpiner = hwMap.get(ModernRoboticsI2cGyro.class, "gs");
-        gyroSpiner.calibrate(); // Start calibration because it takes time.
-        spiner = hwMap.get(DcMotor.class, "sp");
+        gyroSpinner = hwMap.get(ModernRoboticsI2cGyro.class, "gs");
+        gyroSpinner.calibrate(); // Start calibration because it takes time.
+        spinner = hwMap.get(DcMotor.class, "sp");
         driveBackLeft = hwMap.get(DcMotor.class, "dlb");
         driveBackRight = hwMap.get(DcMotor.class, "drb");
         driveFrontLeft = hwMap.get(DcMotor.class, "dlf");
@@ -112,20 +106,20 @@ public class HardwareApollo {
         driveFrontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         lift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
         relicLift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
-        spiner.setDirection(DcMotor.Direction.REVERSE); // Set to FORWARD if using AndyMark motors
+        spinner.setDirection(DcMotor.Direction.REVERSE); // Set to FORWARD if using AndyMark motors
 
         // Set all motors to zero power
         setPowerAllDriveMotors(0);
         lift.setPower(0);
         relicLift.setPower(0);
-        spiner.setPower(0);
+        spinner.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         setDriveMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         relicLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        spiner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -145,15 +139,11 @@ public class HardwareApollo {
         setPositionClaw(START_POSITION_CLAW_UP, START_POSITION_CLAW_DOWN);
         armUpDown.setPosition(0.0);
         armRightLeft.setPosition(0.15);
-        //relicUpDown.setPosition(START_POSITION_ARM);
         relicClaw.setPosition(START_POSITION_CLAW);
         setPositionWheel(STOP_POSITION);
 
         colorFront = hwMap.get(ColorSensor.class, "cf");
         colorBack = hwMap.get(ColorSensor.class, "cb");
-        //color = hwMap.i2cDevice.get("sc");
-        //colorReader = new I2cDeviceSynchImpl(color, colorAddr, false);
-        //colorReader.engage();
 
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually

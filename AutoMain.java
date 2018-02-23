@@ -22,30 +22,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * each auto mode should call function apolloRun.
  */
 public abstract class AutoMain extends LinearOpMode {
-
-    private static final int RED_THRESHOLD = 50;
-    private static final int BLUE_THRESHOLD = 50;
-
-
     HardwareApollo robot = new HardwareApollo();
     VuforiaLocalizer vuforia;
     VuforiaTrackable relicTemplate;
     VuforiaTrackables relicTrackables;
     RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.UNKNOWN;
     public static final double DROP_POSITION_ARM_RIGHT_LEFT = 0.38;
-    public static final double DROP_POSITION_ARM_UP_DOWN = 0.9;
-    public static final double START_POSITION_ARM_UP_DOWN = 0.2;
     static final double HEADING_THRESHOLD = 2 ;
     static final double P_TURN_COEFF = 0.1;
     static final double P_DRIVE_COEFF = 0.08;
     static final double SPIN_SPEED_FAST = -0.6;
     static final double SPIN_SPEED_SLOW = -0.2;
     public float spinAngle = 0;
-    static final double START_POSITION = 0.05;
-
+    private static final int RED_THRESHOLD = 50;
+    private static final int BLUE_THRESHOLD = 50;
     double speed = 0.7;
 
-    //Init function, hardwareMap & vuforia
+    //Init function, hardwareMap,vuforia and gyro calibration
     public void apolloInit() {
         robot.init(hardwareMap);
         initVuforia();
@@ -55,7 +48,7 @@ public abstract class AutoMain extends LinearOpMode {
         telemetry.update();
 
         // make sure the gyro is calibrated before continuing
-        while (!isStopRequested() && robot.gyroSpiner.isCalibrating())  {
+        while (!isStopRequested() && robot.gyroSpinner.isCalibrating())  {
             sleep(50);
             idle();
         }
@@ -82,7 +75,6 @@ public abstract class AutoMain extends LinearOpMode {
         robot.setPositionWheel(robot.GRAB_POSITION);
         readPhotoWhileWait(100);
         robot.setPositionWheel(robot.STOP_POSITION);
-        //encoderDriveLift(0.9, 500);
     }
 
     // Balls task: Move the ball with the other color aside.
@@ -95,7 +87,6 @@ public abstract class AutoMain extends LinearOpMode {
         readPhotoWhileWait(600);
         robot.armUpDown.setPosition(0.90);
         readPhotoWhileWait(400);
-
 
         boolean colorDetected = false;
         boolean frontIsRed = false;
@@ -213,9 +204,6 @@ public abstract class AutoMain extends LinearOpMode {
             }
         }
 
-        //close servo claw
-        //robot.setPositionClaw(up,down);
-
         if (isCorner) {
             if (column == RelicRecoveryVuMark.LEFT ) {
                 gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER) * direction, 0);
@@ -269,25 +257,20 @@ public abstract class AutoMain extends LinearOpMode {
             gyroHold(speed, 90, 0.7);
             robot.setPositionClaw(0.7, 0.3);
             robot.setPositionWheel(robot.GRAB_POSITION);
-            gyroDrive(speed, 1700, 90);
-            gyroDrive(speed, 700, 90);
+            gyroDrive(speed, 2400, 90);
             gyroDrive(speed, -1700, 90);
-            //robot.setPositionClaw(0.7, 0.3);
             robot.lift.setPower(0.9);
             gyroTurn(speed, -90);
             gyroHold(speed, -90, 1);
             robot.lift.setPower(0.0);
             gyroDrive(speed, 2200, -90);
             robot.setPositionWheel(robot.DROP_POSITION);
-            //gyroDrive(speed, 200, 0);
             sleep(650);
             robot.setPositionClaw(0.3, 0.7);
             gyroDrive(speed, -400, -90);
             robot.setPositionClaw(0.5, 0.5);
             gyroDrive(speed, 300, -90);
             gyroDrive(speed, -300, -90);
-            //robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
-            //encoderDriveLift(0.9, 1000);
         }
     }
 
@@ -516,22 +499,24 @@ public abstract class AutoMain extends LinearOpMode {
                 steer = getSteer(error, P_DRIVE_COEFF);
 
                 // if driving in reverse, the motor correction also needs to be reversed
-                if (distanceTick < 0)
+                if (distanceTick < 0) {
                     steer *= -1.0;
+                }
 
                 leftSpeed = speed - steer;
                 rightSpeed = speed + steer;
 
                 // Normalize speeds if either one exceeds +/- 1.0;
                 max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-                if (max > 1.0)
-                {
+                if (max > 1.0) {
                     leftSpeed /= max;
                     rightSpeed /= max;
                 }
+
                 robot.setPowerLeftDriveMotors(leftSpeed);
                 robot.setPowerRightDriveMotors(rightSpeed);
 
+                //Fix if the spinner move
                 spin();
 
                 // Display drive status for the driver.
@@ -675,17 +660,17 @@ public abstract class AutoMain extends LinearOpMode {
 
     //Set and change power to spinner according to gyro angle
     public void spin(){
-        spinAngle = robot.gyroSpiner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        spinAngle = robot.gyroSpinner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         if (spinAngle <= 90 && spinAngle >= 25){
-            robot.spiner.setPower(SPIN_SPEED_FAST);
+            robot.spinner.setPower(SPIN_SPEED_FAST);
         } else if (spinAngle < 25 && spinAngle >= 4){
-            robot.spiner.setPower(SPIN_SPEED_SLOW);
+            robot.spinner.setPower(SPIN_SPEED_SLOW);
         } else if ((spinAngle < 4 && spinAngle >= 0) || (spinAngle >= -4 && spinAngle < 0)){
-            robot.spiner.setPower(0);
+            robot.spinner.setPower(0);
         } else if (spinAngle < -4 && spinAngle >= -45){
-            robot.spiner.setPower(-SPIN_SPEED_SLOW);
+            robot.spinner.setPower(-SPIN_SPEED_SLOW);
         } else {
-            robot.spiner.setPower(-SPIN_SPEED_FAST);
+            robot.spinner.setPower(-SPIN_SPEED_FAST);
         }
     }
 }

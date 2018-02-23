@@ -31,16 +31,13 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 import static java.lang.Thread.sleep;
-import static org.firstinspires.ftc.teamcode.AutoMain.HEADING_THRESHOLD;
 
 //import org.firstinspires.ftc.robotcontroller.external.samples.SensorColor;
 
@@ -69,7 +66,6 @@ public class ApolloTeleop extends LinearOpMode {
     static final double SPEED_FACTOR_2 = 1.3;
     static final double SPEED_FACTOR_3 = 1.6;
     static final double SPEED_FACTOR_4 = 2.0;
-    private static final double P_TURN_COEFF = 0.1;
     private boolean spinDirectionUp = true; // Up is gear wheels are up
     static final double SPIN_SPEED_FAST = -0.6;
     static final double SPIN_SPEED_SLOW = -0.2;
@@ -86,15 +82,10 @@ public class ApolloTeleop extends LinearOpMode {
         boolean driveDirectionForward = false;
         boolean speedFactorUpPressHandled = false;
         boolean speedFactorDownPressHandled = false;
-        boolean armRelic = true;
         boolean clawRelic = true;
-        boolean gamepad2_x_previous_pressed = false;
         boolean gamepad2_bumper_previous_pressed = false;
         boolean isSpinerPressed = false;
         boolean isSpinerEnabled = true;
-        int angleClaws = 0;
-        ElapsedTime timer = new ElapsedTime();
-        //double angleClaws = 0;
 
         robot.init(hardwareMap);
 
@@ -102,7 +93,7 @@ public class ApolloTeleop extends LinearOpMode {
         telemetry.update();
 
         // make sure the gyro is calibrated before continuing
-        while (!isStopRequested() && robot.gyroSpiner.isCalibrating())  {
+        while (!isStopRequested() && robot.gyroSpinner.isCalibrating()) {
             sleep(50);
             idle();
         }
@@ -110,24 +101,15 @@ public class ApolloTeleop extends LinearOpMode {
         telemetry.addData(">", "Robot Ready.");
         telemetry.update();
 
-        //robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //robot.clawRoll.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Version", "1");
-        telemetry.update();
-
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        robot.gyroSpiner.resetZAxisIntegrator();
+        robot.gyroSpinner.resetZAxisIntegrator();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             robot.armRightLeft.setPosition(0.38);
             robot.armUpDown.setPosition(0.15);
-
 
             //Change speed of the motors
             if (gamepad1.dpad_left) {
@@ -270,34 +252,20 @@ public class ApolloTeleop extends LinearOpMode {
             } else {
                 robot.relicLift.setPower(0);
             }
-/*
-            //Set power to spiner according to gyro
-            if (gamepad1.y) {
-                if (!isSpinered){
-                    robot.setPositionClaw(0.7, 0.3);
-                    encoderDriveSpiner(0.3, 640);
-                    isSpinered = true;
-                } else {
-                    robot.setPositionClaw(0.7, 0.3);
-                    encoderDriveSpiner(0.3, -640);
-                    isSpinered = false;
-                }
-            }
-            */
 
-            if (gamepad2.dpad_left){
-                robot.spiner.setPower(-0.25);
+            if (gamepad2.dpad_left) {
+                robot.spinner.setPower(-0.25);
                 isSpinerEnabled = false;
-            } else if (gamepad2.dpad_right){
-                robot.spiner.setPower(0.25);
+            } else if (gamepad2.dpad_right) {
+                robot.spinner.setPower(0.25);
                 isSpinerEnabled = false;
             } else {
-                robot.spiner.setPower(0);
+                robot.spinner.setPower(0);
             }
 
             //Change the direction of the spin
             if (gamepad1.y) {
-                if (!isSpinerPressed){
+                if (!isSpinerPressed) {
                     robot.setPositionClaw(0.7, 0.3);
                     spinDirectionUp = !spinDirectionUp;
                     isSpinerPressed = true;
@@ -320,77 +288,38 @@ public class ApolloTeleop extends LinearOpMode {
             telemetry.addData("spinDirectionUp", spinDirectionUp);
             telemetry.update();
 
-
             // Pace this loop so jaw action is reasonable speed.
             sleep(50);
-
         }
     }
 
     //Set and change power to spinner according to gyro angle
-    public void spin(){
-        spinAngle = robot.gyroSpiner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        if (spinDirectionUp){
-            if (spinAngle <= 90 && spinAngle >= 25){
-                robot.spiner.setPower(SPIN_SPEED_FAST);
-            } else if (spinAngle < 25 && spinAngle >= 4){
-                robot.spiner.setPower(SPIN_SPEED_SLOW);
-            } else if ((spinAngle < 4 && spinAngle >= 0) || (spinAngle >= -4 && spinAngle < 0)){
-                robot.spiner.setPower(0);
-            } else if (spinAngle < -4 && spinAngle >= -45){
-                robot.spiner.setPower(-SPIN_SPEED_SLOW);
+    public void spin() {
+        spinAngle = robot.gyroSpinner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        if (spinDirectionUp) {
+            if (spinAngle <= 90 && spinAngle >= 25) {
+                robot.spinner.setPower(SPIN_SPEED_FAST);
+            } else if (spinAngle < 25 && spinAngle >= 4) {
+                robot.spinner.setPower(SPIN_SPEED_SLOW);
+            } else if ((spinAngle < 4 && spinAngle >= 0) || (spinAngle >= -4 && spinAngle < 0)) {
+                robot.spinner.setPower(0);
+            } else if (spinAngle < -4 && spinAngle >= -45) {
+                robot.spinner.setPower(-SPIN_SPEED_SLOW);
             } else {
-                robot.spiner.setPower(-SPIN_SPEED_FAST);
+                robot.spinner.setPower(-SPIN_SPEED_FAST);
             }
         } else {
-            if (spinAngle >= 90 && spinAngle <= 155){
-                robot.spiner.setPower(-SPIN_SPEED_FAST);
-            } else if (spinAngle <= 176 && spinAngle > 155){
-                robot.spiner.setPower(-SPIN_SPEED_SLOW);
-            } else if (spinAngle <= -176 || spinAngle > 176){
-                robot.spiner.setPower(0);
-            } else if (spinAngle <= -140 && spinAngle > -176){
-                robot.spiner.setPower(SPIN_SPEED_SLOW);
+            if (spinAngle >= 90 && spinAngle <= 155) {
+                robot.spinner.setPower(-SPIN_SPEED_FAST);
+            } else if (spinAngle <= 176 && spinAngle > 155) {
+                robot.spinner.setPower(-SPIN_SPEED_SLOW);
+            } else if (spinAngle <= -176 || spinAngle > 176) {
+                robot.spinner.setPower(0);
+            } else if (spinAngle <= -140 && spinAngle > -176) {
+                robot.spinner.setPower(SPIN_SPEED_SLOW);
             } else {
-                robot.spiner.setPower(SPIN_SPEED_FAST);
+                robot.spinner.setPower(SPIN_SPEED_FAST);
             }
         }
-    }
-
-    // Function drive encoder to spiner
-    public void encoderDriveSpiner(double speed, int tick) {
-        robot.spiner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.spiner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        int newLeftTarget = 0;
-        int newRightTarget = 0;
-
-        speed = Math.abs(speed);
-        double Speed = tick > 0 ? speed : -speed;
-
-        newLeftTarget = robot.spiner.getCurrentPosition() + tick;
-
-        robot.spiner.setPower(Speed);
-
-        while (opModeIsActive()) {
-            if (tick > 0) {
-                if (robot.spiner.getCurrentPosition() >= newLeftTarget) {
-                    telemetry.addData("break", "1");
-                    break;
-                }
-            } else {
-                if (robot.spiner.getCurrentPosition() <= newLeftTarget) {
-                    telemetry.addData("break", "2");
-                    break;
-                }
-            }
-
-            telemetry.addData("tick lift", "%d", robot.spiner.getCurrentPosition());
-            telemetry.update();
-            idle();
-        }
-        robot.spiner.setPower(0);
     }
 }
-
-
