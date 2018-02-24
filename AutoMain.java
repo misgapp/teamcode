@@ -27,13 +27,9 @@ public abstract class AutoMain extends LinearOpMode {
     VuforiaTrackable relicTemplate;
     VuforiaTrackables relicTrackables;
     RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.UNKNOWN;
-    public static final double DROP_POSITION_ARM_RIGHT_LEFT = 0.38;
     static final double HEADING_THRESHOLD = 2 ;
     static final double P_TURN_COEFF = 0.1;
     private double P_DRIVE_COEFF = 0.08; //For option to change in grab more cubes
-    static final double SPIN_SPEED_FAST = -0.6;
-    static final double SPIN_SPEED_SLOW = -0.2;
-    public float spinAngle = 0;
     private static final int RED_THRESHOLD = 50;
     private static final int BLUE_THRESHOLD = 50;
     double speed = 0.7;
@@ -42,19 +38,6 @@ public abstract class AutoMain extends LinearOpMode {
     public void apolloInit() {
         robot.init(hardwareMap);
         initVuforia();
-
-        // Wait for gyro calibration
-        telemetry.addData(">", "Calibrating Gyro");    //
-        telemetry.update();
-
-        // make sure the gyro is calibrated before continuing
-        while (!isStopRequested() && robot.gyroSpinner.isCalibrating())  {
-            sleep(50);
-            idle();
-        }
-
-        telemetry.addData(">", "Robot Ready.");
-        telemetry.update();
     }
 
     //The main function of the autonomous
@@ -79,7 +62,7 @@ public abstract class AutoMain extends LinearOpMode {
 
     // Balls task: Move the ball with the other color aside.
     public void ballsTaskAndReadPhoto(boolean isRed) {
-        robot.armRightLeft.setPosition(DROP_POSITION_ARM_RIGHT_LEFT);
+        robot.armRightLeft.setPosition(0.38);
 
         robot.armUpDown.setPosition(0.5);
         readPhotoWhileWait(400);
@@ -94,6 +77,7 @@ public abstract class AutoMain extends LinearOpMode {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 2.5)) {
+            //Change variables according to sensors value
             if (robot.colorFront.red() > RED_THRESHOLD) {
                 frontIsRed = true;
                 colorDetected = true;
@@ -191,10 +175,10 @@ public abstract class AutoMain extends LinearOpMode {
         int direction = isRed ? 1 : -1;
         int columnTicks = isRed ? 0 : 525;
         int gyroDegrees = isRed ? 0 : 180;
-        int blue = isRed ? 0 : 1200;
+        int blue = isRed ? -200 : 0;
 
-        final int TICK_TO_CRYPTO_BOX_CORNER = 2280;
-        final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 400;
+        final int TICK_TO_CRYPTO_BOX_CORNER = 2200;
+        final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 450;
 
         if (isRed) {
             if (column == RelicRecoveryVuMark.LEFT) {
@@ -208,7 +192,7 @@ public abstract class AutoMain extends LinearOpMode {
             if (column == RelicRecoveryVuMark.LEFT ) {
                 gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER) * direction, 0);
             } else if (column == RelicRecoveryVuMark.CENTER || column == RelicRecoveryVuMark.UNKNOWN) {
-                gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER + 700) * direction, 0);
+                gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER + 600) * direction, 0);
             } else {
                 gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER + 1300) * direction, 0);
             }
@@ -217,7 +201,7 @@ public abstract class AutoMain extends LinearOpMode {
             gyroHold(speed, -90, 1);
             gyroDrive(speed, 900, -90);
         } else {
-            gyroDrive(speed, 2100 * direction, 0);
+            gyroDrive(speed, (2100 + columnTicks) * direction, 0);
 
             gyroTurn(speed, 90);
             gyroHold(speed, 90, 1);
@@ -226,13 +210,13 @@ public abstract class AutoMain extends LinearOpMode {
             } else if (column == RelicRecoveryVuMark.CENTER ) {
                 gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 700, 90);
             } else {
-                gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1400, 90);
+                gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1300, 90);
             }
 
             //turn(speed, TURN_2_CRYPTO_BOX_WALL * direction, -1 * TURN_2_CRYPTO_BOX_WALL * direction);
             gyroTurn(speed, 0+gyroDegrees);
             gyroHold(speed, 0+gyroDegrees, 1);
-            driveStrait(speed, 200+blue);
+            driveStrait(speed, 400+blue);
         }
     }
 
@@ -242,7 +226,7 @@ public abstract class AutoMain extends LinearOpMode {
         sleep(800);
         robot.setPositionWheel(robot.STOP_POSITION);
         robot.setPositionClaw(1, 1);
-        driveStrait(speed, 300);
+        driveStrait(speed, 400);
         driveStrait(speed, -700);
     }
 
@@ -256,15 +240,16 @@ public abstract class AutoMain extends LinearOpMode {
             robot.lift.setPower(0.0);
             gyroHold(speed, 90, 0.7);
             robot.setPositionClaw(0.7, 0.3);
-            P_DRIVE_COEFF = 0.12;
+            P_DRIVE_COEFF = 0.17;
             robot.setPositionWheel(robot.GRAB_POSITION);
             gyroDrive(speed, 2400, 90);
             gyroDrive(speed, -1700, 90);
+            P_DRIVE_COEFF = 0.08;
             robot.lift.setPower(0.9);
             gyroTurn(speed, -90);
             gyroHold(speed, -90, 1);
             robot.lift.setPower(0.0);
-            gyroDrive(speed, 2000, -90);
+            gyroDrive(speed, 2050, -90);
             robot.setPositionWheel(robot.DROP_POSITION);
             sleep(650);
             robot.setPositionClaw(0.3, 0.7);
@@ -402,41 +387,6 @@ public abstract class AutoMain extends LinearOpMode {
         telemetry.update();
     }
 
-    // Function drive encoder to lift
-    public void encoderDriveLift(double speed, int tick) {
-        robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        int newLeftTarget = 0;
-        int newRightTarget = 0;
-
-        speed = Math.abs(speed);
-        double Speed = tick > 0 ? speed : -speed;
-
-        newLeftTarget = robot.lift.getCurrentPosition() + tick;
-
-        robot.lift.setPower(Speed);
-
-        while (opModeIsActive()) {
-            if (tick > 0) {
-                if (robot.lift.getCurrentPosition() >= newLeftTarget) {
-                    telemetry.addData("break", "1");
-                    break;
-                }
-            } else {
-                if (robot.lift.getCurrentPosition() <= newLeftTarget) {
-                    telemetry.addData("break", "2");
-                    break;
-                }
-            }
-
-            telemetry.addData("tick lift", "%d", robot.lift.getCurrentPosition());
-            telemetry.update();
-            idle();
-        }
-        robot.lift.setPower(0);
-    }
-
     /*
      *  Method to drive on a fixed compass bearing (angle), based on encoder counts.
      *  Move will stop if either of these conditions occur:
@@ -516,16 +466,12 @@ public abstract class AutoMain extends LinearOpMode {
                 robot.setPowerLeftDriveMotors(leftSpeed);
                 robot.setPowerRightDriveMotors(rightSpeed);
 
-                //Fix if the spinner move
-                spin();
-
                 // Display drive status for the driver.
                 telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
                 telemetry.addData("Target",  "%7d:%7d",      newBackLeftTarget,  newBackRightTarget);
                 telemetry.addData("Actual",  "%7d:%7d",      robot.driveBackLeft.getCurrentPosition(),
                         robot.driveBackRight.getCurrentPosition());
                 telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
-                telemetry.addData("Spin Angle",  "%5.1f", spinAngle);
                 telemetry.update();
             }
 
@@ -656,21 +602,5 @@ public abstract class AutoMain extends LinearOpMode {
      */
     public double getSteer(double error, double PCoeff) {
         return Range.clip(error * PCoeff, -1, 1);
-    }
-
-    //Set and change power to spinner according to gyro angle
-    public void spin(){
-        spinAngle = robot.gyroSpinner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        if (spinAngle <= 90 && spinAngle >= 25){
-            robot.spinner.setPower(SPIN_SPEED_FAST);
-        } else if (spinAngle < 25 && spinAngle >= 4){
-            robot.spinner.setPower(SPIN_SPEED_SLOW);
-        } else if ((spinAngle < 4 && spinAngle >= 0) || (spinAngle >= -4 && spinAngle < 0)){
-            robot.spinner.setPower(0);
-        } else if (spinAngle < -4 && spinAngle >= -45){
-            robot.spinner.setPower(-SPIN_SPEED_SLOW);
-        } else {
-            robot.spinner.setPower(-SPIN_SPEED_FAST);
-        }
     }
 }

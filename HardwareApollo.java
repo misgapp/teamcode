@@ -90,7 +90,6 @@ public class HardwareApollo {
 
         // Define and Initialize Motors
         gyroSpinner = hwMap.get(ModernRoboticsI2cGyro.class, "gs");
-        gyroSpinner.calibrate(); // Start calibration because it takes time.
         spinner = hwMap.get(DcMotor.class, "sp");
         driveBackLeft = hwMap.get(DcMotor.class, "dlb");
         driveBackRight = hwMap.get(DcMotor.class, "drb");
@@ -161,9 +160,6 @@ public class HardwareApollo {
         // and named "imu".
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-
-
-
     }
 
     //Function: set mode run using encoder

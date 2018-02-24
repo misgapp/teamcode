@@ -31,7 +31,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -73,7 +72,6 @@ public class ApolloTeleop extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
         double clawDownPosition = robot.START_POSITION_CLAW_DOWN;
         double clawUpPosition = robot.START_POSITION_CLAW_UP;
         double speed_Left = 0;
@@ -89,6 +87,8 @@ public class ApolloTeleop extends LinearOpMode {
         boolean balltaskisup = false;
 
         robot.init(hardwareMap);
+
+        robot.gyroSpinner.calibrate();
 
         telemetry.addData(">", "Calibrating Gyro");    //
         telemetry.update();
