@@ -76,30 +76,45 @@ public abstract class AutoMain extends LinearOpMode {
 
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 2.5)) {
-            //Change variables according to sensors value
-            if (robot.colorFront.red() > RED_THRESHOLD) {
+        while (opModeIsActive() && (runtime.seconds() < 1)) {
+            if (robot.colorFront.red() > 30 && robot.colorFront.red() > robot.colorBack.red() && robot.colorFront.blue() < robot.colorBack.blue() ) {
                 frontIsRed = true;
                 colorDetected = true;
                 break;
             }
 
-            if (robot.colorFront.blue() > BLUE_THRESHOLD) {
+            if (robot.colorFront.red() < robot.colorBack.red() && robot.colorFront.blue() > 30 && robot.colorFront.blue() > robot.colorBack.blue() ) {
                 frontIsRed = false;
                 colorDetected = true;
                 break;
             }
+        }
 
-            if (robot.colorBack.red() > RED_THRESHOLD) {
-                frontIsRed = false;
-                colorDetected = true;
-                break;
-            }
+        if (!colorDetected) {
+            while (opModeIsActive() && (runtime.seconds() < 1.5)) {
+                if (robot.colorFront.red() > 30 && robot.colorFront.red() > robot.colorBack.red()) {
+                    frontIsRed = true;
+                    colorDetected = true;
+                    break;
+                }
 
-            if (robot.colorBack.blue() > BLUE_THRESHOLD) {
-                frontIsRed = true;
-                colorDetected = true;
-                break;
+                if (robot.colorFront.blue() > 30 && robot.colorFront.blue() > robot.colorBack.blue()) {
+                    frontIsRed = false;
+                    colorDetected = true;
+                    break;
+                }
+
+                if (robot.colorBack.red() > 30 && robot.colorFront.red() < robot.colorBack.red()) {
+                    frontIsRed = false;
+                    colorDetected = true;
+                    break;
+                }
+
+                if (robot.colorBack.blue() > 30 && robot.colorFront.blue() < robot.colorBack.blue()) {
+                    frontIsRed = true;
+                    colorDetected = true;
+                    break;
+                }
             }
         }
 

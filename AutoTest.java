@@ -18,7 +18,12 @@ public class AutoTest extends AutoMain {
 
         waitForStart();
 
-        moveToCryptoBox(false, false, RelicRecoveryVuMark.UNKNOWN);
+        telemetry.addData("Blue back ", robot.colorBack.blue());
+        telemetry.addData("Red back ", robot.colorBack.red());
+        telemetry.addData("Blue front", robot.colorFront.blue());
+        telemetry.addData("Red front", robot.colorFront.red());
+        telemetry.update();
+        sleep(10000000);
 
         /*
         for (int g = 0; g<2; g++){
