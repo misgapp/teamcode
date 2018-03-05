@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-
 /**
  * Created by Carmel on 10/11/2017.
  */
@@ -18,10 +16,10 @@ public class AutoTest extends AutoMain {
 
         waitForStart();
 
-        telemetry.addData("Blue back ", robot.colorBack.blue());
-        telemetry.addData("Red back ", robot.colorBack.red());
-        telemetry.addData("Blue front", robot.colorFront.blue());
-        telemetry.addData("Red front", robot.colorFront.red());
+        telemetry.addData("Blue back ", robot.colorabiBack.blue());
+        telemetry.addData("Red back ", robot.colorabiBack.red());
+        telemetry.addData("Blue front", robot.coloradoFront.blue());
+        telemetry.addData("Red front", robot.coloradoFront.red());
         telemetry.update();
         sleep(10000000);
 

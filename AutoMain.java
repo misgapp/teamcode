@@ -82,13 +82,13 @@ public abstract class AutoMain extends LinearOpMode {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1)) {
-            if (robot.colorFront.red() > 30 && robot.colorFront.red() > robot.colorBack.red() && robot.colorFront.blue() < robot.colorBack.blue() ) {
+            if (robot.coloradoFront.red() > 30 && robot.coloradoFront.red() > robot.colorabiBack.red() && robot.coloradoFront.blue() < robot.colorabiBack.blue() ) {
                 frontIsRed = true;
                 colorDetected = true;
                 break;
             }
 
-            if (robot.colorFront.red() < robot.colorBack.red() && robot.colorFront.blue() > 30 && robot.colorFront.blue() > robot.colorBack.blue() ) {
+            if (robot.coloradoFront.red() < robot.colorabiBack.red() && robot.coloradoFront.blue() > 30 && robot.coloradoFront.blue() > robot.colorabiBack.blue() ) {
                 frontIsRed = false;
                 colorDetected = true;
                 break;
@@ -97,25 +97,25 @@ public abstract class AutoMain extends LinearOpMode {
 
         if (!colorDetected) {
             while (opModeIsActive() && (runtime.seconds() < 1.5)) {
-                if (robot.colorFront.red() > 30 && robot.colorFront.red() > robot.colorBack.red()) {
+                if (robot.coloradoFront.red() > 30 && robot.coloradoFront.red() > robot.colorabiBack.red()) {
                     frontIsRed = true;
                     colorDetected = true;
                     break;
                 }
 
-                if (robot.colorFront.blue() > 30 && robot.colorFront.blue() > robot.colorBack.blue()) {
+                if (robot.coloradoFront.blue() > 30 && robot.coloradoFront.blue() > robot.colorabiBack.blue()) {
                     frontIsRed = false;
                     colorDetected = true;
                     break;
                 }
 
-                if (robot.colorBack.red() > 30 && robot.colorFront.red() < robot.colorBack.red()) {
+                if (robot.colorabiBack.red() > 30 && robot.coloradoFront.red() < robot.colorabiBack.red()) {
                     frontIsRed = false;
                     colorDetected = true;
                     break;
                 }
 
-                if (robot.colorBack.blue() > 30 && robot.colorFront.blue() < robot.colorBack.blue()) {
+                if (robot.colorabiBack.blue() > 30 && robot.coloradoFront.blue() < robot.colorabiBack.blue()) {
                     frontIsRed = true;
                     colorDetected = true;
                     break;
@@ -133,10 +133,10 @@ public abstract class AutoMain extends LinearOpMode {
                 telemetry.addData("front is red ", frontIsRed);
                 telemetry.addData("color detected ", colorDetected);
                 telemetry.addData("going back ", colorDetected);
-                telemetry.addData("Blue back ", robot.colorBack.blue());
-                telemetry.addData("Red back ", robot.colorBack.red());
-                telemetry.addData("Blue front", robot.colorFront.blue());
-                telemetry.addData("Red front", robot.colorFront.red());
+                telemetry.addData("Blue back ", robot.colorabiBack.blue());
+                telemetry.addData("Red back ", robot.colorabiBack.red());
+                telemetry.addData("Blue front", robot.coloradoFront.blue());
+                telemetry.addData("Red front", robot.coloradoFront.red());
                 telemetry.update();
                 robot.lift.setPower(0.95);
                 readPhotoWhileWait(400);
@@ -151,10 +151,10 @@ public abstract class AutoMain extends LinearOpMode {
                 telemetry.addData("front is red ", frontIsRed);
                 telemetry.addData("color detected ", colorDetected);
                 telemetry.addData("going front ", colorDetected);
-                telemetry.addData("Blue back ", robot.colorBack.blue());
-                telemetry.addData("Red back ", robot.colorBack.red());
-                telemetry.addData("Blue front", robot.colorFront.blue());
-                telemetry.addData("Red front", robot.colorFront.red());
+                telemetry.addData("Blue back ", robot.colorabiBack.blue());
+                telemetry.addData("Red back ", robot.colorabiBack.red());
+                telemetry.addData("Blue front", robot.coloradoFront.blue());
+                telemetry.addData("Red front", robot.coloradoFront.red());
                 telemetry.update();
                 robot.lift.setPower(0.95);
                 readPhotoWhileWait(400);

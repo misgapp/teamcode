@@ -66,8 +66,8 @@ public class HardwareApollo {
     public Servo wheelDownRight = null;
     public Servo wheelUpLeft = null;
     public Servo wheelUpRight = null;
-    public ColorSensor colorFront = null;
-    public ColorSensor colorBack = null;
+    public ColorSensor coloradoFront = null;
+    public ColorSensor colorabiBack = null;
     BNO055IMU imu;
     ModernRoboticsI2cGyro gyroSpinner = null;
 
@@ -139,8 +139,8 @@ public class HardwareApollo {
         wheelUpRight = hwMap.get(Servo.class, "wur");
 
 
-        colorFront = hwMap.get(ColorSensor.class, "cf");
-        colorBack = hwMap.get(ColorSensor.class, "cb");
+        coloradoFront = hwMap.get(ColorSensor.class, "cf");
+        colorabiBack = hwMap.get(ColorSensor.class, "cb");
 
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
