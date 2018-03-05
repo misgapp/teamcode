@@ -53,6 +53,7 @@ public class HardwareApollo {
     public DcMotor lift = null;
     public DcMotor relicLift = null;
     public DcMotor spinner = null;
+    public DcMotor fitfhWheel = null;
     public Servo clawDownLeft = null;
     public Servo clawDownRight = null;
     public Servo clawUpLeft = null;
@@ -97,6 +98,7 @@ public class HardwareApollo {
         driveFrontRight = hwMap.get(DcMotor.class, "drf");
         lift = hwMap.get(DcMotor.class, "lift");
         relicLift = hwMap.get(DcMotor.class, "rl");
+        fitfhWheel = hwMap.get(DcMotor.class, "fw");
 
 
         driveBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
@@ -106,6 +108,7 @@ public class HardwareApollo {
         lift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
         relicLift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
         spinner.setDirection(DcMotor.Direction.REVERSE); // Set to FORWARD if using AndyMark motors
+        fitfhWheel.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
 
         // Set all motors to zero power
         setPowerAllDriveMotors(0);
@@ -135,11 +138,6 @@ public class HardwareApollo {
         wheelUpLeft = hwMap.get(Servo.class, "wul");
         wheelUpRight = hwMap.get(Servo.class, "wur");
 
-        setPositionClaw(START_POSITION_CLAW_UP, START_POSITION_CLAW_DOWN);
-        armUpDown.setPosition(0.25);
-        armRightLeft.setPosition(0.8);
-        relicClaw.setPosition(START_POSITION_CLAW);
-        setPositionWheel(STOP_POSITION);
 
         colorFront = hwMap.get(ColorSensor.class, "cf");
         colorBack = hwMap.get(ColorSensor.class, "cb");

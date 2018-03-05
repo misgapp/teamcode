@@ -37,6 +37,11 @@ public abstract class AutoMain extends LinearOpMode {
     //Init function, hardwareMap,vuforia and gyro calibration
     public void apolloInit() {
         robot.init(hardwareMap);
+        robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
+        robot.armUpDown.setPosition(0.25);
+        robot.armRightLeft.setPosition(0.8);
+        robot.relicClaw.setPosition(robot.START_POSITION_CLAW);
+        robot.setPositionWheel(robot.STOP_POSITION);
         initVuforia();
     }
 

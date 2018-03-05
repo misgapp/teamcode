@@ -76,6 +76,7 @@ public class ApolloTeleop extends LinearOpMode {
         double clawUpPosition = robot.START_POSITION_CLAW_UP;
         double speed_Left = 0;
         double speed_Right = 0;
+        double driveLeftRight = 0 ;
         double driveSpeedFactor = SPEED_FACTOR_1;
         boolean driveDirectionForward = false;
         boolean speedFactorUpPressHandled = false;
@@ -134,6 +135,15 @@ public class ApolloTeleop extends LinearOpMode {
                 speed_Right = -gamepad1.right_stick_y;
                 speed_Left = -gamepad1.left_stick_y;
             }
+             driveLeftRight = gamepad1.left_stick_x ;
+
+
+            if (gamepad1.left_stick_x>0.2)
+                robot.fitfhWheel.setPower(driveLeftRight);
+            else if (gamepad1.left_stick_x<0.2)
+                robot.fitfhWheel.setPower(-driveLeftRight);
+            else
+                robot.fitfhWheel.setPower(0);
 
             //Change variables to change velocity
             if (gamepad1.dpad_up) {
