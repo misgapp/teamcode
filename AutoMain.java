@@ -29,7 +29,7 @@ public abstract class AutoMain extends LinearOpMode {
     RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.UNKNOWN;
     static final double HEADING_THRESHOLD = 2 ;
     static final double P_TURN_COEFF = 0.1;
-    private double P_DRIVE_COEFF = 0.08; //For option to change in grab more cubes
+    private double P_DRIVE_COEFF = 0.06; //For option to change in grab more cubes
     private static final int RED_THRESHOLD = 50;
     private static final int BLUE_THRESHOLD = 50;
     double speed = 0.7;

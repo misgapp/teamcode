@@ -34,6 +34,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -53,7 +54,6 @@ public class HardwareApollo {
     public DcMotor lift = null;
     public DcMotor relicLift = null;
     public DcMotor spinner = null;
-    public DcMotor fitfhWheel = null;
     public Servo clawDownLeft = null;
     public Servo clawDownRight = null;
     public Servo clawUpLeft = null;
@@ -70,6 +70,8 @@ public class HardwareApollo {
     public ColorSensor colorabiBack = null;
     BNO055IMU imu;
     ModernRoboticsI2cGyro gyroSpinner = null;
+    DigitalChannel touchSpinnerUp;
+    DigitalChannel touchSpinnerDown;
 
     public static final double START_POSITION_CLAW_UP = 0.46;
     public static final double START_POSITION_CLAW_DOWN = 0.6;
@@ -98,8 +100,6 @@ public class HardwareApollo {
         driveFrontRight = hwMap.get(DcMotor.class, "drf");
         lift = hwMap.get(DcMotor.class, "lift");
         relicLift = hwMap.get(DcMotor.class, "rl");
-        fitfhWheel = hwMap.get(DcMotor.class, "fw");
-
 
         driveBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         driveBackRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
@@ -108,7 +108,6 @@ public class HardwareApollo {
         lift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
         relicLift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
         spinner.setDirection(DcMotor.Direction.REVERSE); // Set to FORWARD if using AndyMark motors
-        fitfhWheel.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
 
         // Set all motors to zero power
         setPowerAllDriveMotors(0);
@@ -158,6 +157,16 @@ public class HardwareApollo {
         // and named "imu".
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
+        // get a reference to our digitalTouch object.
+        touchSpinnerDown = hwMap.get(DigitalChannel.class, "tsd");
+        // set the digital channel to input.
+        touchSpinnerDown.setMode(DigitalChannel.Mode.INPUT);
+
+        // get a reference to our digitalTouch object.
+        touchSpinnerUp = hwMap.get(DigitalChannel.class, "tsu");
+        // set the digital channel to input.
+        touchSpinnerUp.setMode(DigitalChannel.Mode.INPUT);
     }
 
     //Function: set mode run using encoder
