@@ -70,6 +70,7 @@ public class ApolloTeleop extends LinearOpMode {
     static final double SPIN_SPEED_FAST = -0.6;
     static final double SPIN_SPEED_SLOW = -0.2;
     private float spinAngle = 0;
+    boolean isSpinerEnabled = false;
 
     @Override
     public void runOpMode() {
@@ -85,10 +86,13 @@ public class ApolloTeleop extends LinearOpMode {
         boolean clawRelic = true;
         boolean gamepad2_bumper_previous_pressed = false;
         boolean isSpinerPressed = false;
-        boolean isSpinerEnabled = true;
         boolean balltaskisup = false;
 
+
         robot.init(hardwareMap);
+
+        robot.spinner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.spinner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         /*robot.gyroSpinner.calibrate();
 
@@ -261,9 +265,11 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             if (gamepad2.dpad_left) {
+                robot.spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 robot.spinner.setPower(-0.25);
                 isSpinerEnabled = false;
             } else if (gamepad2.dpad_right) {
+                robot.spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 robot.spinner.setPower(0.25);
                 isSpinerEnabled = false;
             } else {
@@ -276,19 +282,23 @@ public class ApolloTeleop extends LinearOpMode {
                     robot.setPositionClaw(0.7, 0.3);
                     spinDirectionUp = !spinDirectionUp;
                     isSpinerPressed = true;
-                    spin();
+                    int tick = spinDirectionUp ? -1000 : 1000;
+                    robot.spinner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    int target = robot.spinner.getCurrentPosition() + tick;
+
+                    robot.spinner.setTargetPosition(target);
+                    robot.spinner.setPower(0.4);
                 }
                 isSpinerEnabled = true;
             } else {
                 isSpinerPressed = false;
             }
 
-            /*
+
             //Set and change power to spinner according to gyro angle
             if (isSpinerEnabled) {
                 spin();
             }
-            */
 
             telemetry.addData("claw Down Left", "%.2f", robot.clawDownLeft.getPosition());
             telemetry.addData("claw Down Right", "%.2f", robot.clawDownRight.getPosition());
@@ -296,6 +306,9 @@ public class ApolloTeleop extends LinearOpMode {
             telemetry.addData("claw up Right", "%.2f", robot.clawUpRight.getPosition());
             telemetry.addData("Spin angle", "%.2f", spinAngle);
             telemetry.addData("spinDirectionUp", spinDirectionUp);
+            telemetry.addData("touch up", robot.touchSpinnerUp.getState());
+            telemetry.addData("touch down", robot.touchSpinnerDown.getState());
+            telemetry.addData("spinner ticks", "%d", robot.spinner.getCurrentPosition());
             telemetry.update();
 
             // Pace this loop so jaw action is reasonable speed.
@@ -305,60 +318,19 @@ public class ApolloTeleop extends LinearOpMode {
 
     public void spin(){
         if (spinDirectionUp){
-            robot.spinner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.spinner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            double speed = 0.4;
-            int tick = 5000;
-            int target = 0;
-
-
-            target = robot.spinner.getCurrentPosition() + tick;
-
-            while (opModeIsActive()) {
-                robot.spinner.setPower(speed);
-
-                if (robot.spinner.getCurrentPosition() >= target) {
-                    break;
-                }
-
-                if (robot.spinner.getCurrentPosition() >= 2000) {
-                    speed = 0.2;
-                }
-
-                if (!robot.touchSpinnerDown.getState()){
-                    break;
-                }
+            if (!robot.touchSpinnerDown.getState()){
+                robot.spinner.setPower(0);
+                isSpinerEnabled = false;
             }
-            robot.spinner.setPower(0);
-
         } else {
-            robot.spinner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.spinner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            double speed = -0.4;
-            int tick = -5000;
-            int target = 0;
-
-
-            target = robot.spinner.getCurrentPosition() + tick;
-
-            while (opModeIsActive()) {
-                robot.spinner.setPower(speed);
-
-                if (robot.spinner.getCurrentPosition() <= target) {
-                    break;
-                }
-
-                if (robot.spinner.getCurrentPosition() <= 2000) {
-                    speed = -0.2;
-                }
-
-                if (!robot.touchSpinnerUp.getState()){
-                    break;
-                }
+            if (!robot.touchSpinnerUp.getState()){
+                robot.spinner.setPower(0);
+                isSpinerEnabled = false;
             }
+        }
+        if (!robot.spinner.isBusy()){
             robot.spinner.setPower(0);
+            isSpinerEnabled = false;
         }
     }
 

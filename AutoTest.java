@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
  * Created by Carmel on 10/11/2017.
@@ -13,15 +14,17 @@ public class AutoTest extends AutoMain {
     @Override
     public void runOpMode() throws InterruptedException {
        apolloInit();
+        robot.spinner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.spinner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         waitForStart();
 
-        telemetry.addData("Blue back ", robot.colorabiBack.blue());
-        telemetry.addData("Red back ", robot.colorabiBack.red());
-        telemetry.addData("Blue front", robot.coloradoFront.blue());
-        telemetry.addData("Red front", robot.coloradoFront.red());
-        telemetry.update();
-        sleep(10000000);
+        while (opModeIsActive()){
+            telemetry.addData("tick: ", robot.spinner.getCurrentPosition());
+            telemetry.update();
+        }
+        //sleep(10000000);
 
         /*
         for (int g = 0; g<2; g++){
