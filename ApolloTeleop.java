@@ -71,6 +71,8 @@ public class ApolloTeleop extends LinearOpMode {
     static final double SPIN_SPEED_SLOW = -0.2;
     private float spinAngle = 0;
     boolean isSpinerEnabled = false;
+    int spinTarget = 0;
+    double spinSpeed = 0;
 
     @Override
     public void runOpMode() {
@@ -283,11 +285,10 @@ public class ApolloTeleop extends LinearOpMode {
                     spinDirectionUp = !spinDirectionUp;
                     isSpinerPressed = true;
                     int tick = spinDirectionUp ? -1000 : 1000;
-                    robot.spinner.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    int target = robot.spinner.getCurrentPosition() + tick;
-
-                    robot.spinner.setTargetPosition(target);
-                    robot.spinner.setPower(0.4);
+                    spinSpeed = spinDirectionUp ? -0.4 : 0.4;
+                    robot.spinner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    spinTarget = robot.spinner.getCurrentPosition() + tick;
+                    robot.spinner.setPower(spinSpeed);
                 }
                 isSpinerEnabled = true;
             } else {
@@ -318,19 +319,20 @@ public class ApolloTeleop extends LinearOpMode {
 
     public void spin(){
         if (spinDirectionUp){
-            if (!robot.touchSpinnerDown.getState()){
+            if (robot.spinner.getCurrentPosition() <= spinTarget || !robot.touchSpinnerDown.getState()){
                 robot.spinner.setPower(0);
                 isSpinerEnabled = false;
+            } else if (robot.spinner.getCurrentPosition() <= spinTarget * 0.25){
+                robot.spinner.setPower(spinSpeed * 0.5);
             }
+
         } else {
-            if (!robot.touchSpinnerUp.getState()){
+            if (robot.spinner.getCurrentPosition() >= spinTarget || !robot.touchSpinnerUp.getState()){
                 robot.spinner.setPower(0);
                 isSpinerEnabled = false;
+            } else if (robot.spinner.getCurrentPosition() >= spinTarget * 0.25){
+                robot.spinner.setPower(spinSpeed * 0.5);
             }
-        }
-        if (!robot.spinner.isBusy()){
-            robot.spinner.setPower(0);
-            isSpinerEnabled = false;
         }
     }
 
