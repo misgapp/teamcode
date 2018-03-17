@@ -10,50 +10,20 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(name="Apollo: Auto test", group="Apollo")
 public class AutoTest extends AutoMain {
-
     @Override
     public void runOpMode() throws InterruptedException {
-       apolloInit();
-        robot.spinner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.spinner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        apolloInit();
 
         waitForStart();
 
-        while (opModeIsActive()){
-            telemetry.addData("tick: ", robot.spinner.getCurrentPosition());
-            telemetry.update();
-        }
-        //sleep(10000000);
+        while (opModeIsActive()) {
 
-        /*
-        for (int g = 0; g<2; g++){
-            for (int i = 1; i<5; i++){
-                gyroDrive(0.2, 4000, 0+90*(i-1));
-                gyroTurn(0.2, 90*i);
+            for (int g = 0; g < 4; g++) {
+                for (int i = 1; i < 5; i++) {
+                    gyroDrive(0.5, 2000, 0 + 90 * (i - 1));
+                    gyroTurn(0.3, 90 * i);
+                }
             }
         }
-
-        for (int g = 0; g<2; g++){
-            for (int i = 1; i<5; i++){
-                gyroDrive(0.9, 4000, 0+90*(i-1));
-                gyroTurn(0.9, 90*i);
-            }
-        }
-
-        gyroTurn(0.2, -90);
-
-        for (int g = 0; g<2; g++){
-            for (int i = 1; i<5; i++){
-                gyroDrive(0.2, -4000, 0+90*(i-1));
-                gyroTurn(0.2, -90*i);
-            }
-        }
-
-        for (int i = 3; i<7; i++){
-            robot.setPositionClaw(0.1*i, 0.1*i);
-        }
-
-*/
     }
 }
