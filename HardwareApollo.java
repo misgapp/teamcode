@@ -112,7 +112,7 @@ public class HardwareApollo {
         // Set all motors to zero power
         setPowerAllDriveMotors(0);
         lift.setPower(0);
-        relicLift.setPower(0.4);
+        relicLift.setPower(0);
         spinner.setPower(0);
 
         // Set all motors to run without encoders.
