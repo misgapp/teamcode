@@ -71,8 +71,8 @@ public class ApolloTeleop extends LinearOpMode {
     static final double SPIN_SPEED_SLOW = -0.2;
     private float spinAngle = 0;
     boolean isSpinerEnabled = false;
-    int spinTarget = 0;
     double spinSpeed = 0;
+    boolean manualSpinActive = false;
 
     @Override
     public void runOpMode() {
@@ -87,8 +87,8 @@ public class ApolloTeleop extends LinearOpMode {
         boolean speedFactorDownPressHandled = false;
         boolean clawRelic = true;
         boolean gamepad2_bumper_previous_pressed = false;
-        boolean isSpinerPressed = false;
         boolean balltaskisup = false;
+
 
 
         robot.init(hardwareMap);
@@ -270,31 +270,31 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 robot.spinner.setPower(-0.25);
                 isSpinerEnabled = false;
+                manualSpinActive = true;
             } else if (gamepad2.dpad_right) {
                 robot.spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 robot.spinner.setPower(0.25);
                 isSpinerEnabled = false;
-            } else {
+                manualSpinActive = true;
+            } else if (manualSpinActive) {
                 robot.spinner.setPower(0);
+                manualSpinActive = false;
             }
 
             //Change the direction of the spin
             if (gamepad1.y) {
-                if (!isSpinerPressed) {
+                if (!isSpinerEnabled) {
+                    isSpinerEnabled = true;
                     robot.setPositionClaw(0.7, 0.3);
                     spinDirectionUp = !spinDirectionUp;
-                    isSpinerPressed = true;
-                    int tick = spinDirectionUp ? -1000 : 1000;
-                    spinSpeed = spinDirectionUp ? -0.4 : 0.4;
-                    robot.spinner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    spinTarget = robot.spinner.getCurrentPosition() + tick;
+
+                    spinSpeed = spinDirectionUp ? -0.7 : 0.7;
+                    robot.spinner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    robot.spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     robot.spinner.setPower(spinSpeed);
                 }
                 isSpinerEnabled = true;
-            } else {
-                isSpinerPressed = false;
             }
-
 
             //Set and change power to spinner according to gyro angle
             if (isSpinerEnabled) {
@@ -306,6 +306,7 @@ public class ApolloTeleop extends LinearOpMode {
             telemetry.addData("claw up Left", "%.2f", robot.clawUpLeft.getPosition());
             telemetry.addData("claw up Right", "%.2f", robot.clawUpRight.getPosition());
             telemetry.addData("Spin angle", "%.2f", spinAngle);
+            telemetry.addData("spinner enabled", isSpinerEnabled);
             telemetry.addData("spinDirectionUp", spinDirectionUp);
             telemetry.addData("touch up", robot.touchSpinnerUp.getState());
             telemetry.addData("touch down", robot.touchSpinnerDown.getState());
@@ -317,22 +318,11 @@ public class ApolloTeleop extends LinearOpMode {
         }
     }
 
-    public void spin(){
-        if (spinDirectionUp){
-            if (robot.spinner.getCurrentPosition() <= spinTarget || !robot.touchSpinnerDown.getState()){
-                robot.spinner.setPower(0);
-                isSpinerEnabled = false;
-            } else if (robot.spinner.getCurrentPosition() <= spinTarget * 0.25){
-                robot.spinner.setPower(spinSpeed * 0.5);
-            }
-
-        } else {
-            if (robot.spinner.getCurrentPosition() >= spinTarget || !robot.touchSpinnerUp.getState()){
-                robot.spinner.setPower(0);
-                isSpinerEnabled = false;
-            } else if (robot.spinner.getCurrentPosition() >= spinTarget * 0.25){
-                robot.spinner.setPower(spinSpeed * 0.5);
-            }
+    public void spin() {
+        if ((!spinDirectionUp && !robot.touchSpinnerDown.getState()) ||
+                (spinDirectionUp && !robot.touchSpinnerUp.getState())) {
+            robot.spinner.setPower(0);
+            isSpinerEnabled = false;
         }
     }
 
