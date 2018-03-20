@@ -233,21 +233,12 @@ public abstract class AutoMain extends LinearOpMode {
             } else {
                 gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1300, 90);
             }
-
+            
             //turn(speed, TURN_2_CRYPTO_BOX_WALL * direction, -1 * TURN_2_CRYPTO_BOX_WALL * direction);
             gyroTurn(speed, 0+gyroDegrees);
             gyroHold(speed, 0+gyroDegrees, 1);
             driveStrait(speed, 400+blue); //Go closer to crypto
         }
-    }
-
-    //Go closer to crypto according to distance sensor
-    public void goCloserToCrypto(){
-        robot.setPowerAllDriveMotors(0.6);
-        while (robot.sensorDistanceCrypto.getDistance(DistanceUnit.MM) > 10000){
-            idle();
-        }
-        robot.setPowerAllDriveMotors(0.6);
     }
 
     // Put the cube in crypto box
@@ -257,6 +248,15 @@ public abstract class AutoMain extends LinearOpMode {
         robot.setPositionWheel(robot.STOP_POSITION);
         robot.setPositionClaw(1, 1);
         driveStrait(speed, 400);
+        if (robot.sensorDistanceCrypto.getDistance(DistanceUnit.CM) < 6){
+            robot.setPositionClaw(0.7, 0.3);
+            robot.setPositionWheel(robot.DROP_POSITION);
+            driveStrait(speed, -400);
+            driveStrait(speed, 300);
+            sleep(1000);
+            robot.setPositionWheel(robot.STOP_POSITION);
+        }
+        robot.setPositionClaw(1, 1);
         driveStrait(speed, -700);
     }
 

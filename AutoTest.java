@@ -16,6 +16,9 @@ public class AutoTest extends AutoMain {
 
         waitForStart();
 
+        putCube();
+
+        /*
         while (opModeIsActive()) {
 
             for (int g = 0; g < 4; g++) {
@@ -25,5 +28,6 @@ public class AutoTest extends AutoMain {
                 }
             }
         }
+        */
     }
 }

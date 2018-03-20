@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import static java.lang.Thread.sleep;
 
@@ -80,9 +81,7 @@ public class ApolloTeleop extends LinearOpMode {
         double clawUpPosition = robot.START_POSITION_CLAW_UP;
         double speed_Left = 0;
         double speed_Right = 0;
-        double driveLeftRight = 0 ;
         double driveSpeedFactor = SPEED_FACTOR_1;
-        boolean driveDirectionForward = false;
         boolean speedFactorUpPressHandled = false;
         boolean speedFactorDownPressHandled = false;
         boolean clawRelic = true;
@@ -124,24 +123,8 @@ public class ApolloTeleop extends LinearOpMode {
                 balltaskisup = true;
             }
 
-            //Change speed of the motors
-            if (gamepad1.dpad_left) {
-                driveDirectionForward = true;
-                idle();
-            }
-
-            if (gamepad1.dpad_right) {
-                driveDirectionForward = false;
-                idle();
-            }
-
-            if (driveDirectionForward) {
-                speed_Left = gamepad1.right_stick_y;
-                speed_Right = gamepad1.left_stick_y;
-            } else {
-                speed_Right = -gamepad1.right_stick_y;
-                speed_Left = -gamepad1.left_stick_y;
-            }
+            speed_Left = -gamepad1.right_stick_y;
+            speed_Right = -gamepad1.left_stick_y;
 
             //Change variables to change velocity
             if (gamepad1.dpad_up) {
@@ -311,6 +294,7 @@ public class ApolloTeleop extends LinearOpMode {
             telemetry.addData("touch up", robot.touchSpinnerUp.getState());
             telemetry.addData("touch down", robot.touchSpinnerDown.getState());
             telemetry.addData("spinner ticks", "%d", robot.spinner.getCurrentPosition());
+            telemetry.addData("dictance sensor ", "%.2f", robot.sensorDistanceCrypto.getDistance(DistanceUnit.CM));
             telemetry.update();
 
             // Pace this loop so jaw action is reasonable speed.
