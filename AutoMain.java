@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -219,7 +220,7 @@ public abstract class AutoMain extends LinearOpMode {
 
             gyroTurn(speed, -90);
             gyroHold(speed, -90, 1);
-            gyroDrive(speed, 900, -90);
+            gyroDrive(speed, 900, -90); //Go closer to crypto
         } else {
             gyroDrive(speed, (2100 + columnTicks) * direction, 0);
 
@@ -236,8 +237,17 @@ public abstract class AutoMain extends LinearOpMode {
             //turn(speed, TURN_2_CRYPTO_BOX_WALL * direction, -1 * TURN_2_CRYPTO_BOX_WALL * direction);
             gyroTurn(speed, 0+gyroDegrees);
             gyroHold(speed, 0+gyroDegrees, 1);
-            driveStrait(speed, 400+blue);
+            driveStrait(speed, 400+blue); //Go closer to crypto
         }
+    }
+
+    //Go closer to crypto according to distance sensor
+    public void goCloserToCrypto(){
+        robot.setPowerAllDriveMotors(0.6);
+        while (robot.sensorDistanceCrypto.getDistance(DistanceUnit.MM) > 10000){
+            idle();
+        }
+        robot.setPowerAllDriveMotors(0.6);
     }
 
     // Put the cube in crypto box
