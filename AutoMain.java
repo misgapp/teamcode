@@ -29,11 +29,11 @@ public abstract class AutoMain extends LinearOpMode {
     VuforiaTrackables relicTrackables;
     RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.UNKNOWN;
     static final double HEADING_THRESHOLD = 2 ;
-    static final double P_TURN_COEFF = 0.1;
-    private double P_DRIVE_COEFF = 0.06; //For option to change in grab more cubes
+    static final double P_TURN_COEFF = 0.02;
+    private double P_DRIVE_COEFF = 0.03; //For option to change in grab more cubes
     private static final int RED_THRESHOLD = 50;
     private static final int BLUE_THRESHOLD = 50;
-    double speed = 0.7;
+    double speed = 0.8;
 
     //Init function, hardwareMap,vuforia and gyro calibration
     public void apolloInit() {
@@ -69,12 +69,13 @@ public abstract class AutoMain extends LinearOpMode {
     // Balls task: Move the ball with the other color aside.
     public void ballsTaskAndReadPhoto(boolean isRed) {
         robot.armRightLeft.setPosition(0.38);
-
         robot.armUpDown.setPosition(0.5);
         readPhotoWhileWait(400);
-        robot.armUpDown.setPosition(0.87);
-        readPhotoWhileWait(600);
-        robot.armUpDown.setPosition(0.90);
+        robot.armUpDown.setPosition(0.78);
+        readPhotoWhileWait(350);
+        robot.armUpDown.setPosition(0.81);
+        readPhotoWhileWait(450);
+        robot.armUpDown.setPosition(0.83);
         readPhotoWhileWait(400);
 
         boolean colorDetected = false;
@@ -198,7 +199,7 @@ public abstract class AutoMain extends LinearOpMode {
         int gyroDegrees = isRed ? 0 : 180;
         int blue = isRed ? -200 : 0;
 
-        final int TICK_TO_CRYPTO_BOX_CORNER = 2200;
+        final int TICK_TO_CRYPTO_BOX_CORNER = 2150;
         final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 450;
 
         if (isRed) {
@@ -213,7 +214,7 @@ public abstract class AutoMain extends LinearOpMode {
             if (column == RelicRecoveryVuMark.LEFT ) {
                 gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER) * direction, 0);
             } else if (column == RelicRecoveryVuMark.CENTER || column == RelicRecoveryVuMark.UNKNOWN) {
-                gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER + 600) * direction, 0);
+                gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER + 700) * direction, 0);
             } else {
                 gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER + 1300) * direction, 0);
             }
@@ -233,7 +234,7 @@ public abstract class AutoMain extends LinearOpMode {
             } else {
                 gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1300, 90);
             }
-            
+
             //turn(speed, TURN_2_CRYPTO_BOX_WALL * direction, -1 * TURN_2_CRYPTO_BOX_WALL * direction);
             gyroTurn(speed, 0+gyroDegrees);
             gyroHold(speed, 0+gyroDegrees, 1);
@@ -246,13 +247,12 @@ public abstract class AutoMain extends LinearOpMode {
         robot.setPositionWheel(robot.DROP_POSITION);
         sleep(800);
         robot.setPositionWheel(robot.STOP_POSITION);
-        robot.setPositionClaw(1, 1);
         driveStrait(speed, 400);
         if (robot.sensorDistanceCrypto.getDistance(DistanceUnit.CM) < 6){
             robot.setPositionClaw(0.7, 0.3);
             robot.setPositionWheel(robot.DROP_POSITION);
             driveStrait(speed, -400);
-            driveStrait(speed, 300);
+            driveStrait(speed, 400);
             sleep(1000);
             robot.setPositionWheel(robot.STOP_POSITION);
         }
@@ -270,11 +270,11 @@ public abstract class AutoMain extends LinearOpMode {
             robot.lift.setPower(0.0);
             gyroHold(speed, 90, 0.7);
             robot.setPositionClaw(0.7, 0.3);
-            P_DRIVE_COEFF = 0.17;
+            //P_DRIVE_COEFF = 0.17;
             robot.setPositionWheel(robot.GRAB_POSITION);
             gyroDrive(speed, 2400, 90);
             gyroDrive(speed, -1700, 90);
-            P_DRIVE_COEFF = 0.08;
+            //P_DRIVE_COEFF = 0.08;
             robot.lift.setPower(0.9);
             gyroTurn(speed, -90);
             gyroHold(speed, -90, 1);

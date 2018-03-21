@@ -123,8 +123,8 @@ public class ApolloTeleop extends LinearOpMode {
                 balltaskisup = true;
             }
 
-            speed_Left = -gamepad1.right_stick_y;
-            speed_Right = -gamepad1.left_stick_y;
+            speed_Left = -gamepad1.left_stick_y;
+            speed_Right = -gamepad1.right_stick_y;
 
             //Change variables to change velocity
             if (gamepad1.dpad_up) {

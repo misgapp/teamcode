@@ -16,18 +16,13 @@ public class AutoTest extends AutoMain {
 
         waitForStart();
 
-        putCube();
-
-        /*
         while (opModeIsActive()) {
-
             for (int g = 0; g < 4; g++) {
                 for (int i = 1; i < 5; i++) {
                     gyroDrive(0.5, 2000, 0 + 90 * (i - 1));
-                    gyroTurn(0.3, 90 * i);
+                    gyroTurn(0.9, 90 * i);
                 }
             }
         }
-        */
     }
 }
