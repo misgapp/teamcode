@@ -216,6 +216,20 @@ public class HardwareApollo {
         wheelDownLeft.setPosition(1-setPosition);
     }
 
+    public void openClaws(){
+        clawUpLeft.setPosition(0.8);
+        clawUpRight.setPosition(0.2);
+        clawDownRight.setPosition(0.8);
+        clawDownLeft.setPosition(0.2);
+    }
+
+    public void closeClaws(){
+        clawUpLeft.setPosition(0.55);
+        clawUpRight.setPosition(0.45);
+        clawDownRight.setPosition(0.55);
+        clawDownLeft.setPosition(0.45);
+    }
+
     public void prepareForStart() {
         // Start the logging of measured acceleration
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);

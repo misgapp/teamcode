@@ -60,7 +60,7 @@ public abstract class AutoMain extends LinearOpMode {
 
     //Set the claws & lift to right position, grab cube
     public void setClaw() {
-        robot.setPositionClaw(0.75, 0.25);
+        robot.closeClaws();
         robot.setPositionWheel(robot.GRAB_POSITION);
         readPhotoWhileWait(100);
         robot.setPositionWheel(robot.STOP_POSITION);
@@ -249,27 +249,27 @@ public abstract class AutoMain extends LinearOpMode {
         robot.setPositionWheel(robot.STOP_POSITION);
         driveStrait(speed, 400);
         if (robot.sensorDistanceCrypto.getDistance(DistanceUnit.CM) < 6){
-            robot.setPositionClaw(0.7, 0.3);
+            robot.closeClaws();
             robot.setPositionWheel(robot.DROP_POSITION);
             driveStrait(speed, -400);
             driveStrait(speed, 400);
             sleep(1000);
             robot.setPositionWheel(robot.STOP_POSITION);
         }
-        robot.setPositionClaw(1, 1);
+        robot.openClaws();
         driveStrait(speed, -700);
     }
 
     // Put more cube in crypto box
     public void moreCubs(boolean isCorner){
         if (isCorner){
-            robot.setPositionClaw(0.6, 0.4);
+            robot.openClaws();
             gyroDrive(speed, -950, -90);
             robot.lift.setPower(-0.15);
             gyroTurn(speed, 90);
             robot.lift.setPower(0.0);
             gyroHold(speed, 90, 0.7);
-            robot.setPositionClaw(0.7, 0.3);
+            robot.closeClaws();
             //P_DRIVE_COEFF = 0.17;
             robot.setPositionWheel(robot.GRAB_POSITION);
             gyroDrive(speed, 2400, 90);
@@ -282,9 +282,9 @@ public abstract class AutoMain extends LinearOpMode {
             gyroDrive(speed, 2050, -90);
             robot.setPositionWheel(robot.DROP_POSITION);
             sleep(650);
-            robot.setPositionClaw(0.3, 0.7);
+            //robot.openClaws();
             gyroDrive(speed, -400, -90);
-            robot.setPositionClaw(0.5, 0.5);
+            robot.openClaws();
 
         }
     }
