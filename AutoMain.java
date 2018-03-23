@@ -172,7 +172,7 @@ public abstract class AutoMain extends LinearOpMode {
             sleep(500);
             robot.lift.setPower(0);
         }
-        robot.armUpDown.setPosition(0.25);
+        robot.armUpDown.setPosition(0.15);
         telemetry.addData("column ", vuMark);
         telemetry.update();
         readPhotoWhileWait(450);
@@ -221,7 +221,7 @@ public abstract class AutoMain extends LinearOpMode {
 
             gyroTurn(speed, -90);
             gyroHold(speed, -90, 1);
-            gyroDrive(speed, 900, -90); //Go closer to crypto
+            //gyroDrive(speed, 900, -90); //Go closer to crypto
         } else {
             gyroDrive(speed, (2100 + columnTicks) * direction, 0);
 
@@ -238,13 +238,15 @@ public abstract class AutoMain extends LinearOpMode {
             //turn(speed, TURN_2_CRYPTO_BOX_WALL * direction, -1 * TURN_2_CRYPTO_BOX_WALL * direction);
             gyroTurn(speed, 0+gyroDegrees);
             gyroHold(speed, 0+gyroDegrees, 1);
-            driveStrait(speed, 400+blue); //Go closer to crypto
+            //driveStrait(speed, 400+blue); //Go closer to crypto
         }
     }
 
     // Put the cube in crypto box
     public void putCube() {
+        gyroDrive(speed, 300, -90);
         robot.setPositionWheel(robot.DROP_POSITION);
+        gyroDrive(speed, 600, -90);
         sleep(800);
         robot.setPositionWheel(robot.STOP_POSITION);
         driveStrait(speed, 400);
