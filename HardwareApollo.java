@@ -73,7 +73,8 @@ public class HardwareApollo {
     ModernRoboticsI2cGyro gyroSpinner = null;
     DigitalChannel touchSpinnerUp;
     DigitalChannel touchSpinnerDown;
-    DistanceSensor sensorDistanceCrypto;
+    DistanceSensor sensorDistanceDown;
+    DistanceSensor sensorDistanceUp;
 
     public static final double START_POSITION_CLAW_UP = 0.46;
     public static final double START_POSITION_CLAW_DOWN = 0.6;
@@ -142,7 +143,8 @@ public class HardwareApollo {
 
         coloradoFront = hwMap.get(ColorSensor.class, "cf");
         colorabiBack = hwMap.get(ColorSensor.class, "cb");
-        sensorDistanceCrypto = hwMap.get(DistanceSensor.class, "sd");
+        sensorDistanceDown = hwMap.get(DistanceSensor.class, "sd");
+        sensorDistanceUp = hwMap.get(DistanceSensor.class, "sdu");
 
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
@@ -224,10 +226,28 @@ public class HardwareApollo {
     }
 
     public void closeClaws(){
-        clawUpLeft.setPosition(0.55);
-        clawUpRight.setPosition(0.45);
+        closeClawsDown();
+        closeClawsUp();
+    }
+
+    public void closeClawsDown(){
         clawDownRight.setPosition(0.55);
         clawDownLeft.setPosition(0.45);
+    }
+
+    public void closeClawsUp(){
+        clawUpLeft.setPosition(0.55);
+        clawUpRight.setPosition(0.45);
+    }
+
+
+
+
+    public void halfCloseClaws(){
+        clawUpLeft.setPosition(0.57);
+        clawUpRight.setPosition(0.43);
+        clawDownRight.setPosition(0.57);
+        clawDownLeft.setPosition(0.43);
     }
 
     public void prepareForStart() {

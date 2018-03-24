@@ -33,7 +33,7 @@ public abstract class AutoMain extends LinearOpMode {
     private double P_DRIVE_COEFF = 0.03; //For option to change in grab more cubes
     private static final int RED_THRESHOLD = 50;
     private static final int BLUE_THRESHOLD = 50;
-    private boolean goUpSpin = true;
+    public boolean goUpSpin = true;
     double speed = 0.8;
 
     //Init function, hardwareMap,vuforia and gyro calibration
@@ -253,7 +253,7 @@ public abstract class AutoMain extends LinearOpMode {
         driveStrait(speed, 600);
         robot.setPositionWheel(robot.STOP_POSITION);
         //driveStrait(speed, 400);
-        if (robot.sensorDistanceCrypto.getDistance(DistanceUnit.CM) < 6){
+        if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 6){
             robot.closeClaws();
             robot.setPositionWheel(robot.DROP_POSITION);
             driveStrait(speed, -400);
@@ -274,16 +274,50 @@ public abstract class AutoMain extends LinearOpMode {
             gyroTurn(speed, 90);
             robot.lift.setPower(0.0);
             gyroHold(speed, 90, 0.7);
-            robot.closeClaws();
+            robot.halfCloseClaws();
             //P_DRIVE_COEFF = 0.17;
             robot.setPositionWheel(robot.GRAB_POSITION);
-            gyroDrive(speed, 2400, 90);
-            gyroDrive(speed, -1700, 90);
+            speed = 0.5;
+            int ticks = gyroDrive(speed, 2400, 90, true, false);
+            if ((robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15
+                    && robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15)
+                    || robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15){
+                robot.closeClaws();
+                sleep(100);
+                robot.lift.setPower(1);
+                sleep(400);
+                robot.lift.setPower(0);
+                gyroDrive(speed, -ticks, 90);
+
+            } else if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15){
+                robot.closeClawsDown();
+                sleep(100);
+                robot.lift.setPower(1);
+                sleep(500);
+                robot.lift.setPower(0);
+                ticks += gyroDrive(speed, -800, 90);
+                robot.spinner.setPower(0.8);
+                ElapsedTime runtime = new ElapsedTime();
+                runtime.reset();
+                while (opModeIsActive() && robot.touchSpinnerDown.getState() && runtime.seconds() < 2){
+                    idle();
+                }
+                robot.spinner.setPower(0);
+                goUpSpin = false;
+                ticks += gyroDrive(speed, 1400, 90, true, false);
+                robot.closeClaws();
+                robot.lift.setPower(1);
+                sleep(400);
+                robot.lift.setPower(0);
+                gyroDrive(speed, -(ticks ), 90);
+            }
+            //gyroDrive(speed, -1700, 90);
+            robot.setPositionWheel(robot.STOP_POSITION);
             //P_DRIVE_COEFF = 0.08;
             robot.lift.setPower(0.9);
             gyroTurn(speed, -90);
             gyroHold(speed, -90, 1);
-            sleep(400);
+            sleep(100);
             robot.lift.setPower(0.0);
             goUpSpin = false; // Spin the claws to drop third cube.
             gyroDrive(speed, 2050, -90);
@@ -424,6 +458,12 @@ public abstract class AutoMain extends LinearOpMode {
         telemetry.update();
     }
 
+    public int gyroDrive(double speed,
+                          double distanceTick,
+                          double angle) {
+        return gyroDrive(speed, distanceTick, angle, false, false);
+    }
+
     /*
      *  Method to drive on a fixed compass bearing (angle), based on encoder counts.
      *  Move will stop if either of these conditions occur:
@@ -437,9 +477,11 @@ public abstract class AutoMain extends LinearOpMode {
      *                   If a relative angle is required, add/subtract from current heading.
      */
 
-    public void gyroDrive ( double speed,
-                            double distanceTick,
-                            double angle) {
+    public int gyroDrive(double speed,
+                          double distanceTick,
+                          double angle,
+                          boolean stopIfSenseUpCube,
+                          boolean stopIfSenseDownCube) {
         int     newBackLeftTarget;
         int     newBackRightTarget;
         int     newFrontLeftTarget;
@@ -517,7 +559,21 @@ public abstract class AutoMain extends LinearOpMode {
                     }
                 }
 
+                if (stopIfSenseDownCube){
+                    if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 6){
+                        break;
+                    }
+                }
+
+                if (stopIfSenseUpCube){
+                    if (robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 6){
+                        break;
+                    }
+                }
+
                 // Display drive status for the driver.
+                telemetry.addData("Distance Up",  "%f",  robot.sensorDistanceUp.getDistance(DistanceUnit.CM));
+                telemetry.addData("Distance Down",  "%f",  robot.sensorDistanceDown.getDistance(DistanceUnit.CM));
                 telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
                 telemetry.addData("Target",  "%7d:%7d",      newBackLeftTarget,  newBackRightTarget);
                 telemetry.addData("Actual",  "%7d:%7d",      robot.driveBackLeft.getCurrentPosition(),
@@ -532,7 +588,10 @@ public abstract class AutoMain extends LinearOpMode {
             // Turn off RUN_TO_POSITION
             robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+            return robot.driveFrontRight.getCurrentPosition();
+
         }
+        return 0;
     }
 
     /*

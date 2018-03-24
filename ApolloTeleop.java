@@ -33,9 +33,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import static java.lang.Thread.sleep;
@@ -293,7 +290,7 @@ public class ApolloTeleop extends LinearOpMode {
             telemetry.addData("touch up", robot.touchSpinnerUp.getState());
             telemetry.addData("touch down", robot.touchSpinnerDown.getState());
             telemetry.addData("spinner ticks", "%d", robot.spinner.getCurrentPosition());
-            telemetry.addData("dictance sensor ", "%.2f", robot.sensorDistanceCrypto.getDistance(DistanceUnit.CM));
+            telemetry.addData("dictance sensor ", "%.2f", robot.sensorDistanceDown.getDistance(DistanceUnit.CM));
             telemetry.update();
 
             // Pace this loop so jaw action is reasonable speed.
