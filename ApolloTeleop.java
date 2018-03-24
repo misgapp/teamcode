@@ -187,14 +187,14 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             clawDownPosition += deltaClawDown;
-            clawDownPosition = Math.min(clawDownPosition, 0.6);
-            clawDownPosition = Math.max(clawDownPosition, 0.2);
+            clawDownPosition = Math.min(clawDownPosition, 0.45);
+            clawDownPosition = Math.max(clawDownPosition, 0.3);
             robot.clawDownLeft.setPosition(clawDownPosition);
             robot.clawDownRight.setPosition(1 - clawDownPosition);
 
             clawUpPosition += deltaClawUp;
-            clawUpPosition = Math.min(clawUpPosition, 0.8);
-            clawUpPosition = Math.max(clawUpPosition, 0.4);
+            clawUpPosition = Math.min(clawUpPosition, 0.7);
+            clawUpPosition = Math.max(clawUpPosition, 0.55);
             robot.clawUpLeft.setPosition(clawUpPosition);
             robot.clawUpRight.setPosition(1 - clawUpPosition);
 
@@ -270,7 +270,6 @@ public class ApolloTeleop extends LinearOpMode {
                     isSpinerEnabled = true;
                     robot.setPositionClaw(0.7, 0.3);
                     spinDirectionUp = !spinDirectionUp;
-
                     spinSpeed = spinDirectionUp ? -0.7 : 0.7;
                     robot.spinner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     robot.spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
