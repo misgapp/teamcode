@@ -33,6 +33,7 @@ public abstract class AutoMain extends LinearOpMode {
     private double P_DRIVE_COEFF = 0.03; //For option to change in grab more cubes
     private static final int RED_THRESHOLD = 50;
     private static final int BLUE_THRESHOLD = 50;
+    private boolean goUpSpin = true;
     double speed = 0.8;
 
     //Init function, hardwareMap,vuforia and gyro calibration
@@ -175,7 +176,9 @@ public abstract class AutoMain extends LinearOpMode {
         robot.armUpDown.setPosition(0.15);
         telemetry.addData("column ", vuMark);
         telemetry.update();
-        readPhotoWhileWait(450);
+        if (vuMark == RelicRecoveryVuMark.UNKNOWN){
+            readPhotoWhileWait(450);
+        }
     }
 
     // Read photo while wait instead sleep
@@ -244,12 +247,12 @@ public abstract class AutoMain extends LinearOpMode {
 
     // Put the cube in crypto box
     public void putCube() {
-        gyroDrive(speed, 300, -90);
-        robot.setPositionWheel(robot.DROP_POSITION);
-        gyroDrive(speed, 600, -90);
-        sleep(800);
-        robot.setPositionWheel(robot.STOP_POSITION);
         driveStrait(speed, 400);
+        robot.setPositionWheel(robot.DROP_POSITION);
+        sleep(800);
+        driveStrait(speed, 600);
+        robot.setPositionWheel(robot.STOP_POSITION);
+        //driveStrait(speed, 400);
         if (robot.sensorDistanceCrypto.getDistance(DistanceUnit.CM) < 6){
             robot.closeClaws();
             robot.setPositionWheel(robot.DROP_POSITION);
@@ -280,7 +283,9 @@ public abstract class AutoMain extends LinearOpMode {
             robot.lift.setPower(0.9);
             gyroTurn(speed, -90);
             gyroHold(speed, -90, 1);
+            sleep(400);
             robot.lift.setPower(0.0);
+            goUpSpin = false; // Spin the claws to drop third cube.
             gyroDrive(speed, 2050, -90);
             robot.setPositionWheel(robot.DROP_POSITION);
             sleep(650);
@@ -497,6 +502,20 @@ public abstract class AutoMain extends LinearOpMode {
 
                 robot.setPowerLeftDriveMotors(leftSpeed);
                 robot.setPowerRightDriveMotors(rightSpeed);
+
+                if (goUpSpin){
+                    if (robot.touchSpinnerUp.getState()){
+                        robot.spinner.setPower(-0.6);
+                    } else{
+                        robot.spinner.setPower(0);
+                    }
+                } else {
+                    if (robot.touchSpinnerDown.getState()){
+                        robot.spinner.setPower(0.6);
+                    } else if (!robot.touchSpinnerDown.getState()) {
+                        robot.spinner.setPower(0);
+                    }
+                }
 
                 // Display drive status for the driver.
                 telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
