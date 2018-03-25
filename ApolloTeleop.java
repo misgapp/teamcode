@@ -92,24 +92,9 @@ public class ApolloTeleop extends LinearOpMode {
         robot.spinner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.spinner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        /*robot.gyroSpinner.calibrate();
-
-        telemetry.addData(">", "Calibrating Gyro");    //
-        telemetry.update();
-
-        // make sure the gyro is calibrated before continuing
-        while (!isStopRequested() && robot.gyroSpinner.isCalibrating()) {
-            sleep(50);
-            idle();
-        }
-
-        telemetry.addData(">", "Robot Ready.");
-        telemetry.update();
-*/
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        robot.gyroSpinner.resetZAxisIntegrator();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -280,6 +265,7 @@ public class ApolloTeleop extends LinearOpMode {
                 spin();
             }
 
+            telemetry.addData("tick", "%d", robot.lift.getCurrentPosition());
             telemetry.addData("claw Down Left", "%.2f", robot.clawDownLeft.getPosition());
             telemetry.addData("claw Down Right", "%.2f", robot.clawDownRight.getPosition());
             telemetry.addData("claw up Left", "%.2f", robot.clawUpLeft.getPosition());

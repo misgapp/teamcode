@@ -141,14 +141,12 @@ public abstract class AutoMain extends LinearOpMode {
                 telemetry.addData("Blue front", robot.coloradoFront.blue());
                 telemetry.addData("Red front", robot.coloradoFront.red());
                 telemetry.update();
-                robot.lift.setPower(0.95);
+                encoderDrive(1 , -1300);
                 readPhotoWhileWait(400);
                 robot.armUpDown.setPosition(0.6);
                 robot.armRightLeft.setPosition(0.3);
                 readPhotoWhileWait(700);
                 robot.armRightLeft.setPosition(0.4);
-                robot.lift.setPower(0);
-
             } else {
                 robot.armRightLeft.setPosition(0.8);
                 telemetry.addData("front is red ", frontIsRed);
@@ -159,19 +157,16 @@ public abstract class AutoMain extends LinearOpMode {
                 telemetry.addData("Blue front", robot.coloradoFront.blue());
                 telemetry.addData("Red front", robot.coloradoFront.red());
                 telemetry.update();
-                robot.lift.setPower(0.95);
+                encoderDrive(1 , -1300);
                 readPhotoWhileWait(400);
                 robot.armUpDown.setPosition(0.6);
                 robot.armRightLeft.setPosition(0.5);
                 readPhotoWhileWait(700);
                 robot.armRightLeft.setPosition(0.4);
-                robot.lift.setPower(0);
 
             }
         } else {
-            robot.lift.setPower(1);
-            sleep(500);
-            robot.lift.setPower(0);
+            encoderDrive(1 , -1300);
         }
         robot.armUpDown.setPosition(0.15);
         telemetry.addData("column ", vuMark);
@@ -270,9 +265,8 @@ public abstract class AutoMain extends LinearOpMode {
         if (isCorner){
             robot.openClaws();
             gyroDrive(speed, -950, -90);
-            robot.lift.setPower(-0.15);
+            encoderDrive(1 , 1100);
             gyroTurn(speed, 90);
-            robot.lift.setPower(0.0);
             gyroHold(speed, 90, 0.7);
             robot.halfCloseClaws();
             //P_DRIVE_COEFF = 0.17;
@@ -284,17 +278,13 @@ public abstract class AutoMain extends LinearOpMode {
                     || robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15){
                 robot.closeClaws();
                 sleep(100);
-                robot.lift.setPower(1);
-                sleep(400);
-                robot.lift.setPower(0);
+                encoderDrive(1, -1000);
                 gyroDrive(speed, -ticks, 90);
 
             } else if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15){
                 robot.closeClawsDown();
                 sleep(100);
-                robot.lift.setPower(1);
-                sleep(500);
-                robot.lift.setPower(0);
+                encoderDrive(1, -2000);
                 ticks += gyroDrive(speed, -800, 90);
                 robot.spinner.setPower(0.8);
                 ElapsedTime runtime = new ElapsedTime();
@@ -304,21 +294,19 @@ public abstract class AutoMain extends LinearOpMode {
                 }
                 robot.spinner.setPower(0);
                 goUpSpin = false;
+                encoderDrive(1, 1700);
                 ticks += gyroDrive(speed, 1400, 90, true, false);
                 robot.closeClaws();
-                robot.lift.setPower(1);
-                sleep(400);
-                robot.lift.setPower(0);
+                encoderDrive(1, -1000);
                 gyroDrive(speed, -(ticks ), 90);
             }
             //gyroDrive(speed, -1700, 90);
             robot.setPositionWheel(robot.STOP_POSITION);
             //P_DRIVE_COEFF = 0.08;
-            robot.lift.setPower(0.9);
+            encoderDrive(1, -4200);
             gyroTurn(speed, -90);
             gyroHold(speed, -90, 1);
             sleep(100);
-            robot.lift.setPower(0.0);
             goUpSpin = false; // Spin the claws to drop third cube.
             gyroDrive(speed, 2050, -90);
             robot.setPositionWheel(robot.DROP_POSITION);
@@ -712,5 +700,42 @@ public abstract class AutoMain extends LinearOpMode {
      */
     public double getSteer(double error, double PCoeff) {
         return Range.clip(error * PCoeff, -1, 1);
+    }
+
+    // Lift encoder drive function
+    public void encoderDrive(double speed, int tick) {
+
+        robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int newTarget = 0;
+
+        speed = Math.abs(speed);
+        speed = tick > 0 ? -speed : speed;
+
+        newTarget = robot.lift.getCurrentPosition() + tick;
+
+        robot.lift.setPower(speed);
+
+        while (opModeIsActive()){
+            if (tick > 0) {
+                if (robot.lift.getCurrentPosition() >= newTarget) {
+                    telemetry.addData("break", "1");
+                    break;
+                }
+            } else {
+                if (robot.lift.getCurrentPosition() <= newTarget) {
+                    telemetry.addData("break", "2");
+                    break;
+                }
+            }
+
+            telemetry.addData("tick", "%d", robot.lift.getCurrentPosition());
+            telemetry.update();
+            idle();
+
+        }
+
+        robot.lift.setPower(0);
     }
 }

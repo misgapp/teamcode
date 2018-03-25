@@ -70,7 +70,6 @@ public class HardwareApollo {
     public ColorSensor coloradoFront = null;
     public ColorSensor colorabiBack = null;
     BNO055IMU imu;
-    ModernRoboticsI2cGyro gyroSpinner = null;
     DigitalChannel touchSpinnerUp;
     DigitalChannel touchSpinnerDown;
     DistanceSensor sensorDistanceDown;
@@ -95,7 +94,6 @@ public class HardwareApollo {
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        gyroSpinner = hwMap.get(ModernRoboticsI2cGyro.class, "gs");
         spinner = hwMap.get(DcMotor.class, "sp");
         driveBackLeft = hwMap.get(DcMotor.class, "dlb");
         driveBackRight = hwMap.get(DcMotor.class, "drb");
@@ -124,8 +122,8 @@ public class HardwareApollo {
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         relicLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         clawDownLeft = hwMap.get(Servo.class, "cdl");
         clawDownRight = hwMap.get(Servo.class, "cdr");
