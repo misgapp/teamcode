@@ -35,6 +35,12 @@ public abstract class AutoMain extends LinearOpMode {
     private static final int BLUE_THRESHOLD = 50;
     public boolean goUpSpin = true;
     double speed = 0.8;
+    int liftTargetTicks = 0;
+    boolean liftStopIfMoreThanTicks = false;
+    boolean liftEnabled = false;
+    ElapsedTime liftTimer;
+    int liftTimeoutSeconds;
+    ElapsedTime encoderLiftTimer;
 
     //Init function, hardwareMap,vuforia and gyro calibration
     public void apolloInit() {
@@ -307,6 +313,7 @@ public abstract class AutoMain extends LinearOpMode {
             //gyroDrive(speed, -1700, 90);
             robot.closeClaws();
             robot.setPositionWheel(robot.STOP_POSITION);
+            startLift(-4200);
             //encoderLift(1, -4200);
             gyroTurn(speed, 180);
             //gyroHold(speed, 180, 1);
@@ -563,6 +570,8 @@ public abstract class AutoMain extends LinearOpMode {
                     }
                 }
 
+                handleLift();
+
                 // Display drive status for the driver.
                 telemetry.addData("Distance Up",  "%f",  robot.sensorDistanceUp.getDistance(DistanceUnit.CM));
                 telemetry.addData("Distance Down",  "%f",  robot.sensorDistanceDown.getDistance(DistanceUnit.CM));
@@ -602,8 +611,11 @@ public abstract class AutoMain extends LinearOpMode {
         robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // keep looping while we are still active, and not on heading.
         while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
+            handleLift();
+
             // Update telemetry & Allow time for other processes to run.
             telemetry.update();
+
         }
     }
 
@@ -627,6 +639,7 @@ public abstract class AutoMain extends LinearOpMode {
         while (opModeIsActive() && (holdTimer.time() < holdTime)) {
             // Update telemetry & Allow time for other processes to run.
             onHeading(speed, angle, P_TURN_COEFF);
+            handleLift();
             telemetry.update();
         }
 
@@ -708,20 +721,24 @@ public abstract class AutoMain extends LinearOpMode {
 
     // Lift encoder drive function
     public void encoderLift(double speed, int tick) {
+        encoderLiftTimer = new ElapsedTime();
 
         robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         int newTarget = 0;
 
+        int timeS = (tick/1000) * 1; // Second per 1000 ticks
+
         speed = Math.abs(speed);
         speed = tick > 0 ? -speed : speed;
 
         newTarget = robot.lift.getCurrentPosition() + tick;
 
+        encoderLiftTimer.reset();
         robot.lift.setPower(speed);
 
-        while (opModeIsActive()){
+        while (opModeIsActive() && encoderLiftTimer.seconds() < timeS){
             if (tick > 0) {
                 if (robot.lift.getCurrentPosition() >= newTarget) {
                     telemetry.addData("break", "1");
@@ -741,5 +758,33 @@ public abstract class AutoMain extends LinearOpMode {
         }
 
         robot.lift.setPower(0);
+    }
+
+    public void handleLift() {
+        if (!liftEnabled){
+            return;
+        }
+
+        int ticks = robot.lift.getCurrentPosition();
+        if ((liftStopIfMoreThanTicks && ticks >= liftTargetTicks) ||
+                (!liftStopIfMoreThanTicks && ticks <= liftTargetTicks)||
+                liftTimer.seconds() >= liftTimeoutSeconds) {
+                robot.lift.setPower(0);
+            liftEnabled = false;
+        }
+    }
+
+    public void startLift(int ticks
+            //, int timeoutSeconds
+    ) {
+        robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftTargetTicks = ticks;
+        liftStopIfMoreThanTicks = ticks > 0;
+        liftTimeoutSeconds = (ticks/1000) * 1; // Second per 1000 ticks
+        //liftTimeoutSeconds = timeoutSeconds;
+        liftTimer = new ElapsedTime();
+        liftTimer.reset();
+        liftEnabled = true;
     }
 }
