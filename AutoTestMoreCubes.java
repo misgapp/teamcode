@@ -18,7 +18,7 @@ public class AutoTestMoreCubes extends AutoMain {
 
         waitForStart();
 
-        robot.openClaws();
+        //gyroHold(speed, 90, 0.7);
         robot.halfCloseClaws();
         //P_DRIVE_COEFF = 0.17;
         robot.setPositionWheel(robot.GRAB_POSITION);
@@ -29,32 +29,37 @@ public class AutoTestMoreCubes extends AutoMain {
                 || robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15){
             robot.closeClaws();
             sleep(100);
-            encoderLift(1, -1000);
+            startLift(-1000);
+            //encoderLift(1, -1000);
             gyroDrive(speed, -ticks, 0);
 
         } else if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15){
             robot.closeClawsDown();
             sleep(100);
-            encoderLift(1, -2000);
+            startLift(-2000);
+            //encoderLift(1, -2000);
             ticks += gyroDrive(speed, -800, 0);
             robot.spinner.setPower(0.8);
             ElapsedTime runtime = new ElapsedTime();
             runtime.reset();
             while (opModeIsActive() && robot.touchSpinnerDown.getState() && runtime.seconds() < 2){
+                handleLift();
                 idle();
             }
             robot.spinner.setPower(0);
             goUpSpin = false;
             encoderLift(1, 1700);
+            //encoderLift(1, 1700);
             ticks += gyroDrive(speed, 1400, 0, true, false);
             robot.closeClaws();
             encoderLift(1, -1800);
+            //encoderLift(1, -1800);
             gyroDrive(speed, -(ticks), 0);
         }
         //gyroDrive(speed, -1700, 90);
+        robot.closeClaws();
         robot.setPositionWheel(robot.STOP_POSITION);
-        //P_DRIVE_COEFF = 0.08;
-        //encoderLift(1, -4200);
+        startLift(-4200);
         gyroTurn(speed, 180);
         //gyroHold(speed, 180, 1);
         sleep(100);
@@ -62,6 +67,8 @@ public class AutoTestMoreCubes extends AutoMain {
         gyroDrive(speed, 1950, 180);
         robot.setPositionWheel(robot.DROP_POSITION);
         sleep(650);
+        gyroDrive(speed, -150, 180);
+        gyroDrive(speed, 150, 180);
         //robot.openClaws();
         gyroDrive(speed, -400, 180);
         robot.openClaws();

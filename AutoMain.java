@@ -274,56 +274,62 @@ public abstract class AutoMain extends LinearOpMode {
     public void moreCubs(boolean isCorner){
         if (isCorner){
             robot.openClaws();
+            startLift(1100);
             gyroDrive(speed, -950, -90);
-            encoderLift(1 , 1100);
+            //encoderLift(1 , 1100);
             gyroTurn(speed, 90);
             //gyroHold(speed, 90, 0.7);
             robot.halfCloseClaws();
             //P_DRIVE_COEFF = 0.17;
             robot.setPositionWheel(robot.GRAB_POSITION);
             speed = 0.5;
-            int ticks = gyroDrive(speed, 2400, 0, true, false);
+            int ticks = gyroDrive(speed, 2400, -90, true, false);
             if ((robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15
                     && robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15)
                     || robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15){
                 robot.closeClaws();
                 sleep(100);
-                encoderLift(1, -1000);
-                gyroDrive(speed, -ticks, 0);
+                startLift(-1000);
+                //encoderLift(1, -1000);
+                gyroDrive(speed, -ticks, -90);
 
             } else if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15){
                 robot.closeClawsDown();
                 sleep(100);
-                encoderLift(1, -2000);
-                ticks += gyroDrive(speed, -800, 0);
+                startLift(-2000);
+                //encoderLift(1, -2000);
+                ticks += gyroDrive(speed, -800, -90);
                 robot.spinner.setPower(0.8);
                 ElapsedTime runtime = new ElapsedTime();
                 runtime.reset();
                 while (opModeIsActive() && robot.touchSpinnerDown.getState() && runtime.seconds() < 2){
+                    handleLift();
                     idle();
                 }
                 robot.spinner.setPower(0);
                 goUpSpin = false;
                 encoderLift(1, 1700);
-                ticks += gyroDrive(speed, 1400, 0, true, false);
+                ticks += gyroDrive(speed, 1400, -90, true, false);
                 robot.closeClaws();
                 encoderLift(1, -1800);
-                gyroDrive(speed, -(ticks), 0);
+                gyroDrive(speed, -(ticks), -90);
             }
             //gyroDrive(speed, -1700, 90);
             robot.closeClaws();
             robot.setPositionWheel(robot.STOP_POSITION);
             startLift(-4200);
-            //encoderLift(1, -4200);
-            gyroTurn(speed, 180);
+            gyroTurn(speed, 90);
             //gyroHold(speed, 180, 1);
             sleep(100);
             goUpSpin = false; // Spin the claws to drop third cube.
-            gyroDrive(speed, 1950, 180);
+            gyroDrive(speed, 2000, 90);
             robot.setPositionWheel(robot.DROP_POSITION);
             sleep(650);
+            robot.closeClaws();
+            gyroDrive(speed, -150, 90);
+            gyroDrive(speed, 150, 90);
             //robot.openClaws();
-            gyroDrive(speed, -400, 180);
+            gyroDrive(speed, -400, 90);
             robot.openClaws();
 
         }
@@ -728,7 +734,7 @@ public abstract class AutoMain extends LinearOpMode {
 
         int newTarget = 0;
 
-        int timeS = (tick/1000) * 1; // Second per 1000 ticks
+        int timeS = (Math.abs(tick)/1000) * 1; // Second per 1000 ticks
 
         speed = Math.abs(speed);
         speed = tick > 0 ? -speed : speed;
@@ -769,22 +775,21 @@ public abstract class AutoMain extends LinearOpMode {
         if ((liftStopIfMoreThanTicks && ticks >= liftTargetTicks) ||
                 (!liftStopIfMoreThanTicks && ticks <= liftTargetTicks)||
                 liftTimer.seconds() >= liftTimeoutSeconds) {
-                robot.lift.setPower(0);
+            robot.lift.setPower(0);
             liftEnabled = false;
         }
     }
 
-    public void startLift(int ticks
-            //, int timeoutSeconds
-    ) {
+    public void startLift(int ticks) {
         robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftTargetTicks = ticks;
         liftStopIfMoreThanTicks = ticks > 0;
-        liftTimeoutSeconds = (ticks/1000) * 1; // Second per 1000 ticks
+        liftTimeoutSeconds = (Math.abs(ticks)/1000) * 1; // Second per 1000 ticks
         //liftTimeoutSeconds = timeoutSeconds;
         liftTimer = new ElapsedTime();
         liftTimer.reset();
         liftEnabled = true;
+        robot.lift.setPower(1);
     }
 }
