@@ -69,6 +69,8 @@ public class HardwareApollo {
     public Servo wheelUpRight = null;
     public ColorSensor coloradoFront = null;
     public ColorSensor colorabiBack = null;
+    public DistanceSensor coloradoDistanceFront = null;
+    public DistanceSensor colorabiDistanceBack = null;
     BNO055IMU imu;
     DigitalChannel touchSpinnerUp;
     DigitalChannel touchSpinnerDown;
@@ -141,6 +143,8 @@ public class HardwareApollo {
 
         coloradoFront = hwMap.get(ColorSensor.class, "cf");
         colorabiBack = hwMap.get(ColorSensor.class, "cb");
+        coloradoDistanceFront = hwMap.get(DistanceSensor.class, "cf");
+        colorabiDistanceBack = hwMap.get(DistanceSensor.class, "cb");
         sensorDistanceDown = hwMap.get(DistanceSensor.class, "sd");
         sensorDistanceUp = hwMap.get(DistanceSensor.class, "sdu");
 

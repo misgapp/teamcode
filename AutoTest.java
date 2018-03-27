@@ -19,8 +19,18 @@ public class AutoTest extends AutoMain {
 
         waitForStart();
 
-        gyroTurn(speed, 180);
+        //gyroTurn(speed, 180);
 
+        while (opModeIsActive()) {
+            telemetry.addData("numbers", "%f,%d,%d,%f,%d,%d",
+                    robot.coloradoDistanceFront.getDistance(DistanceUnit.CM),
+                    robot.coloradoFront.red(),
+                    robot.coloradoFront.blue(),
+                    robot.colorabiDistanceBack.getDistance(DistanceUnit.CM),
+                    robot.colorabiBack.red(),
+                    robot.colorabiBack.blue());
+            telemetry.update();
+        }
 
 
 /*

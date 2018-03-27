@@ -282,23 +282,24 @@ public abstract class AutoMain extends LinearOpMode {
             robot.halfCloseClaws();
             //P_DRIVE_COEFF = 0.17;
             robot.setPositionWheel(robot.GRAB_POSITION);
-            speed = 0.5;
-            int ticks = gyroDrive(speed, 2400, -90, true, false);
+            int ticks = gyroDrive(speed, 2400, 90, true, false);
+
             if ((robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15
                     && robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15)
                     || robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15){
+                // If got two cubes or only upper cube.
                 robot.closeClaws();
                 sleep(100);
                 startLift(-1000);
                 //encoderLift(1, -1000);
-                gyroDrive(speed, -ticks, -90);
-
+                gyroDrive(speed, -ticks, 90);
             } else if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15){
+                // If got only lower go back, spin and try again.
                 robot.closeClawsDown();
                 sleep(100);
                 startLift(-2000);
                 //encoderLift(1, -2000);
-                ticks += gyroDrive(speed, -800, -90);
+                ticks += gyroDrive(speed, -800, 90);
                 robot.spinner.setPower(0.8);
                 ElapsedTime runtime = new ElapsedTime();
                 runtime.reset();
@@ -309,28 +310,36 @@ public abstract class AutoMain extends LinearOpMode {
                 robot.spinner.setPower(0);
                 goUpSpin = false;
                 encoderLift(1, 1700);
-                ticks += gyroDrive(speed, 1400, -90, true, false);
+                ticks += gyroDrive(speed, 1400, 90, true, false);
                 robot.closeClaws();
                 encoderLift(1, -1800);
-                gyroDrive(speed, -(ticks), -90);
+                gyroDrive(speed, -(ticks), 90);
             }
-            //gyroDrive(speed, -1700, 90);
-            robot.closeClaws();
-            robot.setPositionWheel(robot.STOP_POSITION);
-            startLift(-4200);
-            gyroTurn(speed, 90);
-            //gyroHold(speed, 180, 1);
-            sleep(100);
-            goUpSpin = false; // Spin the claws to drop third cube.
-            gyroDrive(speed, 2000, 90);
-            robot.setPositionWheel(robot.DROP_POSITION);
-            sleep(650);
-            robot.closeClaws();
-            gyroDrive(speed, -150, 90);
-            gyroDrive(speed, 150, 90);
-            //robot.openClaws();
-            gyroDrive(speed, -400, 90);
-            robot.openClaws();
+
+            if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15 ||
+                    robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15){
+                //gyroDrive(speed, -1700, 90);
+                robot.closeClaws();
+                robot.setPositionWheel(robot.STOP_POSITION);
+                startLift(-4200);
+                gyroTurn(speed, -90);
+                //gyroHold(speed, 180, 1);
+                sleep(100);
+                goUpSpin = false; // Spin the claws to drop third cube.
+                gyroDrive(speed, 2000, -90);
+                robot.setPositionWheel(robot.DROP_POSITION);
+                sleep(650);
+                robot.closeClaws();
+                gyroDrive(speed, -150, -90);
+                gyroDrive(speed, 150, -90);
+                //robot.openClaws();
+                gyroDrive(speed, -400, -90);
+                robot.openClaws();
+            } else {
+                gyroDrive(speed, -3000, -90);
+            }
+
+
 
         }
     }
