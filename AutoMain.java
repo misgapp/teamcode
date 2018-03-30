@@ -78,11 +78,11 @@ public abstract class AutoMain extends LinearOpMode {
         robot.armRightLeft.setPosition(0.38);
         robot.armUpDown.setPosition(0.5);
         readPhotoWhileWait(200);
-        robot.armUpDown.setPosition(0.78);
+        robot.armUpDown.setPosition(0.7);
         readPhotoWhileWait(250);
-        robot.armUpDown.setPosition(0.81);
+        robot.armUpDown.setPosition(0.74);
         readPhotoWhileWait(350);
-        robot.armUpDown.setPosition(0.83);
+        robot.armUpDown.setPosition(0.78);
         readPhotoWhileWait(200);
 
         boolean colorDetected = false;

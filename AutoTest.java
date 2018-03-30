@@ -22,7 +22,7 @@ public class AutoTest extends AutoMain {
         //gyroTurn(speed, 180);
 
         while (opModeIsActive()) {
-            telemetry.addData("numbers", "%f,%d,%d,%f,%d,%d",
+            telemetry.addData("numbers", "%f\n%d\n,%d\n,%f\n,%d\n,%d\n",
                     robot.coloradoDistanceFront.getDistance(DistanceUnit.CM),
                     robot.coloradoFront.red(),
                     robot.coloradoFront.blue(),
