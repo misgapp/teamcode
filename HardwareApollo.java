@@ -34,6 +34,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -52,7 +53,8 @@ public class HardwareApollo {
     public DcMotor driveFrontRight = null;
     public DcMotor driveBackLeft = null;
     public DcMotor driveBackRight = null;
-    public DcMotor lift = null;
+    public DcMotor liftLeft = null;
+    public DcMotor liftRight = null;
     public DcMotor relicLift = null;
     public DcMotor spinner = null;
     public Servo clawDownLeft = null;
@@ -101,31 +103,37 @@ public class HardwareApollo {
         driveBackRight = hwMap.get(DcMotor.class, "drb");
         driveFrontLeft = hwMap.get(DcMotor.class, "dlf");
         driveFrontRight = hwMap.get(DcMotor.class, "drf");
-        lift = hwMap.get(DcMotor.class, "lift");
+        liftRight = hwMap.get(DcMotor.class, "liftR");
+        liftLeft = hwMap.get(DcMotor.class, "liftL");
         relicLift = hwMap.get(DcMotor.class, "rl");
 
         driveBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         driveBackRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
         driveFrontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         driveFrontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
-        lift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
+        liftLeft.setDirection(DcMotor.Direction.FORWARD); //Set to FORWARD if using AndyMark motors
+        liftRight.setDirection(DcMotor.Direction.REVERSE);
         relicLift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
         spinner.setDirection(DcMotor.Direction.REVERSE); // Set to FORWARD if using AndyMark motors
 
         // Set all motors to zero power
         setPowerAllDriveMotors(0);
-        lift.setPower(0);
+        liftRight.setPower(0);
+        liftLeft.setPower(0);
         relicLift.setPower(0);
         spinner.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         setDriveMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         relicLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         clawDownLeft = hwMap.get(Servo.class, "cdl");
         clawDownRight = hwMap.get(Servo.class, "cdr");
@@ -203,6 +211,12 @@ public class HardwareApollo {
         driveBackRight.setPower(speed);
         driveFrontRight.setPower(speed);
     }
+
+    public void setPowerLifts( double LIFT_SPEED){
+        liftLeft.setPower(LIFT_SPEED);
+        liftRight.setPower(LIFT_SPEED);
+    }
+
 
     //Function: set position to all the claws
     public void setPositionClaw(double setPositionUp, double setPositionDown) {

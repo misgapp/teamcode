@@ -147,11 +147,11 @@ public class ApolloTeleop extends LinearOpMode {
 
             //Set power to the lift according to the buttons
             if (gamepad2.right_trigger > 0) {
-                robot.lift.setPower(LIFT_SPEED);
+                robot.setPowerLifts(LIFT_SPEED);
             } else if (gamepad2.left_trigger > 0) {
-                robot.lift.setPower(-LIFT_SPEED);
+                robot.setPowerLifts(-LIFT_SPEED);
             } else {
-                robot.lift.setPower(0);
+                robot.setPowerLifts(0);
             }
 
             //Set position to claws according to the sticks
@@ -265,7 +265,7 @@ public class ApolloTeleop extends LinearOpMode {
                 spin();
             }
 
-            telemetry.addData("tick", "%d", robot.lift.getCurrentPosition());
+            telemetry.addData("tick", "%d", robot.liftLeft.getCurrentPosition());
             telemetry.addData("claw Down Left", "%.2f", robot.clawDownLeft.getPosition());
             telemetry.addData("claw Down Right", "%.2f", robot.clawDownRight.getPosition());
             telemetry.addData("claw up Left", "%.2f", robot.clawUpLeft.getPosition());
