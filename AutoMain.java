@@ -42,6 +42,12 @@ public abstract class AutoMain extends LinearOpMode {
     int liftTimeoutSeconds;
     ElapsedTime encoderLiftTimer;
 
+    public enum BallColor {
+        UNKOWN,
+        RED,
+        BLUE
+    }
+
     //Init function, hardwareMap,vuforia and gyro calibration
     public void apolloInit() {
         robot.init(hardwareMap);
@@ -73,6 +79,74 @@ public abstract class AutoMain extends LinearOpMode {
         robot.setPositionWheel(robot.STOP_POSITION);
     }
 
+    public BallColor getBallColor(double distance,
+                                  int red,
+                                  int blue){
+        if (red >= 40) {
+            if (blue >= 40) {
+                return BallColor.UNKOWN;
+            }
+            return BallColor.RED;
+        } else {
+            if (blue >= 40) {
+                return BallColor.BLUE;
+            }
+        }
+
+        if (distance < 6) {
+            return BallColor.UNKOWN;
+        }
+
+        if (red > 30 && blue < 20) {
+            return BallColor.RED;
+        }
+
+        if (red < 20 && blue > 30) {
+            return BallColor.BLUE;
+        }
+
+        return BallColor.UNKOWN;
+    }
+
+    public BallColor getFrontBallColor(double distanceFront,
+                                       int redFront,
+                                       int blueFront,
+                                       double distanceBack,
+                                       int redBack,
+                                       int blueBack) {
+        if (distanceBack > 10){
+            if (distanceFront > 10){
+                return BallColor.UNKOWN;
+            } else {
+                return getBallColor(distanceFront, redFront, blueFront);
+            }
+        } else if (distanceFront > 10){
+            BallColor backColor = getBallColor(distanceBack, redBack, blueBack);
+            BallColor frontColor = BallColor.UNKOWN;
+
+            if (backColor == BallColor.RED) {
+                frontColor = BallColor.BLUE;
+            } else if (backColor == BallColor.BLUE) {
+                frontColor = BallColor.RED;
+            }
+            return frontColor;
+        } else {
+            BallColor frontColor = getBallColor(distanceFront, redFront, blueFront);
+            BallColor backColor = getBallColor(distanceBack, redBack, blueBack);
+
+            if (frontColor == BallColor.UNKOWN) {
+                return backColor == BallColor.RED ? BallColor.BLUE : BallColor.RED;
+            }
+            if (backColor == BallColor.UNKOWN) {
+                return frontColor;
+            }
+            if (frontColor != backColor) {
+                return frontColor;
+            }
+        }
+        return BallColor.UNKOWN;
+    }
+
     // Balls task: Move the ball with the other color aside.
     public void ballsTaskAndReadPhoto(boolean isRed) {
         robot.armRightLeft.setPosition(0.38);
@@ -91,44 +165,17 @@ public abstract class AutoMain extends LinearOpMode {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1)) {
-            if (robot.coloradoFront.red() > 30 && robot.coloradoFront.red() > robot.colorabiBack.red() && robot.coloradoFront.blue() < robot.colorabiBack.blue() ) {
-                frontIsRed = true;
+            BallColor frontColor = getFrontBallColor(
+                    robot.coloradoDistanceFront.getDistance(DistanceUnit.CM),
+                    robot.coloradoFront.red(),
+                    robot.coloradoFront.blue(),
+                    robot.colorabiDistanceBack.getDistance(DistanceUnit.CM),
+                    robot.colorabiBack.red(),
+                    robot.colorabiBack.blue());
+            if (frontColor != BallColor.UNKOWN) {
                 colorDetected = true;
+                frontIsRed = (frontColor == BallColor.RED);
                 break;
-            }
-
-            if (robot.coloradoFront.red() < robot.colorabiBack.red() && robot.coloradoFront.blue() > 30 && robot.coloradoFront.blue() > robot.colorabiBack.blue() ) {
-                frontIsRed = false;
-                colorDetected = true;
-                break;
-            }
-        }
-
-        if (!colorDetected) {
-            while (opModeIsActive() && (runtime.seconds() < 1.5)) {
-                if (robot.coloradoFront.red() > 30 && robot.coloradoFront.red() > robot.colorabiBack.red()) {
-                    frontIsRed = true;
-                    colorDetected = true;
-                    break;
-                }
-
-                if (robot.coloradoFront.blue() > 30 && robot.coloradoFront.blue() > robot.colorabiBack.blue()) {
-                    frontIsRed = false;
-                    colorDetected = true;
-                    break;
-                }
-
-                if (robot.colorabiBack.red() > 30 && robot.coloradoFront.red() < robot.colorabiBack.red()) {
-                    frontIsRed = false;
-                    colorDetected = true;
-                    break;
-                }
-
-                if (robot.colorabiBack.blue() > 30 && robot.coloradoFront.blue() < robot.colorabiBack.blue()) {
-                    frontIsRed = true;
-                    colorDetected = true;
-                    break;
-                }
             }
         }
 
@@ -745,8 +792,8 @@ public abstract class AutoMain extends LinearOpMode {
     public void encoderLift(double speed, int tick) {
         encoderLiftTimer = new ElapsedTime();
 
-        robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         int newTarget = 0;
 
@@ -755,31 +802,31 @@ public abstract class AutoMain extends LinearOpMode {
         speed = Math.abs(speed);
         speed = tick > 0 ? -speed : speed;
 
-        newTarget = robot.lift.getCurrentPosition() + tick;
+        newTarget = robot.liftRight.getCurrentPosition() + tick;
 
         encoderLiftTimer.reset();
-        robot.lift.setPower(speed);
+        robot.setPowerLifts(speed);
 
         while (opModeIsActive() && encoderLiftTimer.seconds() < timeS){
             if (tick > 0) {
-                if (robot.lift.getCurrentPosition() >= newTarget) {
+                if (robot.liftRight.getCurrentPosition() >= newTarget) {
                     telemetry.addData("break", "1");
                     break;
                 }
             } else {
-                if (robot.lift.getCurrentPosition() <= newTarget) {
+                if (robot.liftRight.getCurrentPosition() <= newTarget) {
                     telemetry.addData("break", "2");
                     break;
                 }
             }
 
-            telemetry.addData("tick", "%d", robot.lift.getCurrentPosition());
+            telemetry.addData("tick", "%d", robot.liftRight.getCurrentPosition());
             telemetry.update();
             idle();
 
         }
 
-        robot.lift.setPower(0);
+        robot.setPowerLifts(0);
     }
 
     public void handleLift() {
@@ -787,18 +834,18 @@ public abstract class AutoMain extends LinearOpMode {
             return;
         }
 
-        int ticks = robot.lift.getCurrentPosition();
+        int ticks = robot.liftRight.getCurrentPosition();
         if ((liftStopIfMoreThanTicks && ticks >= liftTargetTicks) ||
                 (!liftStopIfMoreThanTicks && ticks <= liftTargetTicks)||
                 liftTimer.seconds() >= liftTimeoutSeconds) {
-            robot.lift.setPower(0);
+            robot.setPowerLifts(0);
             liftEnabled = false;
         }
     }
 
     public void startLift(int ticks) {
-        robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftTargetTicks = ticks;
         liftStopIfMoreThanTicks = ticks > 0;
         liftTimeoutSeconds = (Math.abs(ticks)/1000) * 1; // Second per 1000 ticks
@@ -806,6 +853,6 @@ public abstract class AutoMain extends LinearOpMode {
         liftTimer = new ElapsedTime();
         liftTimer.reset();
         liftEnabled = true;
-        robot.lift.setPower(ticks > 0 ? -1:1);
+        robot.setPowerLifts(ticks > 0 ? -1:1);
     }
 }
