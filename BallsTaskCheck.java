@@ -19,7 +19,11 @@ public class BallsTaskCheck extends AutoMain {
 
         waitForStart();
 
-        ballsTaskAndReadPhoto1(true);
+        while (opModeIsActive()){
+            ballsTaskAndReadPhoto1(true);
+
+        }
+
     }
 
     public BallColor getBallColor(double distance,

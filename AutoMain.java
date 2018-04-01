@@ -788,7 +788,7 @@ public abstract class AutoMain extends LinearOpMode {
         return Range.clip(error * PCoeff, -1, 1);
     }
 
-    // Lift encoder drive function
+    //Encoder lift function
     public void encoderLift(double speed, int tick) {
         encoderLiftTimer = new ElapsedTime();
 
@@ -802,25 +802,25 @@ public abstract class AutoMain extends LinearOpMode {
         speed = Math.abs(speed);
         speed = tick > 0 ? -speed : speed;
 
-        newTarget = robot.liftRight.getCurrentPosition() + tick;
+        newTarget = robot.liftLeft.getCurrentPosition() + tick;
 
         encoderLiftTimer.reset();
         robot.setPowerLifts(speed);
 
         while (opModeIsActive() && encoderLiftTimer.seconds() < timeS){
             if (tick > 0) {
-                if (robot.liftRight.getCurrentPosition() >= newTarget) {
+                if (robot.liftLeft.getCurrentPosition() >= newTarget) {
                     telemetry.addData("break", "1");
                     break;
                 }
             } else {
-                if (robot.liftRight.getCurrentPosition() <= newTarget) {
+                if (robot.liftLeft.getCurrentPosition() <= newTarget) {
                     telemetry.addData("break", "2");
                     break;
                 }
             }
 
-            telemetry.addData("tick", "%d", robot.liftRight.getCurrentPosition());
+            telemetry.addData("tick", "%d", robot.liftLeft.getCurrentPosition());
             telemetry.update();
             idle();
 
