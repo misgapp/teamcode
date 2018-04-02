@@ -39,6 +39,7 @@ public abstract class AutoMain extends LinearOpMode {
     boolean liftStopIfMoreThanTicks = false;
     boolean liftEnabled = false;
     ElapsedTime liftTimer;
+    ElapsedTime overallTimer;
     int liftTimeoutSeconds;
     ElapsedTime encoderLiftTimer;
 
@@ -61,6 +62,9 @@ public abstract class AutoMain extends LinearOpMode {
 
     //The main function of the autonomous
     void apolloRun(boolean isRed, boolean isCorner) {
+        overallTimer = new ElapsedTime();
+        overallTimer.reset();
+
         robot.prepareForStart();
         setClaw();
         ballsTaskAndReadPhoto(isRed);
@@ -337,7 +341,7 @@ public abstract class AutoMain extends LinearOpMode {
             robot.halfCloseClaws();
             //P_DRIVE_COEFF = 0.17;
             robot.setPositionWheel(robot.GRAB_POSITION);
-            int ticks = gyroDrive(speed, 3000, 90, true, false);
+            int ticks = gyroDrive(speed, 3000, 90, false, false);
 
             if ((robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15
                     && robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15)
@@ -345,37 +349,46 @@ public abstract class AutoMain extends LinearOpMode {
                 // If got two cubes or only upper cube.
                 robot.closeClaws();
                 sleep(100);
-                startLift(-1800);
+                startLift(-2000);
                 //encoderLift(1, -1000);
                 gyroDrive(speed, -300, 90);
                 ticks -= 300;
                 goUpSpin = false; // Spin the claws to drop third cube.
                 gyroDrive(speed, -ticks +400, 90);
+
             } else if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15){
                 // If got only lower go back, spin and try again.
-                robot.closeClawsDown();
-                sleep(100);
-                startLift(-1800);
-                //encoderLift(1, -2000);
-                gyroDrive(speed, -400, 90);
-                ticks -= 400;
-                robot.spinner.setPower(0.8);
-                ElapsedTime runtime = new ElapsedTime();
-                runtime.reset();
-                while (opModeIsActive() && robot.touchSpinnerDown.getState() && runtime.seconds() < 2){
-                    handleLift();
-                    idle();
+                if (overallTimer.seconds() <= 16) {
+
+                    robot.closeClawsDown();
+                    sleep(100);
+                    startLift(-2000);
+                    //encoderLift(1, -2000);
+                    gyroDrive(speed, -400, 90);
+                    ticks -= 400;
+                    robot.spinner.setPower(0.8);
+                    ElapsedTime runtime = new ElapsedTime();
+                    runtime.reset();
+                    while (opModeIsActive() && robot.touchSpinnerDown.getState() && runtime.seconds() < 2) {
+                        handleLift();
+                        idle();
+                    }
+                    robot.spinner.setPower(0);
+                    goUpSpin = false;
+                    encoderLift(1, 2000);
+                    ticks += gyroDrive(speed, 1400, 90, true, false);
+                    robot.closeClaws();
+                    encoderLift(1, -2000);
+                    gyroDrive(speed, -300, 90);
+                    ticks -= 300;
+                    goUpSpin = true; // Spin the claws to drop third cube.
+                    gyroDrive(speed, -ticks + 400, 90);
+                } else {
+                    robot.closeClaws();
+                    sleep(100);
+                    startLift(-400);
+                    gyroDrive(speed, -ticks + 400, 90);
                 }
-                robot.spinner.setPower(0);
-                goUpSpin = false;
-                encoderLift(1, 1800);
-                ticks += gyroDrive(speed, 1400, 90, true, false);
-                robot.closeClaws();
-                encoderLift(1, -1800);
-                gyroDrive(speed, -300, 90);
-                ticks -= 300;
-                goUpSpin = true; // Spin the claws to drop third cube.
-                gyroDrive(speed, -ticks+400, 90);
             }
 
             if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15 ||
@@ -389,17 +402,17 @@ public abstract class AutoMain extends LinearOpMode {
                 //gyroHold(speed, 180, 1);
                 //sleep(100);
 
-                //startLift(200);
+                encoderLift(1, 400);
                 gyroDrive(speed, 1000, angle);
                 gyroTurn(speed, -90);
-                gyroDrive(speed, 1300, -90);
+                encoderLift(1, 600);
+                gyroDrive(speed, 1100, -90);
                 robot.setPositionWheel(robot.DROP_POSITION);
                 sleep(650);
-                robot.closeClaws();
                 //gyroDrive(speed, -150, -90);
-                gyroDrive(speed, 150, -90);
+                driveStrait(speed, 600);
                 //robot.openClaws();
-                gyroDrive(speed, -550, -90);
+                driveStrait(speed, -550);
                 robot.setPositionWheel(robot.STOP_POSITION);
                 robot.openClaws();
 
