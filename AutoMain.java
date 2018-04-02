@@ -68,7 +68,7 @@ public abstract class AutoMain extends LinearOpMode {
         reportImage(column);
         moveToCryptoBox(isRed, isCorner, column);
         putCube(isCorner);
-        moreCubs(isCorner);
+        moreCubs(isCorner, column);
     }
 
     //Set the claws & lift to right position, grab cube
@@ -159,7 +159,7 @@ public abstract class AutoMain extends LinearOpMode {
         robot.armUpDown.setPosition(0.78);
         readPhotoWhileWait(200);
 
-        boolean colorDetected = false;
+        int colorDetected = 0;
         boolean frontIsRed = false;
 
         ElapsedTime runtime = new ElapsedTime();
@@ -173,9 +173,17 @@ public abstract class AutoMain extends LinearOpMode {
                     robot.colorabiBack.red(),
                     robot.colorabiBack.blue());
             if (frontColor != BallColor.UNKOWN) {
-                colorDetected = true;
-                frontIsRed = (frontColor == BallColor.RED);
-                break;
+                boolean newDetectionFrontIsRed = (frontColor == BallColor.RED);
+                if (newDetectionFrontIsRed != frontIsRed) {
+                    colorDetected = 1;
+                } else {
+                    colorDetected++;
+                    sleep(20);
+                }
+                frontIsRed = newDetectionFrontIsRed;
+                if (colorDetected >= 3) {
+                    break;
+                }
             }
         }
 
@@ -183,7 +191,7 @@ public abstract class AutoMain extends LinearOpMode {
         telemetry.addData("color detected ", colorDetected);
         telemetry.update();
 
-        if (colorDetected) {
+        if (colorDetected >= 3) {
             if (isRed == frontIsRed) {
                 robot.armRightLeft.setPosition(0.00);
                 telemetry.addData("front is red ", frontIsRed);
@@ -295,12 +303,13 @@ public abstract class AutoMain extends LinearOpMode {
 
     // Put the cube in crypto box
     public void putCube(boolean isCorner) {
-        driveStrait(speed, 400);
+        startLift(300);
+        driveStrait(speed, 500);
         robot.setPositionWheel(robot.DROP_POSITION);
         sleep(800);
-        driveStrait(speed, 600);
+        driveStrait(speed, 500);
         robot.setPositionWheel(robot.STOP_POSITION);
-        sleep(400);
+        //sleep(400);
         //driveStrait(speed, 400);
         if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 6){
             robot.closeClaws();
@@ -311,26 +320,24 @@ public abstract class AutoMain extends LinearOpMode {
             robot.setPositionWheel(robot.STOP_POSITION);
         }
         robot.openClaws();
-        if (isCorner){
-            driveStrait(speed, -700);
-        } else {
+        if (!isCorner) {
             driveStrait(speed, -200);
         }
     }
 
     // Put more cube in crypto box
-    public void moreCubs(boolean isCorner){
+    public void moreCubs(boolean isCorner, RelicRecoveryVuMark column){
         if (isCorner){
             robot.openClaws();
             startLift(1100);
-            gyroDrive(speed, -950, -90);
+            gyroDrive(speed, -1650, -90);
             //encoderLift(1 , 1100);
             gyroTurn(speed, 90);
             //gyroHold(speed, 90, 0.7);
             robot.halfCloseClaws();
             //P_DRIVE_COEFF = 0.17;
             robot.setPositionWheel(robot.GRAB_POSITION);
-            int ticks = gyroDrive(speed, 2400, 90, true, false);
+            int ticks = gyroDrive(speed, 3000, 90, true, false);
 
             if ((robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15
                     && robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15)
@@ -338,17 +345,17 @@ public abstract class AutoMain extends LinearOpMode {
                 // If got two cubes or only upper cube.
                 robot.closeClaws();
                 sleep(100);
-                startLift(-2200);
+                startLift(-1800);
                 //encoderLift(1, -1000);
                 gyroDrive(speed, -300, 90);
                 ticks -= 300;
                 goUpSpin = false; // Spin the claws to drop third cube.
-                gyroDrive(speed, -ticks, 90);
+                gyroDrive(speed, -ticks +400, 90);
             } else if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15){
                 // If got only lower go back, spin and try again.
                 robot.closeClawsDown();
                 sleep(100);
-                startLift(-2200);
+                startLift(-1800);
                 //encoderLift(1, -2000);
                 gyroDrive(speed, -400, 90);
                 ticks -= 400;
@@ -368,7 +375,7 @@ public abstract class AutoMain extends LinearOpMode {
                 gyroDrive(speed, -300, 90);
                 ticks -= 300;
                 goUpSpin = true; // Spin the claws to drop third cube.
-                gyroDrive(speed, -(ticks), 90);
+                gyroDrive(speed, -ticks+400, 90);
             }
 
             if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15 ||
@@ -376,21 +383,28 @@ public abstract class AutoMain extends LinearOpMode {
                 //gyroDrive(speed, -1700, 90);
                 robot.closeClaws();
                 robot.setPositionWheel(robot.STOP_POSITION);
-                startLift(-3000);
-                gyroTurn(speed, -90);
+                //startLift(-3000);
+                double angle = (column == RelicRecoveryVuMark.RIGHT) ? -50 : -130;
+                gyroTurn(speed, angle);
                 //gyroHold(speed, 180, 1);
-                sleep(100);
-                gyroDrive(speed, 2000, -90);
+                //sleep(100);
+
+                //startLift(200);
+                gyroDrive(speed, 1000, angle);
+                gyroTurn(speed, -90);
+                gyroDrive(speed, 1300, -90);
                 robot.setPositionWheel(robot.DROP_POSITION);
                 sleep(650);
                 robot.closeClaws();
-                gyroDrive(speed, -150, -90);
+                //gyroDrive(speed, -150, -90);
                 gyroDrive(speed, 150, -90);
                 //robot.openClaws();
-                gyroDrive(speed, -400, -90);
+                gyroDrive(speed, -550, -90);
+                robot.setPositionWheel(robot.STOP_POSITION);
                 robot.openClaws();
+
             } else {
-                gyroDrive(speed, -3250, 90);
+                gyroDrive(speed, -3400, 90);
             }
 
 
@@ -508,6 +522,8 @@ public abstract class AutoMain extends LinearOpMode {
             telemetry.addData("tick right", "%d", robot.driveFrontRight.getCurrentPosition());
             telemetry.update();
             idle();
+
+            handleLift();
         }
         robot.setPowerAllDriveMotors(0);
     }
