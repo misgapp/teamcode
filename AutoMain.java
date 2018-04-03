@@ -69,7 +69,7 @@ public abstract class AutoMain extends LinearOpMode {
         setClaw();
         ballsTaskAndReadPhoto(isRed);
         RelicRecoveryVuMark column = vuMark;
-        reportImage(column);
+        //reportImage(column);
         moveToCryptoBox(isRed, isCorner, column);
         putCube(isCorner);
         moreCubs(isCorner, column);
@@ -191,13 +191,16 @@ public abstract class AutoMain extends LinearOpMode {
             }
         }
 
+        /*
         telemetry.addData("front is red ", frontIsRed);
         telemetry.addData("color detected ", colorDetected);
         telemetry.update();
+        */
 
         if (colorDetected >= 3) {
             if (isRed == frontIsRed) {
                 robot.armRightLeft.setPosition(0.00);
+                /*
                 telemetry.addData("front is red ", frontIsRed);
                 telemetry.addData("color detected ", colorDetected);
                 telemetry.addData("going back ", colorDetected);
@@ -206,6 +209,7 @@ public abstract class AutoMain extends LinearOpMode {
                 telemetry.addData("Blue front", robot.coloradoFront.blue());
                 telemetry.addData("Red front", robot.coloradoFront.red());
                 telemetry.update();
+                */
                 encoderLift(1 , -1300);
                 readPhotoWhileWait(300);
                 robot.armUpDown.setPosition(0.6);
@@ -214,6 +218,7 @@ public abstract class AutoMain extends LinearOpMode {
                 robot.armRightLeft.setPosition(0.4);
             } else {
                 robot.armRightLeft.setPosition(0.8);
+                /*
                 telemetry.addData("front is red ", frontIsRed);
                 telemetry.addData("color detected ", colorDetected);
                 telemetry.addData("going front ", colorDetected);
@@ -222,20 +227,22 @@ public abstract class AutoMain extends LinearOpMode {
                 telemetry.addData("Blue front", robot.coloradoFront.blue());
                 telemetry.addData("Red front", robot.coloradoFront.red());
                 telemetry.update();
+                */
                 encoderLift(1 , -1300);
                 readPhotoWhileWait(300);
                 robot.armUpDown.setPosition(0.6);
                 robot.armRightLeft.setPosition(0.5);
                 readPhotoWhileWait(100);
                 robot.armRightLeft.setPosition(0.4);
-
             }
         } else {
             encoderLift(1 , -1300);
         }
         robot.armUpDown.setPosition(0.15);
+        /*
         telemetry.addData("column ", vuMark);
         telemetry.update();
+        */
         if (vuMark == RelicRecoveryVuMark.UNKNOWN){
             readPhotoWhileWait(450);
         }
@@ -341,7 +348,7 @@ public abstract class AutoMain extends LinearOpMode {
             robot.halfCloseClaws();
             //P_DRIVE_COEFF = 0.17;
             robot.setPositionWheel(robot.GRAB_POSITION);
-            int ticks = gyroDrive(speed, 3000, 90, false, false);
+            int ticks = gyroDrive(speed, 3000, 90, true, true);
 
             if ((robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15
                     && robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15)
@@ -349,8 +356,8 @@ public abstract class AutoMain extends LinearOpMode {
                 // If got two cubes or only upper cube.
                 robot.closeClaws();
                 sleep(100);
-                startLift(-2000);
-                //encoderLift(1, -1000);
+                //startLift(-2000);
+                encoderLift(1, -2000);
                 gyroDrive(speed, -300, 90);
                 ticks -= 300;
                 goUpSpin = false; // Spin the claws to drop third cube.
@@ -359,7 +366,6 @@ public abstract class AutoMain extends LinearOpMode {
             } else if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15){
                 // If got only lower go back, spin and try again.
                 if (overallTimer.seconds() <= 16) {
-
                     robot.closeClawsDown();
                     sleep(100);
                     startLift(-2000);
@@ -386,7 +392,7 @@ public abstract class AutoMain extends LinearOpMode {
                 } else {
                     robot.closeClaws();
                     sleep(100);
-                    startLift(-400);
+                    encoderLift(1, -400);
                     gyroDrive(speed, -ticks + 400, 90);
                 }
             }
@@ -405,23 +411,19 @@ public abstract class AutoMain extends LinearOpMode {
                 encoderLift(1, 400);
                 gyroDrive(speed, 1000, angle);
                 gyroTurn(speed, -90);
-                encoderLift(1, 600);
+                encoderLift(1, 1000);
                 gyroDrive(speed, 1100, -90);
                 robot.setPositionWheel(robot.DROP_POSITION);
                 sleep(650);
                 //gyroDrive(speed, -150, -90);
                 driveStrait(speed, 600);
                 //robot.openClaws();
-                driveStrait(speed, -550);
+                driveStrait(speed, -450);
                 robot.setPositionWheel(robot.STOP_POSITION);
                 robot.openClaws();
-
             } else {
                 gyroDrive(speed, -3400, 90);
             }
-
-
-
         }
     }
 
@@ -529,11 +531,13 @@ public abstract class AutoMain extends LinearOpMode {
                     break;
                 }
             }
+            /*
             telemetry.addData("tick left", "%d", robot.driveBackLeft.getCurrentPosition());
             telemetry.addData("tick right", "%d", robot.driveBackRight.getCurrentPosition());
             telemetry.addData("tick left", "%d", robot.driveFrontLeft.getCurrentPosition());
             telemetry.addData("tick right", "%d", robot.driveFrontRight.getCurrentPosition());
             telemetry.update();
+            */
             idle();
 
             handleLift();
@@ -670,7 +674,9 @@ public abstract class AutoMain extends LinearOpMode {
 
                 handleLift();
 
+                /*
                 // Display drive status for the driver.
+                telemetry.addData("Time",  "%f",  overallTimer.seconds());
                 telemetry.addData("Distance Up",  "%f",  robot.sensorDistanceUp.getDistance(DistanceUnit.CM));
                 telemetry.addData("Distance Down",  "%f",  robot.sensorDistanceDown.getDistance(DistanceUnit.CM));
                 telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
@@ -679,6 +685,7 @@ public abstract class AutoMain extends LinearOpMode {
                         robot.driveBackRight.getCurrentPosition());
                 telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
                 telemetry.update();
+                */
             }
 
             // Stop all motion;
@@ -710,10 +717,6 @@ public abstract class AutoMain extends LinearOpMode {
         // keep looping while we are still active, and not on heading.
         while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
             handleLift();
-
-            // Update telemetry & Allow time for other processes to run.
-            telemetry.update();
-
         }
     }
 
@@ -738,7 +741,6 @@ public abstract class AutoMain extends LinearOpMode {
             // Update telemetry & Allow time for other processes to run.
             onHeading(speed, angle, P_TURN_COEFF);
             handleLift();
-            telemetry.update();
         }
 
         // Stop all motion;
@@ -839,19 +841,21 @@ public abstract class AutoMain extends LinearOpMode {
         while (opModeIsActive() && encoderLiftTimer.seconds() < timeS){
             if (tick > 0) {
                 if (robot.liftLeft.getCurrentPosition() >= newTarget) {
-                    telemetry.addData("break", "1");
+                    //telemetry.addData("break", "1");
                     break;
                 }
             } else {
                 if (robot.liftLeft.getCurrentPosition() <= newTarget) {
-                    telemetry.addData("break", "2");
+                    //telemetry.addData("break", "2");
                     break;
                 }
             }
 
+            /*
             telemetry.addData("tick", "%d", robot.liftLeft.getCurrentPosition());
             telemetry.update();
             idle();
+            */
 
         }
 
@@ -870,6 +874,17 @@ public abstract class AutoMain extends LinearOpMode {
             robot.setPowerLifts(0);
             liftEnabled = false;
         }
+    }
+
+    public void waitForLift() {
+        ElapsedTime timeout = new ElapsedTime();
+        timeout.reset();
+
+        while (opModeIsActive() && liftEnabled && timeout.seconds() <= 2) {
+            handleLift();
+        }
+        robot.setPowerLifts(0);
+        liftEnabled = false;
     }
 
     public void startLift(int ticks) {
