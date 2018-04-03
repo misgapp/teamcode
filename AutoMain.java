@@ -246,6 +246,9 @@ public abstract class AutoMain extends LinearOpMode {
         if (vuMark == RelicRecoveryVuMark.UNKNOWN){
             readPhotoWhileWait(450);
         }
+
+        // Stop trying to read the photo.
+        relicTrackables.deactivate();
     }
 
     // Read photo while wait instead sleep
@@ -314,8 +317,8 @@ public abstract class AutoMain extends LinearOpMode {
 
     // Put the cube in crypto box
     public void putCube(boolean isCorner) {
-        startLift(300);
         driveStrait(speed, 500);
+        encoderLift(1, 300);
         robot.setPositionWheel(robot.DROP_POSITION);
         sleep(800);
         driveStrait(speed, 500);
@@ -338,6 +341,7 @@ public abstract class AutoMain extends LinearOpMode {
 
     // Put more cube in crypto box
     public void moreCubs(boolean isCorner, RelicRecoveryVuMark column){
+        boolean grabCube = false;
         if (isCorner){
             robot.openClaws();
             startLift(1100);
@@ -348,12 +352,13 @@ public abstract class AutoMain extends LinearOpMode {
             robot.halfCloseClaws();
             //P_DRIVE_COEFF = 0.17;
             robot.setPositionWheel(robot.GRAB_POSITION);
-            int ticks = gyroDrive(speed, 3000, 90, true, true);
+            int ticks = gyroDrive(speed, 2600, 90, true, true);
 
             if ((robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15
                     && robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15)
                     || robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15){
                 // If got two cubes or only upper cube.
+                grabCube = true;
                 robot.closeClaws();
                 sleep(100);
                 //startLift(-2000);
@@ -365,6 +370,7 @@ public abstract class AutoMain extends LinearOpMode {
 
             } else if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15){
                 // If got only lower go back, spin and try again.
+                grabCube = true;
                 if (overallTimer.seconds() <= 16) {
                     robot.closeClawsDown();
                     sleep(100);
@@ -397,8 +403,7 @@ public abstract class AutoMain extends LinearOpMode {
                 }
             }
 
-            if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15 ||
-                    robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15){
+            if (grabCube){
                 //gyroDrive(speed, -1700, 90);
                 robot.closeClaws();
                 robot.setPositionWheel(robot.STOP_POSITION);
@@ -422,7 +427,7 @@ public abstract class AutoMain extends LinearOpMode {
                 robot.setPositionWheel(robot.STOP_POSITION);
                 robot.openClaws();
             } else {
-                gyroDrive(speed, -3400, 90);
+                gyroDrive(speed, -ticks -500, 90);
             }
         }
     }
