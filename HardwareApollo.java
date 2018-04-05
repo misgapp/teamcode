@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
@@ -78,9 +79,10 @@ public class HardwareApollo {
     DigitalChannel touchSpinnerDown;
     DistanceSensor sensorDistanceDown;
     DistanceSensor sensorDistanceUp;
+    public ElapsedTime liftRelic;
 
-    public static final double START_POSITION_CLAW_UP = 0.46;
-    public static final double START_POSITION_CLAW_DOWN = 0.6;
+    public static final double START_POSITION_CLAW_UP = 0.9;
+    public static final double START_POSITION_CLAW_DOWN = 0.1;
     public static final double START_POSITION_ARM_UP_DOWN = 0.0;
     public static final double START_POSITION_ARM_RIGHT_LEFT = 0.4;
     public static final double START_POSITION_CLAW = 0.1;
@@ -255,9 +257,6 @@ public class HardwareApollo {
         clawUpLeft.setPosition(0.55);
         clawUpRight.setPosition(0.45);
     }
-
-
-
 
     public void halfCloseClaws(){
         clawUpLeft.setPosition(0.57);

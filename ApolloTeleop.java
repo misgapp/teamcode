@@ -290,12 +290,12 @@ public class ApolloTeleop extends LinearOpMode {
 
             if (gamepad2.dpad_left) {
                 robot.spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.spinner.setPower(-0.25);
+                robot.spinner.setPower(-0.3);
                 isSpinerEnabled = false;
                 manualSpinActive = true;
             } else if (gamepad2.dpad_right) {
                 robot.spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.spinner.setPower(0.25);
+                robot.spinner.setPower(0.3);
                 isSpinerEnabled = false;
                 manualSpinActive = true;
             } else if (manualSpinActive) {

@@ -42,6 +42,7 @@ public abstract class AutoMain extends LinearOpMode {
     ElapsedTime overallTimer;
     int liftTimeoutSeconds;
     ElapsedTime encoderLiftTimer;
+    ElapsedTime liftRelic;
 
     public enum BallColor {
         UNKOWN,
@@ -52,12 +53,18 @@ public abstract class AutoMain extends LinearOpMode {
     //Init function, hardwareMap,vuforia and gyro calibration
     public void apolloInit() {
         robot.init(hardwareMap);
-        robot.setPositionClaw(robot.START_POSITION_CLAW_UP, robot.START_POSITION_CLAW_DOWN);
+        liftRelic.reset();
+        robot.relicLift.setPower(0.3);
+        robot.setPositionClaw(0.1, 0.9);
         robot.armUpDown.setPosition(0.15);
         robot.armRightLeft.setPosition(0.8);
         robot.relicClaw.setPosition(robot.START_POSITION_CLAW);
         robot.setPositionWheel(robot.STOP_POSITION);
         initVuforia();
+        while (liftRelic.seconds() > 1){
+            idle();
+        }
+        robot.relicLift.setPower(0.15);
     }
 
     //The main function of the autonomous
@@ -725,13 +732,13 @@ public abstract class AutoMain extends LinearOpMode {
 
                 if (goUpSpin){
                     if (robot.touchSpinnerUp.getState()){
-                        robot.spinner.setPower(-0.6);
+                        robot.spinner.setPower(-0.8);
                     } else{
                         robot.spinner.setPower(0);
                     }
                 } else {
                     if (robot.touchSpinnerDown.getState()){
-                        robot.spinner.setPower(0.6);
+                        robot.spinner.setPower(0.8);
                     } else if (!robot.touchSpinnerDown.getState()) {
                         robot.spinner.setPower(0);
                     }
