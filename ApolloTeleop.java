@@ -175,11 +175,11 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             if (gamepad2.a) {
-                robot.relicUpDown.setPosition(0.53);
+                robot.relicUpDown.setPosition(0.48);
             }
 
             if (gamepad2.b) {
-                robot.relicUpDown.setPosition(0.45);
+                robot.relicUpDown.setPosition(0.40);
             }
 
             if (gamepad2.x) {
@@ -245,7 +245,7 @@ public class ApolloTeleop extends LinearOpMode {
             if (isSpinerEnabled) {
                 spin();
             }
-            
+
             // Pace this loop so jaw action is reasonable speed.
             sleep(50);
         }
