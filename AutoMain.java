@@ -30,9 +30,7 @@ public abstract class AutoMain extends LinearOpMode {
     RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.UNKNOWN;
     static final double HEADING_THRESHOLD = 2 ;
     static final double P_TURN_COEFF = 0.02;
-    private double P_DRIVE_COEFF = 0.03; //For option to change in grab more cubes
-    private static final int RED_THRESHOLD = 50;
-    private static final int BLUE_THRESHOLD = 50;
+    private double P_DRIVE_COEFF = 0.03; //For option to change in grab more cubes.
     public boolean goUpSpin = true;
     double speed = 0.8;
     int liftTargetTicks = 0;
@@ -44,6 +42,7 @@ public abstract class AutoMain extends LinearOpMode {
     ElapsedTime encoderLiftTimer;
     ElapsedTime liftRelic;
 
+    // The options to color ball front.
     public enum BallColor {
         UNKOWN,
         RED,
@@ -75,21 +74,20 @@ public abstract class AutoMain extends LinearOpMode {
         robot.relicLift.setPower(0); // Stop the relic lift motor.
         overallTimer = new ElapsedTime(); // Create new elapsed time for cube.
         overallTimer.reset();
-        robot.prepareForStart(); // Prepare gyro for start
-        setClaw(); // Set claw to start position with cube
-        ballsTaskAndReadPhoto(isRed);
+        robot.prepareForStart(); // Prepare gyro for start.
+        setClaw(); // Set claw to start position with cube.
+        ballsTaskAndReadPhoto(isRed); // Ball task and read photo function.
         RelicRecoveryVuMark column = vuMark;
-        //reportImage(column);
-        moveToCryptoBox(isRed, isCorner, column);
-        putCube(isCorner);
+        moveToCryptoBox(isRed, isCorner, column); // Move to cryptoBox function.
+        putCube(isCorner); // Put the cube in cryptoBox.
         if (isCorner) {
-            moreCubsCorner(column);
+            moreCubsCorner(column); // More cubes corner function.
         } else {
-            moreCubsWall(column, isRed);
+            moreCubsWall(column, isRed); // More cubes wall function.
         }
     }
 
-    //Set the claws & lift to right position, grab cube
+    //Set the claws & lift to right position, grab cube.
     public void setClaw() {
         robot.closeClaws();
         robot.setPositionWheel(robot.GRAB_POSITION);
@@ -97,6 +95,7 @@ public abstract class AutoMain extends LinearOpMode {
         robot.setPositionWheel(robot.STOP_POSITION);
     }
 
+    // Detect the color of the ball according to red, blue, distance value.
     public BallColor getBallColor(double distance,
                                   int red,
                                   int blue){
@@ -126,6 +125,7 @@ public abstract class AutoMain extends LinearOpMode {
         return BallColor.UNKOWN;
     }
 
+    // Detect front color using distance sensor and get ball color function.
     public BallColor getFrontBallColor(double distanceFront,
                                        int redFront,
                                        int blueFront,
@@ -167,6 +167,7 @@ public abstract class AutoMain extends LinearOpMode {
 
     // Balls task: Move the ball with the other color aside.
     public void ballsTaskAndReadPhoto(boolean isRed) {
+        // Set the servos to drop position.
         robot.armRightLeft.setPosition(0.38);
         robot.armUpDown.setPosition(0.5);
         readPhotoWhileWait(200);
@@ -180,6 +181,7 @@ public abstract class AutoMain extends LinearOpMode {
         int colorDetected = 0;
         boolean frontIsRed = false;
 
+        // Detect color ball three times to sure the color is correct.
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1)) {
@@ -196,7 +198,7 @@ public abstract class AutoMain extends LinearOpMode {
                     colorDetected = 1;
                 } else {
                     colorDetected++;
-                    sleep(20);
+                    sleep(20); // Sleep 20 milli seconds between the readings.
                 }
                 frontIsRed = newDetectionFrontIsRed;
                 if (colorDetected >= 3) {
@@ -205,25 +207,10 @@ public abstract class AutoMain extends LinearOpMode {
             }
         }
 
-        /*
-        telemetry.addData("front is red ", frontIsRed);
-        telemetry.addData("color detected ", colorDetected);
-        telemetry.update();
-        */
-
+        // Drop ball according the variables and lift the lift.
         if (colorDetected >= 3) {
             if (isRed == frontIsRed) {
                 robot.armRightLeft.setPosition(0.00);
-                /*
-                telemetry.addData("front is red ", frontIsRed);
-                telemetry.addData("color detected ", colorDetected);
-                telemetry.addData("going back ", colorDetected);
-                telemetry.addData("Blue back ", robot.colorabiBack.blue());
-                telemetry.addData("Red back ", robot.colorabiBack.red());
-                telemetry.addData("Blue front", robot.coloradoFront.blue());
-                telemetry.addData("Red front", robot.coloradoFront.red());
-                telemetry.update();
-                */
                 encoderLift(1 , -1300);
                 readPhotoWhileWait(300);
                 robot.armUpDown.setPosition(0.6);
@@ -232,16 +219,6 @@ public abstract class AutoMain extends LinearOpMode {
                 robot.armRightLeft.setPosition(0.4);
             } else {
                 robot.armRightLeft.setPosition(0.8);
-                /*
-                telemetry.addData("front is red ", frontIsRed);
-                telemetry.addData("color detected ", colorDetected);
-                telemetry.addData("going front ", colorDetected);
-                telemetry.addData("Blue back ", robot.colorabiBack.blue());
-                telemetry.addData("Red back ", robot.colorabiBack.red());
-                telemetry.addData("Blue front", robot.coloradoFront.blue());
-                telemetry.addData("Red front", robot.coloradoFront.red());
-                telemetry.update();
-                */
                 encoderLift(1 , -1300);
                 readPhotoWhileWait(300);
                 robot.armUpDown.setPosition(0.6);
@@ -253,10 +230,8 @@ public abstract class AutoMain extends LinearOpMode {
             encoderLift(1 , -1300);
         }
         robot.armUpDown.setPosition(0.15);
-        /*
-        telemetry.addData("column ", vuMark);
-        telemetry.update();
-        */
+
+        // If didn't detect the photo try again.
         if (vuMark == RelicRecoveryVuMark.UNKNOWN){
             readPhotoWhileWait(450);
         }
@@ -265,7 +240,7 @@ public abstract class AutoMain extends LinearOpMode {
         relicTrackables.deactivate();
     }
 
-    // Read photo while wait instead sleep
+    // Read photo while wait instead sleep.
     public void readPhotoWhileWait(int time) {
         relicTrackables.activate();
         ElapsedTime runtime = new ElapsedTime();
@@ -277,19 +252,21 @@ public abstract class AutoMain extends LinearOpMode {
         }
     }
 
-    // Move to crypto box
+    // Move to crypto box.
     public void moveToCryptoBox(boolean isRed, boolean isCorner, RelicRecoveryVuMark column) {
         robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        // Variable to correct the different between red and blue.
         int direction = isRed ? 1 : -1;
         int columnTicks = isRed ? 0 : 525;
         int gyroDegrees = isRed ? 0 : 180;
         int blue = isRed ? 0 : -100;
-        int blueCornerCube = isRed ? 0 : 100;
+        int blueCorner = isRed ? 0 : 100;
 
-        final int TICK_TO_CRYPTO_BOX_CORNER = 2150;
-        final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 450;
+        final int TICK_TO_CRYPTO_BOX_CORNER = 2150; // Ticks to the closer column in crypto corner.
+        final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 450; // Ticks to the closer column in crypto wall.
 
+        // That is the different between red and blue in column.
         if (isRed) {
             if (column == RelicRecoveryVuMark.LEFT) {
                 column = RelicRecoveryVuMark.RIGHT;
@@ -298,6 +275,7 @@ public abstract class AutoMain extends LinearOpMode {
             }
         }
 
+        // Drive to correct column according the variable.
         if (isCorner) {
             if (column == RelicRecoveryVuMark.LEFT ) {
                 gyroDrive(speed, (columnTicks + TICK_TO_CRYPTO_BOX_CORNER) * direction, 0);
@@ -308,14 +286,11 @@ public abstract class AutoMain extends LinearOpMode {
             }
 
             gyroTurn(speed, -90);
-            gyroDrive(speed, blueCornerCube, -90);
-            //gyroHold(speed, -90, 1);
-            //gyroDrive(speed, 900, -90); //Go closer to crypto
+            gyroDrive(speed, blueCorner, -90);
         } else {
             gyroDrive(speed, (2100 + columnTicks) * direction, 0);
 
             gyroTurn(speed, 90);
-            //gyroHold(speed, 90, 1);
             if (column == RelicRecoveryVuMark.LEFT) {
                 gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL, 90);
             } else if (column == RelicRecoveryVuMark.CENTER || column == RelicRecoveryVuMark.UNKNOWN) {
@@ -324,14 +299,11 @@ public abstract class AutoMain extends LinearOpMode {
                 gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1350 + blue, 90);
             }
 
-            //turn(speed, TURN_2_CRYPTO_BOX_WALL * direction, -1 * TURN_2_CRYPTO_BOX_WALL * direction);
             gyroTurn(speed, 0+gyroDegrees);
-            //gyroHold(speed, 0+gyroDegrees, 1);
-            //driveStrait(speed, 400+blue); //Go closer to crypto
         }
     }
 
-    // Put the cube in crypto box
+    // Put the cube in crypto box.
     public void putCube(boolean isCorner) {
         driveStrait(speed, 500);
         encoderLift(1, 300);
@@ -339,8 +311,7 @@ public abstract class AutoMain extends LinearOpMode {
         sleep(800);
         driveStrait(speed, 500);
         robot.setPositionWheel(robot.STOP_POSITION);
-        //sleep(400);
-        //driveStrait(speed, 400);
+        // Try put the cube another time if sense it with the distance sensor.
         if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 6){
             robot.closeClaws();
             robot.setPositionWheel(robot.DROP_POSITION);
@@ -355,27 +326,24 @@ public abstract class AutoMain extends LinearOpMode {
         }
     }
 
-    // Put more cube in crypto box
+    // Put more two cube in crypto box corner.
     public void moreCubsCorner(RelicRecoveryVuMark column){
         boolean grabCube = false;
-
         robot.openClaws();
         startLift(1100);
         gyroDrive(speed, -1650, -90);
-        //encoderLift(1 , 1100);
         gyroTurn(speed, 90);
-        //gyroHold(speed, 90, 0.7);
         robot.halfCloseClaws();
-        //P_DRIVE_COEFF = 0.17;
         robot.setPositionWheel(robot.GRAB_POSITION);
         int ticks = gyroDrive(speed, 2600, 90, true, true);
 
-        if ((robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15 && robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15) || robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15) {
+        if ((robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15 &&
+                robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15) ||
+                robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 15) {
             // If got two cubes or only upper cube.
             grabCube = true;
             robot.closeClaws();
             sleep(100);
-            //startLift(-2000);
             encoderLift(1, -2000);
             gyroDrive(speed, -300, 90);
             ticks -= 300;
@@ -389,14 +357,13 @@ public abstract class AutoMain extends LinearOpMode {
                 robot.closeClawsDown();
                 sleep(100);
                 startLift(-2000);
-                //encoderLift(1, -2000);
                 gyroDrive(speed, -400, 90);
                 ticks -= 400;
                 robot.spinner.setPower(0.8);
                 ElapsedTime runtime = new ElapsedTime();
                 runtime.reset();
                 while (opModeIsActive() && robot.touchSpinnerDown.getState() && runtime.seconds() < 2) {
-                    handleLift();
+                    handleLift(); // Stop lift.
                     idle();
                 }
                 robot.spinner.setPower(0);
@@ -418,15 +385,10 @@ public abstract class AutoMain extends LinearOpMode {
         }
 
         if (grabCube) {
-            //gyroDrive(speed, -1700, 90);
             robot.closeClaws();
             robot.setPositionWheel(robot.STOP_POSITION);
-            //startLift(-3000);
             double angle = (column == RelicRecoveryVuMark.RIGHT) ? -50 : -130;
             gyroTurn(speed, angle);
-            //gyroHold(speed, 180, 1);
-            //sleep(100);
-
             encoderLift(1, 400);
             gyroDrive(speed, 1000, angle);
             gyroTurn(speed, -90);
@@ -434,9 +396,7 @@ public abstract class AutoMain extends LinearOpMode {
             gyroDrive(speed, 1100, -90);
             robot.setPositionWheel(robot.DROP_POSITION);
             sleep(650);
-            //gyroDrive(speed, -150, -90);
             driveStrait(speed, 600);
-            //robot.openClaws();
             driveStrait(speed, -450);
             robot.setPositionWheel(robot.STOP_POSITION);
             robot.openClaws();
@@ -445,6 +405,7 @@ public abstract class AutoMain extends LinearOpMode {
         }
     }
 
+    // Put more two cube in crypto box wall.
     public void moreCubsWall(RelicRecoveryVuMark column, boolean isRed){
         robot.openClaws();
         encoderLift(1, 1000);
@@ -566,12 +527,6 @@ public abstract class AutoMain extends LinearOpMode {
         encoderDrive(speed, tick, tick);
     }
 
-    //Function drive encoder for turns
-    public void turn(double speed, boolean turn_left) {
-        int ticks = 2100;
-        encoderDrive(speed, turn_left ? ticks : -ticks, turn_left ? -ticks : ticks);
-    }
-
     // function drive encoder
     // speed - power level between 0 and 1. Is always positive.
     // tickRight - ticks of right side to drive. If positive driving towards cube claw.
@@ -620,32 +575,11 @@ public abstract class AutoMain extends LinearOpMode {
                     break;
                 }
             }
-            /*
-            telemetry.addData("tick left", "%d", robot.driveBackLeft.getCurrentPosition());
-            telemetry.addData("tick right", "%d", robot.driveBackRight.getCurrentPosition());
-            telemetry.addData("tick left", "%d", robot.driveFrontLeft.getCurrentPosition());
-            telemetry.addData("tick right", "%d", robot.driveFrontRight.getCurrentPosition());
-            telemetry.update();
-            */
             idle();
 
-            handleLift();
+            handleLift(); // Stop lift.
         }
         robot.setPowerAllDriveMotors(0);
-    }
-
-    //Telemetry to the column
-    void reportImage(RelicRecoveryVuMark column) {
-        if (column == RelicRecoveryVuMark.CENTER) {
-            telemetry.addData("Image", "Center");
-        } else if (column == RelicRecoveryVuMark.LEFT) {
-            telemetry.addData("Image", "Left");
-        } else if (column == RelicRecoveryVuMark.RIGHT) {
-            telemetry.addData("Image", "Right");
-        } else {
-            telemetry.addData("Image", "Unknown");
-        }
-        telemetry.update();
     }
 
     public int gyroDrive(double speed,
@@ -687,7 +621,6 @@ public abstract class AutoMain extends LinearOpMode {
         if (opModeIsActive()) {
             robot.setDriveMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             // Determine new target position, and pass to motor controller
-            //moveCounts = (int)(distance * COUNTS_PER_INCH);
             moveCounts = (int)(distanceTick);
             newBackLeftTarget = robot.driveBackLeft.getCurrentPosition() + moveCounts;
             newBackRightTarget = robot.driveBackRight.getCurrentPosition() + moveCounts;
@@ -735,6 +668,7 @@ public abstract class AutoMain extends LinearOpMode {
                 robot.setPowerLeftDriveMotors(leftSpeed);
                 robot.setPowerRightDriveMotors(rightSpeed);
 
+                // Spin the spinner while drive.
                 if (goUpSpin){
                     if (robot.touchSpinnerUp.getState()){
                         robot.spinner.setPower(-0.8);
@@ -749,32 +683,21 @@ public abstract class AutoMain extends LinearOpMode {
                     }
                 }
 
+                // Stop drive if grab lower cube, for the more cube part.
                 if (stopIfSenseDownCube){
                     if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 6){
                         break;
                     }
                 }
 
+                // Stop drive if grab upper cube, for the more cube part.
                 if (stopIfSenseUpCube){
                     if (robot.sensorDistanceUp.getDistance(DistanceUnit.CM) < 6){
                         break;
                     }
                 }
 
-                handleLift();
-
-                /*
-                // Display drive status for the driver.
-                telemetry.addData("Time",  "%f",  overallTimer.seconds());
-                telemetry.addData("Distance Up",  "%f",  robot.sensorDistanceUp.getDistance(DistanceUnit.CM));
-                telemetry.addData("Distance Down",  "%f",  robot.sensorDistanceDown.getDistance(DistanceUnit.CM));
-                telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
-                telemetry.addData("Target",  "%7d:%7d",      newBackLeftTarget,  newBackRightTarget);
-                telemetry.addData("Actual",  "%7d:%7d",      robot.driveBackLeft.getCurrentPosition(),
-                        robot.driveBackRight.getCurrentPosition());
-                telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
-                telemetry.update();
-                */
+                handleLift(); // Stop lift.
             }
 
             // Stop all motion;
@@ -805,37 +728,9 @@ public abstract class AutoMain extends LinearOpMode {
         robot.setDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // keep looping while we are still active, and not on heading.
         while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
-            handleLift();
+            handleLift(); // Stop lift.
         }
     }
-
-    /*
-     *  Method to obtain & hold a heading for a finite amount of time
-     *  Move will stop once the requested time has elapsed
-     *
-     * @param speed      Desired speed of turn.
-     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
-     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                   If a relative angle is required, add/subtract from current heading.
-     * @param holdTime   Length of time (in seconds) to hold the specified heading.
-     */
-
-    public void gyroHold( double speed, double angle, double holdTime) {
-
-        ElapsedTime holdTimer = new ElapsedTime();
-
-        // keep looping while we have time remaining.
-        holdTimer.reset();
-        while (opModeIsActive() && (holdTimer.time() < holdTime)) {
-            // Update telemetry & Allow time for other processes to run.
-            onHeading(speed, angle, P_TURN_COEFF);
-            handleLift();
-        }
-
-        // Stop all motion;
-        robot.setPowerAllDriveMotors(0);
-    }
-
 
     /*
      * Perform one cycle of closed loop heading control.
@@ -873,11 +768,6 @@ public abstract class AutoMain extends LinearOpMode {
         robot.setPowerLeftDriveMotors(leftSpeed);
         robot.setPowerRightDriveMotors(rightSpeed);
 
-        // Display it for the driver.
-        telemetry.addData("Target", "%5.2f", angle);
-        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
-        telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
-
         return onTarget;
     }
 
@@ -908,7 +798,7 @@ public abstract class AutoMain extends LinearOpMode {
         return Range.clip(error * PCoeff, -1, 1);
     }
 
-    //Encoder lift function
+    //Encoder lift function.
     public void encoderLift(double speed, int tick) {
         encoderLiftTimer = new ElapsedTime();
 
@@ -930,27 +820,20 @@ public abstract class AutoMain extends LinearOpMode {
         while (opModeIsActive() && encoderLiftTimer.seconds() < timeS){
             if (tick > 0) {
                 if (robot.liftLeft.getCurrentPosition() >= newTarget) {
-                    //telemetry.addData("break", "1");
                     break;
                 }
             } else {
                 if (robot.liftLeft.getCurrentPosition() <= newTarget) {
-                    //telemetry.addData("break", "2");
                     break;
                 }
             }
-
-            /*
-            telemetry.addData("tick", "%d", robot.liftLeft.getCurrentPosition());
-            telemetry.update();
-            idle();
-            */
 
         }
 
         robot.setPowerLifts(0);
     }
 
+    // Stop the lift if grt to target, while drive gyro function.
     public void handleLift() {
         if (!liftEnabled){
             return;
@@ -965,24 +848,13 @@ public abstract class AutoMain extends LinearOpMode {
         }
     }
 
-    public void waitForLift() {
-        ElapsedTime timeout = new ElapsedTime();
-        timeout.reset();
-
-        while (opModeIsActive() && liftEnabled && timeout.seconds() <= 2) {
-            handleLift();
-        }
-        robot.setPowerLifts(0);
-        liftEnabled = false;
-    }
-
+    // Set all the variables for the lift get the right position while do other things.
     public void startLift(int ticks) {
         robot.liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftTargetTicks = ticks;
         liftStopIfMoreThanTicks = ticks > 0;
         liftTimeoutSeconds = (Math.abs(ticks)/1000) * 1; // Second per 1000 ticks
-        //liftTimeoutSeconds = timeoutSeconds;
         liftTimer = new ElapsedTime();
         liftTimer.reset();
         liftEnabled = true;

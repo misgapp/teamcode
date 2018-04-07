@@ -35,26 +35,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-import static java.lang.Thread.sleep;
-
-//import org.firstinspires.ftc.robotcontroller.external.samples.SensorColor;
-
-/**
- * This OpMode uses the common Apollo hardware class to define the devices on the robot.
- * All device access is managed through the TestHardwareSingleMotor class.
- * The code is structured as a LinearOpMode
- * <p>
- * This particular OpMode executes a POV Game style Teleop for a PushBot
- * In this mode the left stick moves the robot FWD and back, the Right stick turns left and right.
- * It raises and lowers the claw using the Gampad Y and A buttons respectively.
- * It also opens and closes the claws slowly using the left and right Bumper buttons.
- * <p>
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
+//This OpMode uses the common Apollo hardware class to define the devices on the robot.
 
 @TeleOp(name = "Apollo Teleop", group = "Apollo")
-//@Disabled //TODO Enable this to show program in TeleOP list - lasim lev
 public class ApolloTeleop extends LinearOpMode {
     // the lift is in Remarks because we dont have another  motor
     HardwareApollo robot = new HardwareApollo();
@@ -65,8 +48,6 @@ public class ApolloTeleop extends LinearOpMode {
     static final double SPEED_FACTOR_3 = 1.6;
     static final double SPEED_FACTOR_4 = 2.0;
     private boolean spinDirectionUp = true; // Up is gear wheels are up
-    static final double SPIN_SPEED_FAST = -0.6;
-    static final double SPIN_SPEED_SLOW = -0.2;
     private float spinAngle = 0;
     boolean isSpinerEnabled = false;
     double spinSpeed = 0;
@@ -86,18 +67,15 @@ public class ApolloTeleop extends LinearOpMode {
         boolean gamepad2_bumper_previous_pressed = false;
         boolean balltaskisup = false;
 
-
-
         robot.init(hardwareMap);
 
         robot.spinner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.spinner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        // Wait for the game to start (driver presses PLAY)
+        // Wait for the game to start (driver presses PLAY).
         waitForStart();
 
-
-        // run until the end of the match (driver presses STOP)
+        // Run until the end of the match (driver presses STOP).
         while (opModeIsActive()) {
             if (balltaskisup == false) {
                 robot.armRightLeft.setPosition(0.38);
@@ -109,7 +87,7 @@ public class ApolloTeleop extends LinearOpMode {
             speed_Left = -gamepad1.left_stick_y;
             speed_Right = -gamepad1.right_stick_y;
 
-            //Change variables to change velocity
+            //Change variables to change velocity.
             if (gamepad1.dpad_up) {
                 if (!speedFactorUpPressHandled) {
                     speedFactorUpPressHandled = true;
@@ -140,13 +118,13 @@ public class ApolloTeleop extends LinearOpMode {
                 speedFactorDownPressHandled = false;
             }
 
-            //Set power to the motor according to the change
+            //Set power to the motor according to the change.
             robot.driveBackLeft.setPower(speed_Left / driveSpeedFactor);
             robot.driveBackRight.setPower(speed_Right / driveSpeedFactor);
             robot.driveFrontLeft.setPower(speed_Left / driveSpeedFactor);
             robot.driveFrontRight.setPower(speed_Right / driveSpeedFactor);
 
-            //Set power to the lift according to the buttons
+            //Set power to the lift according to the buttons.
             if (gamepad2.right_trigger > 0) {
                 robot.setPowerLifts(LIFT_SPEED);
             } else if (gamepad2.left_trigger > 0) {
@@ -155,7 +133,7 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.setPowerLifts(0);
             }
 
-            //Set position to claws according to the sticks
+            //Set position to claws according to the sticks.
             double deltaClawDown = spinDirectionUp ? -gamepad2.right_stick_y / 2 : gamepad2.left_stick_y / 2;
 
             if (deltaClawDown < 0.3 && deltaClawDown > -0.3) {
@@ -169,6 +147,7 @@ public class ApolloTeleop extends LinearOpMode {
                 telemetry.addData("deltaClawUp - clear", "%.2f", deltaClawUp);
             }
 
+            // Min and Max positions.
             clawDownPosition += deltaClawDown;
             clawDownPosition = Math.min(clawDownPosition, 0.45);
             clawDownPosition = Math.max(clawDownPosition, 0.3);
@@ -181,63 +160,7 @@ public class ApolloTeleop extends LinearOpMode {
             robot.clawUpLeft.setPosition(clawUpPosition);
             robot.clawUpRight.setPosition(1 - clawUpPosition);
 
-
-            /*
-            if (spinDirectionUp == true) {
-                //Set position to claws according to the sticks
-                double deltaClawDown = -gamepad2.right_stick_y / 2;
-
-                if (deltaClawDown < 0.3 && deltaClawDown > -0.3) {
-                    deltaClawDown = 0;
-                }
-
-                double deltaClawUp = gamepad2.left_stick_y / 2;
-
-                if (deltaClawUp < 0.3 && deltaClawUp > -0.3) {
-                    deltaClawUp = 0;
-                    telemetry.addData("deltaClawUp - clear", "%.2f", deltaClawUp);
-                }
-
-                clawDownPosition += deltaClawDown;
-                clawDownPosition = Math.min(clawDownPosition, 0.45);
-                clawDownPosition = Math.max(clawDownPosition, 0.3);
-                robot.clawDownLeft.setPosition(clawDownPosition);
-                robot.clawDownRight.setPosition(1 - clawDownPosition);
-
-                clawUpPosition += deltaClawUp;
-                clawUpPosition = Math.min(clawUpPosition, 0.7);
-                clawUpPosition = Math.max(clawUpPosition, 0.55);
-                robot.clawUpLeft.setPosition(clawUpPosition);
-                robot.clawUpRight.setPosition(1 - clawUpPosition);
-            }else {
-                //Set position to claws according to the sticks
-                double deltaClawDown = -gamepad2.left_stick_y / 2;
-
-                if (deltaClawDown < 0.3 && deltaClawDown > -0.3) {
-                    deltaClawDown = 0;
-                }
-
-                double deltaClawUp = gamepad2.right_stick_y / 2;
-
-                if (deltaClawUp < 0.3 && deltaClawUp > -0.3) {
-                    deltaClawUp = 0;
-                    telemetry.addData("deltaClawUp - clear", "%.2f", deltaClawUp);
-                }
-
-                clawDownPosition += deltaClawDown;
-                clawDownPosition = Math.min(clawDownPosition, 0.45);
-                clawDownPosition = Math.max(clawDownPosition, 0.3);
-                robot.clawDownLeft.setPosition(clawDownPosition);
-                robot.clawDownRight.setPosition(1 - clawDownPosition);
-
-                clawUpPosition += deltaClawUp;
-                clawUpPosition = Math.min(clawUpPosition, 0.7);
-                clawUpPosition = Math.max(clawUpPosition, 0.55);
-                robot.clawUpLeft.setPosition(clawUpPosition);
-                robot.clawUpRight.setPosition(1 - clawUpPosition);
-            } */
-
-            // Set position to the wheels DROP, GRAB or STOP
+            // Set position to the wheels DROP, GRAB or STOP.
             if (gamepad1.left_trigger > 0) {
                 robot.setPositionWheel(robot.DROP_POSITION);
             } else if (gamepad1.right_trigger > 0) {
@@ -246,7 +169,7 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.setPositionWheel(robot.STOP_POSITION);
             }
 
-            //Set position to relic servo
+            //Set position to relic servo.
             if (gamepad2.y) {
                 robot.relicUpDown.setPosition(0.0);
             }
@@ -263,7 +186,7 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.relicUpDown.setPosition(0.3);
             }
 
-            //Set position to relic claw
+            //Set position to relic claw.
             if (gamepad2.left_bumper || gamepad2.right_bumper) {
                 if (!gamepad2_bumper_previous_pressed) {
                     gamepad2_bumper_previous_pressed = true;
@@ -279,7 +202,7 @@ public class ApolloTeleop extends LinearOpMode {
                 gamepad2_bumper_previous_pressed = false;
             }
 
-            // Set power to relic lift
+            // Set power to relic lift.
             if (gamepad2.dpad_down) {
                 robot.relicLift.setPower(1);
             } else if (gamepad2.dpad_up) {
@@ -288,6 +211,7 @@ public class ApolloTeleop extends LinearOpMode {
                 robot.relicLift.setPower(0);
             }
 
+            // spin the spinner manual.
             if (gamepad2.dpad_left) {
                 robot.spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 robot.spinner.setPower(-0.3);
@@ -321,26 +245,13 @@ public class ApolloTeleop extends LinearOpMode {
             if (isSpinerEnabled) {
                 spin();
             }
-
-            telemetry.addData("tick", "%d", robot.liftLeft.getCurrentPosition());
-            telemetry.addData("claw Down Left", "%.2f", robot.clawDownLeft.getPosition());
-            telemetry.addData("claw Down Right", "%.2f", robot.clawDownRight.getPosition());
-            telemetry.addData("claw up Left", "%.2f", robot.clawUpLeft.getPosition());
-            telemetry.addData("claw up Right", "%.2f", robot.clawUpRight.getPosition());
-            telemetry.addData("Spin angle", "%.2f", spinAngle);
-            telemetry.addData("spinner enabled", isSpinerEnabled);
-            telemetry.addData("spinDirectionUp", spinDirectionUp);
-            telemetry.addData("touch up", robot.touchSpinnerUp.getState());
-            telemetry.addData("touch down", robot.touchSpinnerDown.getState());
-            telemetry.addData("spinner ticks", "%d", robot.spinner.getCurrentPosition());
-            telemetry.addData("dictance sensor ", "%.2f", robot.sensorDistanceDown.getDistance(DistanceUnit.CM));
-            telemetry.update();
-
+            
             // Pace this loop so jaw action is reasonable speed.
             sleep(50);
         }
     }
 
+    // Spin function: spin according to touch sensors.
     public void spin() {
         if ((!spinDirectionUp && !robot.touchSpinnerDown.getState()) ||
                 (spinDirectionUp && !robot.touchSpinnerUp.getState())) {
@@ -348,36 +259,4 @@ public class ApolloTeleop extends LinearOpMode {
             isSpinerEnabled = false;
         }
     }
-
-    /*
-    //Set and change power to spinner according to gyro angle
-    public void spin1() {
-        spinAngle = robot.gyroSpinner.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        if (spinDirectionUp) {
-            if (spinAngle <= 90 && spinAngle >= 25) {
-                robot.spinner.setPower(SPIN_SPEED_FAST);
-            } else if (spinAngle < 25 && spinAngle >= 4) {
-                robot.spinner.setPower(SPIN_SPEED_SLOW);
-            } else if ((spinAngle < 4 && spinAngle >= 0) || (spinAngle >= -4 && spinAngle < 0)) {
-                robot.spinner.setPower(0);
-            } else if (spinAngle < -4 && spinAngle >= -45) {
-                robot.spinner.setPower(-SPIN_SPEED_SLOW);
-            } else {
-                robot.spinner.setPower(-SPIN_SPEED_FAST);
-            }
-        } else {
-            if (spinAngle >= 90 && spinAngle <= 155) {
-                robot.spinner.setPower(-SPIN_SPEED_FAST);
-            } else if (spinAngle <= 176 && spinAngle > 155) {
-                robot.spinner.setPower(-SPIN_SPEED_SLOW);
-            } else if (spinAngle <= -176 || spinAngle > 176) {
-                robot.spinner.setPower(0);
-            } else if (spinAngle <= -140 && spinAngle > -176) {
-                robot.spinner.setPower(SPIN_SPEED_SLOW);
-            } else {
-                robot.spinner.setPower(SPIN_SPEED_FAST);
-            }
-        }
-    }
-    */
 }
