@@ -72,11 +72,11 @@ public abstract class AutoMain extends LinearOpMode {
 
     //The main function of the autonomous
     void apolloRun(boolean isRed, boolean isCorner) {
-        overallTimer = new ElapsedTime();
+        robot.relicLift.setPower(0); // Stop the relic lift motor.
+        overallTimer = new ElapsedTime(); // Create new elapsed time for cube.
         overallTimer.reset();
-
-        robot.prepareForStart();
-        setClaw();
+        robot.prepareForStart(); // Prepare gyro for start
+        setClaw(); // Set claw to start position with cube
         ballsTaskAndReadPhoto(isRed);
         RelicRecoveryVuMark column = vuMark;
         //reportImage(column);
@@ -285,6 +285,7 @@ public abstract class AutoMain extends LinearOpMode {
         int columnTicks = isRed ? 0 : 525;
         int gyroDegrees = isRed ? 0 : 180;
         int blue = isRed ? 0 : -100;
+        int blueCornerCube = isRed ? 0 : 100;
 
         final int TICK_TO_CRYPTO_BOX_CORNER = 2150;
         final int TICK_TO_CRYPTO_BOX_COLUMN_WALL = 450;
@@ -307,6 +308,7 @@ public abstract class AutoMain extends LinearOpMode {
             }
 
             gyroTurn(speed, -90);
+            gyroDrive(speed, blueCornerCube, -90);
             //gyroHold(speed, -90, 1);
             //gyroDrive(speed, 900, -90); //Go closer to crypto
         } else {
@@ -314,9 +316,9 @@ public abstract class AutoMain extends LinearOpMode {
 
             gyroTurn(speed, 90);
             //gyroHold(speed, 90, 1);
-            if (column == RelicRecoveryVuMark.LEFT || column == RelicRecoveryVuMark.UNKNOWN) {
+            if (column == RelicRecoveryVuMark.LEFT) {
                 gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL, 90);
-            } else if (column == RelicRecoveryVuMark.CENTER ) {
+            } else if (column == RelicRecoveryVuMark.CENTER || column == RelicRecoveryVuMark.UNKNOWN) {
                 gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 650 + blue, 90);
             } else {
                 gyroDrive(speed, TICK_TO_CRYPTO_BOX_COLUMN_WALL + 1350 + blue, 90);
