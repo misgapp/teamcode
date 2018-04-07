@@ -353,7 +353,8 @@ public abstract class AutoMain extends LinearOpMode {
         } else if (robot.sensorDistanceDown.getDistance(DistanceUnit.CM) < 15) {
             // If got only lower go back, spin and try again.
             grabCube = true;
-            if (overallTimer.seconds() <= 16) {
+            boolean enableDoubleTake = false;
+            if (enableDoubleTake && overallTimer.seconds() <= 16) {
                 robot.closeClawsDown();
                 sleep(100);
                 startLift(-2000);
