@@ -156,13 +156,13 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             //Set position to claws according to the sticks
-            double deltaClawDown = spinDirectionUp ? -gamepad2.left_stick_y / 2 : gamepad2.right_stick_y / 2;
+            double deltaClawDown = spinDirectionUp ? -gamepad2.right_stick_y / 2 : gamepad2.left_stick_y / 2;
 
             if (deltaClawDown < 0.3 && deltaClawDown > -0.3) {
                 deltaClawDown = 0;
             }
 
-            double deltaClawUp = spinDirectionUp ? gamepad2.right_stick_y / 2 : -gamepad2.left_stick_y / 2;
+            double deltaClawUp = spinDirectionUp ? gamepad2.left_stick_y / 2 : -gamepad2.right_stick_y / 2;
 
             if (deltaClawUp < 0.3 && deltaClawUp > -0.3) {
                 deltaClawUp = 0;
