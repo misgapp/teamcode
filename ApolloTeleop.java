@@ -134,13 +134,13 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             //Set position to claws according to the sticks.
-            double deltaClawDown = spinDirectionUp ? -gamepad2.right_stick_y / 2 : gamepad2.left_stick_y / 2;
+            double deltaClawDown = spinDirectionUp ? -gamepad2.right_stick_y / 2 : -gamepad2.left_stick_y / 2;
 
             if (deltaClawDown < 0.3 && deltaClawDown > -0.3) {
                 deltaClawDown = 0;
             }
 
-            double deltaClawUp = spinDirectionUp ? gamepad2.left_stick_y / 2 : -gamepad2.right_stick_y / 2;
+            double deltaClawUp = spinDirectionUp ? gamepad2.left_stick_y / 2 : gamepad2.right_stick_y / 2;
 
             if (deltaClawUp < 0.3 && deltaClawUp > -0.3) {
                 deltaClawUp = 0;
@@ -175,15 +175,15 @@ public class ApolloTeleop extends LinearOpMode {
             }
 
             if (gamepad2.a) {
-                robot.relicUpDown.setPosition(0.48);
+                robot.relicUpDown.setPosition(0.49);
             }
 
             if (gamepad2.b) {
-                robot.relicUpDown.setPosition(0.40);
+                robot.relicUpDown.setPosition(0.42);
             }
 
             if (gamepad2.x) {
-                robot.relicUpDown.setPosition(0.3);
+                robot.relicUpDown.setPosition(0.35);
             }
 
             //Set position to relic claw.
