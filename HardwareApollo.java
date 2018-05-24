@@ -29,24 +29,245 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class HardwareApollo
-{
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+
+import static java.lang.Thread.sleep;
+
+// the lift is in Remarks because we dont have another  motor
+
+public class HardwareApollo {
     /* Public OpMode members. */
+    public DcMotor driveFrontLeft = null;
+    public DcMotor driveFrontRight = null;
+    public DcMotor driveBackLeft = null;
+    public DcMotor driveBackRight = null;
+    public DcMotor liftLeft = null;
+    public DcMotor liftRight = null;
+    public DcMotor relicLift = null;
+    public DcMotor spinner = null;
+    public Servo clawDownLeft = null;
+    public Servo clawDownRight = null;
+    public Servo clawUpLeft = null;
+    public Servo clawUpRight = null;
+    public Servo armUpDown = null;
+    public Servo armRightLeft = null;
+    public Servo relicUpDown = null;
+    public Servo relicClaw = null;
+    public Servo wheelDownLeft = null;
+    public Servo wheelDownRight = null;
+    public Servo wheelUpLeft = null;
+    public Servo wheelUpRight = null;
+    public ColorSensor coloradoFront = null;
+    public ColorSensor colorabiBack = null;
+    public DistanceSensor coloradoDistanceFront = null;
+    public DistanceSensor colorabiDistanceBack = null;
+    BNO055IMU imu;
+    DigitalChannel touchSpinnerUp;
+    DigitalChannel touchSpinnerDown;
+    DistanceSensor sensorDistanceDown;
+    DistanceSensor sensorDistanceUp;
+    public ElapsedTime liftRelic;
 
-    /* local OpMode members. */
+    public static final double START_POSITION_CLAW_UP = 0.9;
+    public static final double START_POSITION_CLAW_DOWN = 0.1;
+    public static final double START_POSITION_ARM_UP_DOWN = 0.0;
+    public static final double START_POSITION_ARM_RIGHT_LEFT = 0.4;
+    public static final double START_POSITION_CLAW = 0.1;
+    public static final double START_POSITION_ARM = 1;
+    public static final double STOP_POSITION = 0.5;
+    public static final double DROP_POSITION = 0.1;
+    public static final double GRAB_POSITION = 0.9;
+
+    // local OpMode members.
     HardwareMap hwMap = null;
 
-    /* Constructor */
-    public HardwareApollo(){
-
-    }
-
-    /* Initialize standard Hardware interfaces */
+    // Initialize standard Hardware interfaces
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
+
+        // Define and Initialize Motors
+        spinner = hwMap.get(DcMotor.class, "sp");
+        driveBackLeft = hwMap.get(DcMotor.class, "dlb");
+        driveBackRight = hwMap.get(DcMotor.class, "drb");
+        driveFrontLeft = hwMap.get(DcMotor.class, "dlf");
+        driveFrontRight = hwMap.get(DcMotor.class, "drf");
+        liftRight = hwMap.get(DcMotor.class, "liftR");
+        liftLeft = hwMap.get(DcMotor.class, "liftL");
+        relicLift = hwMap.get(DcMotor.class, "rl");
+
+        driveBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        driveBackRight.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        driveFrontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        driveFrontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        liftLeft.setDirection(DcMotor.Direction.FORWARD); //Set to FORWARD if using AndyMark motors
+        liftRight.setDirection(DcMotor.Direction.REVERSE);
+        relicLift.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
+        spinner.setDirection(DcMotor.Direction.REVERSE); // Set to FORWARD if using AndyMark motors
+
+        // Set all motors to zero power
+        setPowerAllDriveMotors(0);
+        liftRight.setPower(0);
+        liftLeft.setPower(0);
+        relicLift.setPower(0);
+        spinner.setPower(0);
+
+        // Set all motors to run without encoders.
+        // May want to use RUN_USING_ENCODERS if encoders are installed.
+        setDriveMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        relicLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        clawDownLeft = hwMap.get(Servo.class, "cdl");
+        clawDownRight = hwMap.get(Servo.class, "cdr");
+        clawUpLeft = hwMap.get(Servo.class, "cul");
+        clawUpRight = hwMap.get(Servo.class, "cur");
+        armRightLeft = hwMap.get(Servo.class, "arl");
+        armUpDown = hwMap.get(Servo.class, "aud");
+        relicUpDown = hwMap.get(Servo.class, "rud");
+        relicClaw = hwMap.get(Servo.class, "rc");
+        wheelDownLeft = hwMap.get(Servo.class, "wdl");
+        wheelDownRight = hwMap.get(Servo.class, "wdr");
+        wheelUpLeft = hwMap.get(Servo.class, "wul");
+        wheelUpRight = hwMap.get(Servo.class, "wur");
+
+
+        coloradoFront = hwMap.get(ColorSensor.class, "cf");
+        colorabiBack = hwMap.get(ColorSensor.class, "cb");
+        coloradoDistanceFront = hwMap.get(DistanceSensor.class, "cf");
+        colorabiDistanceBack = hwMap.get(DistanceSensor.class, "cb");
+        sensorDistanceDown = hwMap.get(DistanceSensor.class, "sd");
+        sensorDistanceUp = hwMap.get(DistanceSensor.class, "sdu");
+
+        // Set up the parameters with which we will use our IMU. Note that integration
+        // algorithm here just reports accelerations to the logcat log; it doesn't actually
+        // provide positional information.
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
+        imu = hwMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
+        // get a reference to our digitalTouch object.
+        touchSpinnerDown = hwMap.get(DigitalChannel.class, "tsd");
+        // set the digital channel to input.
+        touchSpinnerDown.setMode(DigitalChannel.Mode.INPUT);
+
+        // get a reference to our digitalTouch object.
+        touchSpinnerUp = hwMap.get(DigitalChannel.class, "tsu");
+        // set the digital channel to input.
+        touchSpinnerUp.setMode(DigitalChannel.Mode.INPUT);
     }
- }
+
+    //Function: set mode run using encoder
+    public void setDriveMotorsMode(DcMotor.RunMode runMode) {
+        driveBackLeft.setMode(runMode);
+        driveBackRight.setMode(runMode);
+        driveFrontLeft.setMode(runMode);
+        driveFrontRight.setMode(runMode);
+    }
+
+    //Function: set power to all the motors
+    public void setPowerAllDriveMotors(double speed) {
+        driveBackLeft.setPower(speed);
+        driveBackRight.setPower(speed);
+        driveFrontLeft.setPower(speed);
+        driveFrontRight.setPower(speed);
+    }
+
+    //Function: set power to all the motors
+    public void setPowerLeftDriveMotors(double speed) {
+        driveBackLeft.setPower(speed);
+        driveFrontLeft.setPower(speed);
+    }
+
+    //Function: set power to all the motors
+    public void setPowerRightDriveMotors(double speed) {
+        driveBackRight.setPower(speed);
+        driveFrontRight.setPower(speed);
+    }
+
+    public void setPowerLifts( double LIFT_SPEED){
+        liftLeft.setPower(LIFT_SPEED);
+        liftRight.setPower(LIFT_SPEED);
+    }
+
+
+    //Function: set position to all the claws
+    public void setPositionClaw(double setPositionUp, double setPositionDown) {
+        clawUpLeft.setPosition(1-setPositionUp);
+        clawUpRight.setPosition(setPositionUp);
+        clawDownRight.setPosition(setPositionDown);
+        clawDownLeft.setPosition(1-setPositionDown);
+    }
+
+    //Function: set position to all the wheel
+    public void setPositionWheel(double setPosition) {
+        wheelUpRight.setPosition(1-setPosition);
+        wheelUpLeft.setPosition(setPosition);
+        wheelDownRight.setPosition(setPosition);
+        wheelDownLeft.setPosition(1-setPosition);
+    }
+
+    public void openClaws(){
+        clawUpLeft.setPosition(0.8);
+        clawUpRight.setPosition(0.2);
+        clawDownRight.setPosition(0.8);
+        clawDownLeft.setPosition(0.2);
+    }
+
+    public void closeClaws(){
+        closeClawsDown();
+        closeClawsUp();
+    }
+
+    public void closeClawsDown(){
+        clawDownRight.setPosition(0.55);
+        clawDownLeft.setPosition(0.45);
+    }
+
+    public void closeClawsUp(){
+        clawUpLeft.setPosition(0.55);
+        clawUpRight.setPosition(0.45);
+    }
+
+    public void halfCloseClaws(){
+        clawUpLeft.setPosition(0.57);
+        clawUpRight.setPosition(0.43);
+        clawDownRight.setPosition(0.57);
+        clawDownLeft.setPosition(0.43);
+    }
+
+    public void prepareForStart() {
+        // Start the logging of measured acceleration
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+    }
+}
 
